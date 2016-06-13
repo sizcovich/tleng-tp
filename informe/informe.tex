@@ -29,7 +29,32 @@
 Expresiones regulares de los tokens y transformaciones
 Tipo de Gramática definida
 
+PROGRAMA \leftarrow LISTA_SENTENCIAS
+LISTA_SENTENCIAS \leftarrow SENTENCIA \| LISTA_SENTENCIAS SENTENCIA
+SENTENCIA \leftarrow E; \| WHILE \| IF_ELSE \| CONDICIONAL \| FOR \| DO_WHILE
+WHILE \leftarrow while (CONDICION) SENTENCIA \| while (CONDICION) {LISTA_SENTENCIAS}
+IF_ELSE \leftarrow IF else SENTENCIA \| IF else {LISTA_SENTENCIAS}
+IF \leftarrow if (CONDICION) SENTENCIA \| if (CONDICION) {LISTA_SENTENCIAS}
+CONDICIONAL \leftarrow (CONDICION) ? SENTENCIA : SENTENCIA
+FOR \leftarrow (ASIGNACION ;CONDICION; AVANZAR) SENTENCIA \| (ASIGNACION ;CONDICION; AVANZAR) {LISTA_SENTENCIAS}
+ASIGNACION \leftarrow VAR = num \| \lambda
+AVANZAR \leftarrow VAR++ \| VAR-- \| VAR -= num \| VAR += num \| \lambda
+DO_WHILE \leftarrow do {LISTA_SENTENCIAS} while (CONDICION)
+CONDICION \leftarrow CONDICION_LOGICA \| CONDICION_AND \| CONDICION_OR
+CONDICION_AND \leftarrow CONDICION_LOGICA AND CONDICION_LOGICA
+CONDICION_OR \leftarrow CONDICION_LOGICA OR CONDICION_LOGICA
+CONDICION_LOGICA \leftarrow E > E \| E < E \| E == E \| E != E
+E \leftarrow NUMERO \| string
+NUMERO \leftarrow NUMERO + T \| NUMERO - T \| T
+T \leftarrow T * F \| T / F \| T \% F \| F
+F \leftarrow num
+
+
+
 \section{Descripción}
+
+ASumimos que ASIGNACION \leftarrow VAR = num 
+
 
 \section{Compilación y ejecución}
 
