@@ -96,6 +96,182 @@ FACTOR $\rightarrow$ num $|$ var[INDICE] $|$ var.cadena  \\
 INDICE $\rightarrow$ num $|$  $\lambda$ \\
 
 
+
+
+\newpage
+
+
+PROGRAMA $\rightarrow$ LISTA\_SENTENCIAS \\
+
+LISTA\_SENTENCIAS $\rightarrow$ SENTENCIA 
+
+LISTA\_SENTENCIAS $\rightarrow$ LISTA\_SENTENCIAS SENTENCIA \\
+
+SENTENCIA $\rightarrow$  E; 
+
+SENTENCIA $\rightarrow$  WHILE  
+
+SENTENCIA $\rightarrow$  IF\_ELSE  
+
+SENTENCIA $\rightarrow$  CONDICIONAL  
+
+SENTENCIA $\rightarrow$  FOR 
+
+SENTENCIA $\rightarrow$  DO\_WHILE   
+
+SENTENCIA $\rightarrow$  COMENTARIO \\ 
+
+
+WHILE $\rightarrow$ while (CONDICION) SENTENCIA  
+
+WHILE $\rightarrow$ while (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+
+IF\_ELSE $\rightarrow$ IF else SENTENCIA  
+
+IF\_ELSE $\rightarrow$ IF else \{ LISTA\_SENTENCIAS \} \\
+
+IF $\rightarrow$ if (CONDICION) SENTENCIA   
+
+IF $\rightarrow$ if (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+
+CONDICIONAL $\rightarrow$ (CONDICION) ? SENTENCIA : SENTENCIA \\
+
+FOR $\rightarrow$ for(ASIGNACION\_VALOR ;CONDICION; AVANZAR) SENTENCIA  
+
+FOR $\rightarrow$ (ASIGNACION\_VALOR ;CONDICION; AVANZAR) \{ LISTA\_SENTENCIAS \} \\
+
+ASIGNACION $\rightarrow$ ASIGNACION\_VALOR   
+
+ASIGNACION $\rightarrow$ ASIGNACION\_VECTOR  
+ 
+ASIGNACION $\rightarrow$ ASIGNACION\_REGISTRO  
+
+ASIGNACION $\rightarrow$ $\lambda$ \\
+
+ASIGNACION\_VALOR $\rightarrow$ var = EXPRESION \\
+
+ASIGNACION\_VECTOR $\rightarrow$ var[INDICE] = EXPRESION \\
+
+ASIGNACION\_REGISTRO $\rightarrow$ var.cadena = EXPRESION \\
+
+AVANZAR $\rightarrow$ var++   
+
+AVANZAR $\rightarrow$ var$--$   
+
+AVANZAR $\rightarrow$ var -= num   
+
+AVANZAR $\rightarrow$ var += num  
+
+AVANZAR $\rightarrow$ $\lambda$ \\
+
+DO\_WHILE $\rightarrow$ do \{ LISTA\_SENTENCIAS \} while (CONDICION) \\
+
+CONDICION $\rightarrow$ CONDICION\_LOGICA   
+
+CONDICION $\rightarrow$ CONDICION\_AND   
+
+CONDICION $\rightarrow$ CONDICION\_OR \\
+
+CONDICION\_AND $\rightarrow$ CONDICION\_LOGICA AND CONDICION\_LOGICA \\
+
+CONDICION\_OR $\rightarrow$ CONDICION\_LOGICA OR CONDICION\_LOGICA \\
+
+CONDICION\_LOGICA $\rightarrow$ E $>$ E   
+
+CONDICION\_LOGICA $\rightarrow$ E $<$ E   
+
+CONDICION\_LOGICA $\rightarrow$ E == E   
+
+CONDICION\_LOGICA $\rightarrow$ E != E \\
+
+E $\rightarrow$ ASIGNACION   
+
+E $\rightarrow$ EXPRESION \\
+
+VALOR $\rightarrow$ string   
+
+VALOR $\rightarrow$ bool   
+
+VALOR $\rightarrow$ var   
+
+VALOR $\rightarrow$ num   
+
+VALOR $\rightarrow$ FUNCION   
+
+VALOR $\rightarrow$ var[INDICE]   
+
+VALOR $\rightarrow$ var.cadena   
+
+VALOR $\rightarrow$ [LISTA\_VALORES]   
+
+VALOR $\rightarrow$ \{ LISTA\_REGISTROS \}\\
+
+LISTA\_REGISTROS $\rightarrow$ REGISTRO  
+
+LISTA\_REGISTROS $\rightarrow$ LISTA\_REGISTROS , REGISTRO \\
+
+REGISTRO $\rightarrow$ cadena:VALOR \\
+
+LISTA\_VALORES $\rightarrow$ VALOR   
+
+LISTA\_VALORES $\rightarrow$ LISTA\_VALORES , VALOR \\
+
+EXPRESION $\rightarrow$ EXPRESION\_ARITMETICA   
+
+EXPRESION $\rightarrow$ VALOR \\
+
+FUNCION $\rightarrow$ print(PARAM\_PRINT)   
+
+FUNCION $\rightarrow$ multiplicacionEscalar(PARAM\_ME)   
+
+FUNCION $\rightarrow$ capitalizar(string)   
+
+FUNCION $\rightarrow$ colineales(var, var)   
+
+FUNCION $\rightarrow$ length(PARAM\_LENGTH) \\
+
+PARAM\_PRINT $\rightarrow$ ? \\
+
+PARAM\_ME $\rightarrow$ var, num, bool   
+
+PARAM\_ME $\rightarrow$ var, num \\
+
+PARAM\_LENGTH $\rightarrow$ var    
+
+PARAM\_LENGTH $\rightarrow$ string \\
+
+LISTA\_PARAMETROS $\rightarrow$ EXPRESION   
+
+LISTA\_PARAMETROS $\rightarrow$ LISTA\_PARAMETROS , EXPRESION \\
+
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERMINO   
+
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA - TERMINO  
+
+EXPRESION\_ARITMETICA $\rightarrow$ TERMINO \\
+
+TERMINO $\rightarrow$ TERMINO $*$ FACTOR   
+
+TERMINO $\rightarrow$ TERMINO $/$ FACTOR   
+
+TERMINO $\rightarrow$ TERMINO \% FACTOR  
+
+TERMINO $\rightarrow$ FACTOR \\
+
+FACTOR $\rightarrow$ num   
+
+FACTOR $\rightarrow$ var[INDICE]   
+
+FACTOR $\rightarrow$ var.cadena  \\
+
+INDICE $\rightarrow$ num 
+
+INDICE $\rightarrow$ $\lambda$ \\
+
+
+
+
+
 \section{Descripción}
 
 ASumimos que ASIGNACION $\rightarrow$ VAR = num 
