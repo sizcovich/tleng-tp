@@ -27,33 +27,78 @@
 
 \section{Gramática}
 Expresiones regulares de los tokens y transformaciones
-Tipo de Gramática definida
+Tipo de Gramática definida \\
 
-PROGRAMA \leftarrow LISTA_SENTENCIAS
-LISTA_SENTENCIAS \leftarrow SENTENCIA \| LISTA_SENTENCIAS SENTENCIA
-SENTENCIA \leftarrow E; \| WHILE \| IF_ELSE \| CONDICIONAL \| FOR \| DO_WHILE
-WHILE \leftarrow while (CONDICION) SENTENCIA \| while (CONDICION) {LISTA_SENTENCIAS}
-IF_ELSE \leftarrow IF else SENTENCIA \| IF else {LISTA_SENTENCIAS}
-IF \leftarrow if (CONDICION) SENTENCIA \| if (CONDICION) {LISTA_SENTENCIAS}
-CONDICIONAL \leftarrow (CONDICION) ? SENTENCIA : SENTENCIA
-FOR \leftarrow (ASIGNACION ;CONDICION; AVANZAR) SENTENCIA \| (ASIGNACION ;CONDICION; AVANZAR) {LISTA_SENTENCIAS}
-ASIGNACION \leftarrow VAR = num \| \lambda
-AVANZAR \leftarrow VAR++ \| VAR-- \| VAR -= num \| VAR += num \| \lambda
-DO_WHILE \leftarrow do {LISTA_SENTENCIAS} while (CONDICION)
-CONDICION \leftarrow CONDICION_LOGICA \| CONDICION_AND \| CONDICION_OR
-CONDICION_AND \leftarrow CONDICION_LOGICA AND CONDICION_LOGICA
-CONDICION_OR \leftarrow CONDICION_LOGICA OR CONDICION_LOGICA
-CONDICION_LOGICA \leftarrow E > E \| E < E \| E == E \| E != E
-E \leftarrow NUMERO \| string
-NUMERO \leftarrow NUMERO + T \| NUMERO - T \| T
-T \leftarrow T * F \| T / F \| T \% F \| F
-F \leftarrow num
+PROGRAMA $\rightarrow$ LISTA\_SENTENCIAS \\
 
+LISTA\_SENTENCIAS $\rightarrow$ SENTENCIA $|$ LISTA\_SENTENCIAS SENTENCIA \\
+
+SENTENCIA $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDICIONAL $|$ FOR $|$ DO\_WHILE $|$ COMENTARIO \\
+
+WHILE $\rightarrow$ while (CONDICION) SENTENCIA $|$ while (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+
+IF\_ELSE $\rightarrow$ IF else SENTENCIA $|$ IF else \{ LISTA\_SENTENCIAS \} \\
+
+IF $\rightarrow$ if (CONDICION) SENTENCIA $|$ if (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+
+CONDICIONAL $\rightarrow$ (CONDICION) ? SENTENCIA : SENTENCIA \\
+
+FOR $\rightarrow$ for(ASIGNACION\_VALOR ;CONDICION; AVANZAR) SENTENCIA $|$ (ASIGNACION\_VALOR ;CONDICION; AVANZAR) \{ LISTA\_SENTENCIAS \} \\
+
+ASIGNACION $\rightarrow$ ASIGNACION\_VALOR $|$ ASIGNACION\_VECTOR $|$ ASIGNACION\_REGISTRO $|$ $\lambda$ \\
+
+ASIGNACION\_VALOR $\rightarrow$ var = EXPRESION \\
+
+ASIGNACION\_VECTOR $\rightarrow$ var[INDICE] = EXPRESION \\
+
+ASIGNACION\_REGISTRO $\rightarrow$ var.cadena = EXPRESION \\
+
+AVANZAR $\rightarrow$ var++ $|$ var$--$ $|$ var -= num $|$ var += num $|$ $\lambda$ \\
+
+DO\_WHILE $\rightarrow$ do \{ LISTA\_SENTENCIAS \} while (CONDICION) \\
+
+CONDICION $\rightarrow$ CONDICION\_LOGICA $|$ CONDICION\_AND $|$ CONDICION\_OR \\
+
+CONDICION\_AND $\rightarrow$ CONDICION\_LOGICA AND CONDICION\_LOGICA \\
+
+CONDICION\_OR $\rightarrow$ CONDICION\_LOGICA OR CONDICION\_LOGICA \\
+
+CONDICION\_LOGICA $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
+
+E $\rightarrow$ ASIGNACION $|$ EXPRESION \\
+
+VALOR $\rightarrow$ string $|$ bool $|$ var $|$ num $|$FUNCION $|$ var[INDICE] $|$ var.cadena $|$ [LISTA\_VALORES] $|$ \{ LISTA\_REGISTROS \}\\
+
+LISTA\_REGISTROS $\rightarrow$ REGISTRO $|$ LISTA\_REGISTROS , REGISTRO \\
+
+REGISTRO $\rightarrow$ cadena:VALOR \\
+
+LISTA\_VALORES $\rightarrow$ VALOR $|$ LISTA\_VALORES , VALOR \\
+
+EXPRESION $\rightarrow$  EXPRESION\_ARITMETICA $|$ VALOR \\
+
+FUNCION $\rightarrow$ print(PARAM\_PRINT) $|$  multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
+
+PARAM\_PRINT $\rightarrow$ ? \\
+
+PARAM\_ME $\rightarrow$ var, num, bool $|$ var, num \\
+
+PARAM\_LENGTH $\rightarrow$ var $|$ string \\
+
+LISTA\_PARAMETROS $\rightarrow$ EXPRESION $|$ LISTA\_PARAMETROS , EXPRESION \\
+
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERMINO $|$ EXPRESION\_ARITMETICA - TERMINO $|$ TERMINO \\
+
+TERMINO $\rightarrow$ TERMINO $*$ FACTOR $|$ TERMINO $/$ FACTOR $|$ TERMINO \% FACTOR $|$ FACTOR \\
+
+FACTOR $\rightarrow$ num $|$ var[INDICE] $|$ var.cadena  \\
+
+INDICE $\rightarrow$ num $|$  $\lambda$ \\
 
 
 \section{Descripción}
 
-ASumimos que ASIGNACION \leftarrow VAR = num 
+ASumimos que ASIGNACION $\rightarrow$ VAR = num 
 
 
 \section{Compilación y ejecución}
