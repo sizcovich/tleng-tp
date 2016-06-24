@@ -3,9 +3,8 @@ import parser_rules
 
 from sys import argv, exit
 
-from ply.lex import lex
-from ply.yacc import yacc
-
+import lex
+import yacc
 
 def dump_ast(ast, output_file):
     output_file.write("digraph {\n")
@@ -42,8 +41,9 @@ if __name__ == "__main__":
     text = input_file.read()
     input_file.close()
 
-    lexer = lex(module=lexer_rules)
-    parser = yacc(module=parser_rules)
+    lexer = lex.lex(module=lexer_rules)
+    parser = yacc.yacc(module=parser_rules)
+
 
     ast = parser.parse(text, lexer)
 

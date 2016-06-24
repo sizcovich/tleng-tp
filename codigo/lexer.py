@@ -2,7 +2,7 @@ import lexer_rules
 
 from sys import argv
 
-from ply.lex import lex
+import lex
 
 
 def dump_tokens(lexer, output_file):
@@ -29,7 +29,8 @@ if __name__ == "__main__":
     text = input_file.read()
     input_file.close()
 
-    lexer = lex(module=lexer_rules)
+    lexer = lex.lex(module=lexer_rules)
+
 
     lexer.input(text)
 

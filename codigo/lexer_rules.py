@@ -1,6 +1,6 @@
-import ply.lex as lex
+import lex
 
-# List of token names.   This is always required
+# List of token names.
 tokens = (
    'NATURAL',
    'DECIMAL',
@@ -70,9 +70,6 @@ t_MODULE = r'%'
 t_DOT = r'\.'
 t_LESS = r'<'
 t_GREATER = r'>'
-#t_AND = r'AND'
-#t_OR = r'OR'
-#t_NOT = r'NOT'
 t_PLUSEQUAL = r'\+='
 t_DIVEQUAL = r'/='
 t_MULEQUAL = r'\*='
@@ -83,27 +80,10 @@ t_SEMICOLON = r';'
 t_UNEQUAL = r'!='
 t_EQUAL = r'=='
 t_DECREMENT = r'--'
-#t_INCREMENT = r'\++'
 t_HASH = r'\#'
 t_RKEY = r'\}'
 t_LKEY = r'\{'
-#t_IF = r'if'
-#t_ELSE = r'else'
-#t_WHILE = r'while'
-#t_FOR = r'for'
-#t_DO = r'do'
-#t_LENGTH = r'length'
-#t_PRINT = r'print'
-#t_MULTIPLICACIONESCALAR = r'multiplicacionEscalar'
-#t_CAPITALIZAR = r'capitalizar'
-#t_COLINEALES = r'colineales'
 t_QUESTIONMARK = r'\?'
-#t_TRUE = r'true'
-#t_FALSE = r'false'
-#t_BEGIN = r'begin'
-#t_END = r'end'
-#t_RETURN = r'return'
-#t_RES = r'res'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_POW = r'\^'
@@ -207,7 +187,7 @@ def t_DECIMAL(t):
     return t
 
 def t_VAR(t):
-    r'[a-zA-Z]{1}[a-zA-Z0-9_]*'
+    r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
     t.value = t.value
     return t
 

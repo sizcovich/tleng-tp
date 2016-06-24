@@ -14,9 +14,9 @@
 \materia{Teoría de Lenguajes}
 \grupo{Los Libres de Contexto}
 
+\integrante{Apellido, Nombre2}{002/01}{email2@dominio.com}
+\integrante{Apellido, Nombre2}{002/01}{email2@dominio.com}
 \integrante{Izcovich, Sabrina}{550/11}{sizcovich@gmail.com}
-\integrante{Apellido, Nombre2}{002/01}{email2@dominio.com}
-\integrante{Apellido, Nombre2}{002/01}{email2@dominio.com}
 
 \maketitle
 
@@ -29,244 +29,227 @@
 Expresiones regulares de los tokens y transformaciones
 Tipo de Gramática definida \\
 
-PROGRAMA $\rightarrow$ LISTA\_SENTENCIAS \\
 
-LISTA\_SENTENCIAS $\rightarrow$ SENTENCIA $|$ LISTA\_SENTENCIAS SENTENCIA \\
+PROGRAMA $\rightarrow$ LIST\_SENTENCIES \\
 
-SENTENCIA $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDICIONAL $|$ FOR $|$ DO\_WHILE $|$ COMENTARIO \\
+LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ LIST\_SENTENCIES SENTENCE \\
 
-WHILE $\rightarrow$ while (CONDICION) SENTENCIA $|$ while (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+SENTENCE $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDITIONAL $|$ FOR $|$ DO\_WHILE $|$ COMENTARIO \\
 
-IF\_ELSE $\rightarrow$ IF else SENTENCIA $|$ IF else \{ LISTA\_SENTENCIAS \} \\
+WHILE $\rightarrow$ while (CONDITION) SENTENCE $|$ while (CONDITION) \{ LIST\_SENTENCIES \} \\
 
-IF $\rightarrow$ if (CONDICION) SENTENCIA $|$ if (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+IF\_ELSE $\rightarrow$ IF else SENTENCE $|$ IF else \{ LIST\_SENTENCIES \} \\
 
-CONDICIONAL $\rightarrow$ (CONDICION) ? SENTENCIA : SENTENCIA \\
+IF $\rightarrow$ if (CONDITION) SENTENCE $|$ if (CONDITION) \{ LIST\_SENTENCIES \} \\
 
-FOR $\rightarrow$ for(ASIGNACION\_VALOR ;CONDICION; AVANZAR) SENTENCIA $|$ (ASIGNACION\_VALOR ;CONDICION; AVANZAR) \{ LISTA\_SENTENCIAS \} \\
+CONDITIONAL $\rightarrow$ (CONDITION) ? SENTENCE : SENTENCE \\
 
-ASIGNACION $\rightarrow$ ASIGNACION\_VALOR $|$ ASIGNACION\_VECTOR $|$ ASIGNACION\_REGISTRO $|$ $\lambda$ \\
+FOR $\rightarrow$ for(ASIGNACION ;CONDITION; AVANZAR) SENTENCE $|$ (ASIGNACION ;CONDITION; AVANZAR) \{ LIST\_SENTENCIES \} \\
 
-ASIGNACION\_VALOR $\rightarrow$ var = EXPRESION \\
+ASIGNACION $\rightarrow$ $\lambda$ $|$ var = EXPRESION $|$ var[NUM] = EXPRESION $|$ var[NUM] = EXPRESION\\
 
-ASIGNACION\_VECTOR $\rightarrow$ var[INDICE] = EXPRESION \\
+AVANZAR $\rightarrow$ var++ $|$ var$--$ $|$ var -= NUM $|$ var += NUM $|$ $\lambda$ \\
 
-ASIGNACION\_REGISTRO $\rightarrow$ var.cadena = EXPRESION \\
+DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
-AVANZAR $\rightarrow$ var++ $|$ var$--$ $|$ var -= num $|$ var += num $|$ $\lambda$ \\
+CONDITION $\rightarrow$ CONDITION\_LOGICA $|$ CONDITION\_AND $|$ CONDITION\_OR \\
 
-DO\_WHILE $\rightarrow$ do \{ LISTA\_SENTENCIAS \} while (CONDICION) \\
+CONDITION\_AND $\rightarrow$ CONDITION\_LOGICA AND CONDITION\_LOGICA \\
 
-CONDICION $\rightarrow$ CONDICION\_LOGICA $|$ CONDICION\_AND $|$ CONDICION\_OR \\
+CONDITION\_OR $\rightarrow$ CONDITION\_LOGICA OR CONDITION\_LOGICA \\
 
-CONDICION\_AND $\rightarrow$ CONDICION\_LOGICA AND CONDICION\_LOGICA \\
-
-CONDICION\_OR $\rightarrow$ CONDICION\_LOGICA OR CONDICION\_LOGICA \\
-
-CONDICION\_LOGICA $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
+CONDITION\_LOGICA $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
 
 E $\rightarrow$ ASIGNACION $|$ EXPRESION \\
 
-VALOR $\rightarrow$ string $|$ bool $|$ var $|$ num $|$FUNCION $|$ var[INDICE] $|$ var.cadena $|$ [LISTA\_VALORES] $|$ \{ LISTA\_REGISTROS \}\\
+VALUE $\rightarrow$ string $|$ bool $|$ var $|$ NUM $|$FUNCION $|$ var[NUM] $|$ [LIST\_VALUES] $|$ \{ LIST\_REGISTERS \}\\
 
-LISTA\_REGISTROS $\rightarrow$ REGISTRO $|$ LISTA\_REGISTROS , REGISTRO \\
+LIST\_REGISTERS $\rightarrow$ REGISTER $|$ LIST\_REGISTERS , REGISTER \\
 
-REGISTRO $\rightarrow$ cadena:VALOR \\
+REGISTER $\rightarrow$ cadena:VALUE \\
 
-LISTA\_VALORES $\rightarrow$ VALOR $|$ LISTA\_VALORES , VALOR \\
+LIST\_VALUES $\rightarrow$ VALUE $|$ LIST\_VALUES , VALUE \\
 
-EXPRESION $\rightarrow$  EXPRESION\_ARITMETICA $|$ VALOR \\
+EXPRESION $\rightarrow$  EXPRESION\_ARITMETICA $|$ VALUE \\
 
-FUNCION $\rightarrow$ print(PARAM\_PRINT) $|$  multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
+FUNCION $\rightarrow$ FUNCION\_CON\_RETORNO $|$ FUNCION\_SIN\_RETORNO \\
 
-PARAM\_PRINT $\rightarrow$ ? \\
+FUNCION\_CON\_RETORNO $\rightarrow$ multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
 
-PARAM\_ME $\rightarrow$ var, num, bool $|$ var, num \\
+FUNCION\_SIN\_RETORNO $\rightarrow$ print(EXPRESION) \\
+
+PARAM\_ME $\rightarrow$ var, NUM, bool $|$ var, NUM \\
 
 PARAM\_LENGTH $\rightarrow$ var $|$ string \\
 
-LISTA\_PARAMETROS $\rightarrow$ EXPRESION $|$ LISTA\_PARAMETROS , EXPRESION \\
+LIST\_PARAMETROS $\rightarrow$ EXPRESION $|$ LIST\_PARAMETROS , EXPRESION \\
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERMINO $|$ EXPRESION\_ARITMETICA - TERMINO $|$ TERMINO \\
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERM $|$ EXPRESION\_ARITMETICA - TERM $|$ TERM \\
 
-TERMINO $\rightarrow$ TERMINO $*$ FACTOR $|$ TERMINO $/$ FACTOR $|$ TERMINO \% FACTOR $|$ FACTOR \\
+TERM $\rightarrow$ TERM $*$ FACTOR $|$ TERM $/$ FACTOR $|$ TERM \% FACTOR $|$ FACTOR \\
 
-FACTOR $\rightarrow$ num $|$ var[INDICE] $|$ var.cadena  \\
+FACTOR $\rightarrow$ NUM $|$ var[NUM] \\
 
-INDICE $\rightarrow$ num $|$  $\lambda$ \\
-
-
-
+NUM $\rightarrow$ decimal $|$ natural
 
 \newpage
 
+PROGRAMA $\rightarrow$ LIST\_SENTENCIES \\
 
-PROGRAMA $\rightarrow$ LISTA\_SENTENCIAS \\
+LIST\_SENTENCIES $\rightarrow$ SENTENCE 
 
-LISTA\_SENTENCIAS $\rightarrow$ SENTENCIA 
+LIST\_SENTENCIES $\rightarrow$ LIST\_SENTENCIES SENTENCE \\
 
-LISTA\_SENTENCIAS $\rightarrow$ LISTA\_SENTENCIAS SENTENCIA \\
+SENTENCE $\rightarrow$  E; 
 
-SENTENCIA $\rightarrow$  E; 
+SENTENCE $\rightarrow$  WHILE  
 
-SENTENCIA $\rightarrow$  WHILE  
+SENTENCE $\rightarrow$  IF\_ELSE  
 
-SENTENCIA $\rightarrow$  IF\_ELSE  
+SENTENCE $\rightarrow$  CONDITIONAL  
 
-SENTENCIA $\rightarrow$  CONDICIONAL  
+SENTENCE $\rightarrow$  FOR 
 
-SENTENCIA $\rightarrow$  FOR 
+SENTENCE $\rightarrow$  DO\_WHILE   
 
-SENTENCIA $\rightarrow$  DO\_WHILE   
-
-SENTENCIA $\rightarrow$  COMENTARIO \\ 
+SENTENCE $\rightarrow$  COMENTARIO \\ 
 
 
-WHILE $\rightarrow$ while (CONDICION) SENTENCIA  
+WHILE $\rightarrow$ while (CONDITION) SENTENCE  
 
-WHILE $\rightarrow$ while (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+WHILE $\rightarrow$ while (CONDITION) \{ LIST\_SENTENCIES \} \\
 
-IF\_ELSE $\rightarrow$ IF else SENTENCIA  
+IF\_ELSE $\rightarrow$ IF else SENTENCE  
 
-IF\_ELSE $\rightarrow$ IF else \{ LISTA\_SENTENCIAS \} \\
+IF\_ELSE $\rightarrow$ IF else \{ LIST\_SENTENCIES \} \\
 
-IF $\rightarrow$ if (CONDICION) SENTENCIA   
+IF $\rightarrow$ if (CONDITION) SENTENCE   
 
-IF $\rightarrow$ if (CONDICION) \{ LISTA\_SENTENCIAS \} \\
+IF $\rightarrow$ if (CONDITION) \{ LIST\_SENTENCIES \} \\
 
-CONDICIONAL $\rightarrow$ (CONDICION) ? SENTENCIA : SENTENCIA \\
+CONDITIONAL $\rightarrow$ (CONDITION) ? SENTENCE : SENTENCE \\
 
-FOR $\rightarrow$ for(ASIGNACION\_VALOR ;CONDICION; AVANZAR) SENTENCIA  
+FOR $\rightarrow$ for(ASIGNACION ;CONDITION; AVANZAR) SENTENCE  
 
-FOR $\rightarrow$ (ASIGNACION\_VALOR ;CONDICION; AVANZAR) \{ LISTA\_SENTENCIAS \} \\
+FOR $\rightarrow$ (ASIGNACION ;CONDITION; AVANZAR) \{ LIST\_SENTENCIES \} \\
 
-ASIGNACION $\rightarrow$ ASIGNACION\_VALOR   
+ASIGNACION $\rightarrow$ var = EXPRESION  
 
-ASIGNACION $\rightarrow$ ASIGNACION\_VECTOR  
- 
-ASIGNACION $\rightarrow$ ASIGNACION\_REGISTRO  
+ASIGNACION $\rightarrow$ var[NUM] = EXPRESION  
 
 ASIGNACION $\rightarrow$ $\lambda$ \\
-
-ASIGNACION\_VALOR $\rightarrow$ var = EXPRESION \\
-
-ASIGNACION\_VECTOR $\rightarrow$ var[INDICE] = EXPRESION \\
-
-ASIGNACION\_REGISTRO $\rightarrow$ var.cadena = EXPRESION \\
 
 AVANZAR $\rightarrow$ var++   
 
 AVANZAR $\rightarrow$ var$--$   
 
-AVANZAR $\rightarrow$ var -= num   
+AVANZAR $\rightarrow$ var -= NUM   
 
-AVANZAR $\rightarrow$ var += num  
+AVANZAR $\rightarrow$ var += NUM  
 
 AVANZAR $\rightarrow$ $\lambda$ \\
 
-DO\_WHILE $\rightarrow$ do \{ LISTA\_SENTENCIAS \} while (CONDICION) \\
+DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
-CONDICION $\rightarrow$ CONDICION\_LOGICA   
+CONDITION $\rightarrow$ CONDITION\_LOGICA   
 
-CONDICION $\rightarrow$ CONDICION\_AND   
+CONDITION $\rightarrow$ CONDITION\_AND   
 
-CONDICION $\rightarrow$ CONDICION\_OR \\
+CONDITION $\rightarrow$ CONDITION\_OR \\
 
-CONDICION\_AND $\rightarrow$ CONDICION\_LOGICA AND CONDICION\_LOGICA \\
+CONDITION\_AND $\rightarrow$ CONDITION\_LOGICA AND CONDITION\_LOGICA \\
 
-CONDICION\_OR $\rightarrow$ CONDICION\_LOGICA OR CONDICION\_LOGICA \\
+CONDITION\_OR $\rightarrow$ CONDITION\_LOGICA OR CONDITION\_LOGICA \\
 
-CONDICION\_LOGICA $\rightarrow$ E $>$ E   
+CONDITION\_LOGICA $\rightarrow$ E $>$ E   
 
-CONDICION\_LOGICA $\rightarrow$ E $<$ E   
+CONDITION\_LOGICA $\rightarrow$ E $<$ E   
 
-CONDICION\_LOGICA $\rightarrow$ E == E   
+CONDITION\_LOGICA $\rightarrow$ E == E   
 
-CONDICION\_LOGICA $\rightarrow$ E != E \\
+CONDITION\_LOGICA $\rightarrow$ E != E \\
 
 E $\rightarrow$ ASIGNACION   
 
 E $\rightarrow$ EXPRESION \\
 
-VALOR $\rightarrow$ string   
+VALUE $\rightarrow$ string   
 
-VALOR $\rightarrow$ bool   
+VALUE $\rightarrow$ bool   
 
-VALOR $\rightarrow$ var   
+VALUE $\rightarrow$ var   
 
-VALOR $\rightarrow$ num   
+VALUE $\rightarrow$ NUM   
 
-VALOR $\rightarrow$ FUNCION   
+VALUE $\rightarrow$ FUNCION   
 
-VALOR $\rightarrow$ var[INDICE]   
+VALUE $\rightarrow$ var[NUM]    
 
-VALOR $\rightarrow$ var.cadena   
+VALUE $\rightarrow$ [LIST\_VALUES]   
 
-VALOR $\rightarrow$ [LISTA\_VALORES]   
+VALUE $\rightarrow$ \{ LIST\_REGISTERS \}\\
 
-VALOR $\rightarrow$ \{ LISTA\_REGISTROS \}\\
+LIST\_REGISTERS $\rightarrow$ REGISTER  
 
-LISTA\_REGISTROS $\rightarrow$ REGISTRO  
+LIST\_REGISTERS $\rightarrow$ LIST\_REGISTERS , REGISTER \\
 
-LISTA\_REGISTROS $\rightarrow$ LISTA\_REGISTROS , REGISTRO \\
+REGISTER $\rightarrow$ cadena:VALUE \\
 
-REGISTRO $\rightarrow$ cadena:VALOR \\
+LIST\_VALUES $\rightarrow$ VALUE   
 
-LISTA\_VALORES $\rightarrow$ VALOR   
-
-LISTA\_VALORES $\rightarrow$ LISTA\_VALORES , VALOR \\
+LIST\_VALUES $\rightarrow$ LIST\_VALUES , VALUE \\
 
 EXPRESION $\rightarrow$ EXPRESION\_ARITMETICA   
 
-EXPRESION $\rightarrow$ VALOR \\
+EXPRESION $\rightarrow$ VALUE \\
 
-FUNCION $\rightarrow$ print(PARAM\_PRINT)   
+FUNCION $\rightarrow$ FUNCION\_CON\_RETORNO \\
 
-FUNCION $\rightarrow$ multiplicacionEscalar(PARAM\_ME)   
+FUNCION $\rightarrow$ FUNCION\_SIN\_RETORNO \\
 
-FUNCION $\rightarrow$ capitalizar(string)   
+FUNCION\_SIN\_RETORNO $\rightarrow$ print(EXPRESION)   
 
-FUNCION $\rightarrow$ colineales(var, var)   
+FUNCION\_CON\_RETORNO $\rightarrow$ multiplicacionEscalar(PARAM\_ME)   
 
-FUNCION $\rightarrow$ length(PARAM\_LENGTH) \\
+FUNCION\_CON\_RETORNO $\rightarrow$ capitalizar(string)   
 
-PARAM\_PRINT $\rightarrow$ ? \\
+FUNCION\_CON\_RETORNO $\rightarrow$ colineales(var, var)   
 
-PARAM\_ME $\rightarrow$ var, num, bool   
+FUNCION\_CON\_RETORNO $\rightarrow$ length(PARAM\_LENGTH) \\
 
-PARAM\_ME $\rightarrow$ var, num \\
+PARAM\_ME $\rightarrow$ var, NUM, bool   
+
+PARAM\_ME $\rightarrow$ var, NUM \\
 
 PARAM\_LENGTH $\rightarrow$ var    
 
 PARAM\_LENGTH $\rightarrow$ string \\
 
-LISTA\_PARAMETROS $\rightarrow$ EXPRESION   
+LIST\_PARAMETROS $\rightarrow$ EXPRESION   
 
-LISTA\_PARAMETROS $\rightarrow$ LISTA\_PARAMETROS , EXPRESION \\
+LIST\_PARAMETROS $\rightarrow$ LIST\_PARAMETROS , EXPRESION \\
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERMINO   
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERM   
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA - TERMINO  
+EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA - TERM  
 
-EXPRESION\_ARITMETICA $\rightarrow$ TERMINO \\
+EXPRESION\_ARITMETICA $\rightarrow$ TERM \\
 
-TERMINO $\rightarrow$ TERMINO $*$ FACTOR   
+TERM $\rightarrow$ TERM $*$ FACTOR   
 
-TERMINO $\rightarrow$ TERMINO $/$ FACTOR   
+TERM $\rightarrow$ TERM $/$ FACTOR   
 
-TERMINO $\rightarrow$ TERMINO \% FACTOR  
+TERM $\rightarrow$ TERM \% FACTOR  
 
-TERMINO $\rightarrow$ FACTOR \\
+TERM $\rightarrow$ FACTOR \\
 
-FACTOR $\rightarrow$ num   
+FACTOR $\rightarrow$ NUM   \\
 
-FACTOR $\rightarrow$ var[INDICE]   
+FACTOR $\rightarrow$ var[NUM]  \\ 
 
-FACTOR $\rightarrow$ var.cadena  \\
+NUM $\rightarrow$ decimal \\
 
-INDICE $\rightarrow$ num 
-
-INDICE $\rightarrow$ $\lambda$ \\
+NUM $\rightarrow$ natural
 
 
 
@@ -274,8 +257,9 @@ INDICE $\rightarrow$ $\lambda$ \\
 
 \section{Descripción}
 
-ASumimos que ASIGNACION $\rightarrow$ VAR = num 
+Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
 
+Asumimos que los REGISTERs toman únicamente literales de tipos básicos.
 
 \section{Compilación y ejecución}
 
