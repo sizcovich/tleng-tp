@@ -242,17 +242,13 @@ def p_arithmetic_expression_minus(subexpressions):
     'arithmetic_expression : arithmetic_expression MINUS term'
     subexpressions[0] = Subtract(subexpressions[1], subexpressions[3])
 
-
-
 def p_arithmetic_expression_term(subexpressions):
     'arithmetic_expression : term'
     subexpressions[0] = subexpressions[1]
 
-
 def p_term_times(subexpressions):
     'term : term TIMES factor'
     subexpressions[0] = Multiplication(subexpressions[1], subexpressions[3])
-
 
 def p_term_divide(subexpressions):
     'term : term DIVIDE factor'
@@ -266,24 +262,13 @@ def p_term_factor(subexpressions):
     'term : factor'
     subexpressions[0] = subexpressions[1]
 
-#OJO CON ESTO PORQUE NOSOTROS TENEMOS DIVIDIDO ENTRE NATURALES Y DECIMALES
 def p_factor_number(subexpressions):
     'factor : NUMBER'
     subexpressions[0] = Number(subexpressions[1])
 
-#ACA CUAL ES EL VALOR DE var[INDICE]? de donde sale?
 def p_factor_vector(subexpressions):
-    'factor : var[NATURAL]'
+    'factor : var LBRACKET NATURAL RBRACKET'
     subexpressions[0] = Number(subexpressions[1])
-
-#ACA CUAL ES EL VALOR DE var.cadena? de donde sale?
-def p_factor_registro(subexpressions):
-    'factor : var.cadena'
-    subexpressions[0] = Number(subexpressions[1])
-
-#def p_factor_expression(subexpressions):
-#    'factor : LPAREN expression RPAREN
-#    subexpressions[0] = subexpressions[2]
 
 
 def p_error(subexpressions):
