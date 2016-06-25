@@ -1,0 +1,24 @@
+
+*.log
+
+*.aux
+
+informe/informe.pdf
+
+*.toc
+
+codigo_aritmetica/expressions.py
+
+codigo_aritmetica/parser_rules.py
+
+codigo_aritmetica/parser.py
+
+codigo_aritmetica/lexer_rules.py
+
+codigo_arreglos/parser_rules.py
+
+codigo_arreglos/lexer_rules.py
+
+codigo_arreglos/parser.py
+
+codigo/archivos de test/parser.out
