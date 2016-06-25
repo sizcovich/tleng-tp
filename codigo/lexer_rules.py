@@ -188,23 +188,21 @@ def t_DECIMAL(t):
 
 def t_VAR(t):
     r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
-    t.value = t.value
     return t
 
 def t_STRING(t):
     r'".*"'
-    t.value = t.value
     return t
 
 def t_COMMENT(t):
     r'\#(.|\n)*?\n'
-    t.value = t.value
     return t
 
 # Define a rule so we can track line numbers
 def t_NEWLINE(t):
-    r'\n+'
+    r'(?<=;)(( )*(\\n)( )*)+(?=#)'
     t.lexer.lineno += len(t.value)
+    return t
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
