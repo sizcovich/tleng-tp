@@ -26,11 +26,11 @@
 \section{Introducción}
 
 \section{Gramática}
-Expresiones regulares de los tokens y transformaciones
+Expresiones regulares de los tokens y transformaciones\\
 Tipo de Gramática definida \\
 
 
-PROGRAMA $\rightarrow$ LIST\_SENTENCIES \\
+PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
 LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ SENTENCE LIST\_SENTENCIES\\
 
@@ -97,86 +97,86 @@ NUM $\rightarrow$ decimal $|$ natural
 
 PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
-\{ LIST\_SENTENCIES.nivel = 0, PROGRAM.value = LIST\_SENTENCIES.value \} \\ \\
+\{ LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value \} \\ \\
 
 
 LIST\_SENTENCIES $\rightarrow$ SENTENCE \\
 
-\{ SENTENCE.nivel = LIST\_SENTENCIES.nivel, LIST\_SENTENCIES.value = SENTENCE.value \}  \\ \\
+\{ SENTENCE.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value \}  \\ \\
 
 
 LIST\_SENTENCIES $\rightarrow$ SENTENCE  $LIST\_SENTENCIES_{1}$ \\
 
-\{ SENTENCE.nivel = LIST\_SENTENCIES.nivel, LIST\_SENTENCIES.value = SENTENCE.value + $LIST\_SENTENCIES_{1}.value$  \} \\  \\
+\{ SENTENCE.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + $LIST\_SENTENCIES_{1}.value$  \} \\  \\
 
 
 SENTENCE $\rightarrow$  E; \\ 
 
-\{ E.nivel = SENTENCE.nivel, SENTENCE.value = E.value \}  \\ \\
+\{ E.level = SENTENCE.level, SENTENCE.value = E.value \}  \\ \\
 
 SENTENCE $\rightarrow$  WHILE  \\ 
 
-\{ WHILE.nivel = SENTENCE.nivel, SENTENCE.value = WHILE.value \}  \\ \\
+\{ WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value \}  \\ \\
 
 SENTENCE $\rightarrow$  IF\_ELSE  \\ 
 
-\{ IF\_ELSE.nivel = SENTENCE.nivel, SENTENCE.value = IF\_ELSE.value \}  \\ \\
+\{ IF\_ELSE.level = SENTENCE.level, SENTENCE.value = IF\_ELSE.value \}  \\ \\
 
 SENTENCE $\rightarrow$  CONDITIONAL  \\ 
 
-\{ CONDITIONAL.nivel = SENTENCE.nivel, SENTENCE.value = CONDITIONAL.value \}  \\ \\
+\{ CONDITIONAL.level = SENTENCE.level, SENTENCE.value = CONDITIONAL.value \}  \\ \\
 
 SENTENCE $\rightarrow$  FOR \\ 
 
-\{ FOR.nivel = SENTENCE.nivel, SENTENCE.value = FOR.value \}  \\ \\
+\{ FOR.level = SENTENCE.level, SENTENCE.value = FOR.value \}  \\ \\
 
 SENTENCE $\rightarrow$  DO\_WHILE \\ 
 
-\{ DO\_WHILE .nivel = SENTENCE.nivel, SENTENCE.value = DO\_WHILE .value \}  \\
+\{ DO\_WHILE .level = SENTENCE.level, SENTENCE.value = DO\_WHILE .value \}  \\
   
 SENTENCE $\rightarrow$  COMMENT \\ 
 
-\{ COMMENT .nivel = SENTENCE.nivel, SENTENCE.value = COMMENT .value \}  \\ \\
+\{ COMMENT .level = SENTENCE.level, SENTENCE.value = COMMENT .value \}  \\ \\
 
 
 WHILE $\rightarrow$ while (CONDITION) SENTENCE \\  
 
-\{ SENTENCE.nivel = WHILE.nivel + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+\{ SENTENCE.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.level) \}  \\ \\
 
 WHILE $\rightarrow$ while (CONDITION) \{ LIST\_SENTENCIES \}  \\
 
-\{ LIST\_SENTENCIES.nivel = WHILE.nivel + 1, WHILE.value = 'while (' + CONDITION.value + ')\{' + indentar(SENTENCE.value, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+\{ LIST\_SENTENCIES.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')\{' + indentar(SENTENCE.value, SENTENCE.level) + '\textbackslash{}n \}' \} \\ \\
 
 IF\_ELSE $\rightarrow$ IF else SENTENCE   \\
 
-\{ SENTENCE.nivel = IF\_ELSE.nivel + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+\{ SENTENCE.level = IF\_ELSE.level + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.level) \}  \\ \\
 
 IF\_ELSE $\rightarrow$ IF else \{ LIST\_SENTENCIES \}  \\
 
-\{ LIST\_SENTENCIES.nivel = IF\_ELSE.nivel + 1, IF\_ELSE.value = IF.value + 'else {' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+\{ LIST\_SENTENCIES.level = IF\_ELSE.level + 1, IF\_ELSE.value = IF.value + 'else {' + indentar(LIST\_SENTENCIES, SENTENCE.level) + '\textbackslash{}n \}' \} \\ \\
 
 
 IF $\rightarrow$ if (CONDITION) SENTENCE   \\
 
-\{ SENTENCE.nivel = IF.nivel + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+\{ SENTENCE.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.level) \}  \\ \\
 
 IF $\rightarrow$ if (CONDITION) \{ LIST\_SENTENCIES \}  \\
 
-\{ LIST\_SENTENCIES.nivel = IF.nivel + 1, IF.value = 'if (' + CONDITION.value + '){' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+\{ LIST\_SENTENCIES.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + '){' + indentar(LIST\_SENTENCIES, SENTENCE.level) + '\textbackslash{}n \}' \} \\ \\
 
 
 CONDITIONAL $\rightarrow$ (CONDITION) ? $SENTENCE_{1} : SENTENCE_{2}$  \\
 
-\{ $SENTENCE_{1}$.nivel = CONDITIONAL.nivel + 1,$SENTENCE_{2}$.nivel = CONDITIONAL.nivel + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value \} \\ \\
+\{ $SENTENCE_{1}$.level = CONDITIONAL.level + 1,$SENTENCE_{2}$.level = CONDITIONAL.level + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value \} \\ \\
 
 FOR $\rightarrow$ for(ASSIGNATION ;CONDITION; ADVANCE) SENTENCE  \\
 
-\{ SENTENCE.nivel = FOR.nivel + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.nivel) \} \\ \\
+\{ SENTENCE.level = FOR.level + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.level) \} \\ \\
 
 
 FOR $\rightarrow$ (ASSIGNATION ;CONDITION; ADVANCE) \{ LIST\_SENTENCIES \} \\ 
 
-\{ LIST\_SENTENCIES.nivel = FOR.nivel + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + ADVANCE.value'){' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+\{ LIST\_SENTENCIES.level = FOR.level + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + ADVANCE.value'){' + indentar(LIST\_SENTENCIES, SENTENCE.level) + '\textbackslash{}n \}' \} \\ \\
 
 
 ASSIGNATION $\rightarrow$ var = EXPRESSION \\  
@@ -214,7 +214,7 @@ ADVANCE $\rightarrow$ $\lambda$ \\
 
 DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
-\{ LIST\_SENTENCIES.nivel = DO\_WHILE.nivel + 1, DO\_WHILE.value = 'do \{ \textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.nivel)  + '\textbackslash{}n while (' +CONDITION.value +') ' \} \\ \\
+\{ LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = 'do \{ \textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.level)  + '\textbackslash{}n while (' +CONDITION.value +') ' \} \\ \\
 
 
 
@@ -458,7 +458,15 @@ NUM $\rightarrow$ natural \\
 
 Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
 
-Asumimos que los REGISTERs toman únicamente literales de tipos básicos.
+Asumimos que los Registers toman únicamente literales de tipos básicos.
+
+Gramática de atributos:
+
+\begin{itemize}
+\item \textbf{Value:} string (\textit{sintetizado}) es el código de salida del parser arreglado.
+\item \textbf{Level:} int (\textit{heredado}) almacena el nivel de indentación de la producción actual.
+\item \textbf{Type:} string (\textit{sintetizado}) representa el tipo de la expresión en cuestión.
+\end{itemize}
 
 \section{Compilación y ejecución}
 
