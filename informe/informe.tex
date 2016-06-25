@@ -32,7 +32,7 @@ Tipo de Gramática definida \\
 
 PROGRAMA $\rightarrow$ LIST\_SENTENCIES \\
 
-LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ LIST\_SENTENCIES SENTENCE \\
+LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ SENTENCE LIST\_SENTENCIES\\
 
 SENTENCE $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDITIONAL $|$ FOR $|$ DO\_WHILE $|$ COMENTARIO \\
 
@@ -92,165 +92,364 @@ FACTOR $\rightarrow$ NUM $|$ var[NUM] \\
 
 NUM $\rightarrow$ decimal $|$ natural
 
+
 \newpage
 
-PROGRAMA $\rightarrow$ LIST\_SENTENCIES \\
+PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
-LIST\_SENTENCIES $\rightarrow$ SENTENCE 
-
-LIST\_SENTENCIES $\rightarrow$ LIST\_SENTENCIES SENTENCE \\
-
-SENTENCE $\rightarrow$  E; 
-
-SENTENCE $\rightarrow$  WHILE  
-
-SENTENCE $\rightarrow$  IF\_ELSE  
-
-SENTENCE $\rightarrow$  CONDITIONAL  
-
-SENTENCE $\rightarrow$  FOR 
-
-SENTENCE $\rightarrow$  DO\_WHILE   
-
-SENTENCE $\rightarrow$  COMENTARIO \\ 
+\{ LIST\_SENTENCIES.nivel = 0, PROGRAM.value = LIST\_SENTENCIES.value \} \\ \\
 
 
-WHILE $\rightarrow$ while (CONDITION) SENTENCE  
+LIST\_SENTENCIES $\rightarrow$ SENTENCE \\
 
-WHILE $\rightarrow$ while (CONDITION) \{ LIST\_SENTENCIES \} \\
+\{ SENTENCE.nivel = LIST\_SENTENCIES.nivel, LIST\_SENTENCIES.value = SENTENCE.value \}  \\ \\
 
-IF\_ELSE $\rightarrow$ IF else SENTENCE  
 
-IF\_ELSE $\rightarrow$ IF else \{ LIST\_SENTENCIES \} \\
+LIST\_SENTENCIES $\rightarrow$ SENTENCE  $LIST\_SENTENCIES_{1}$ \\
 
-IF $\rightarrow$ if (CONDITION) SENTENCE   
+\{ SENTENCE.nivel = LIST\_SENTENCIES.nivel, LIST\_SENTENCIES.value = SENTENCE.value + $LIST\_SENTENCIES_{1}.value$  \} \\  \\
 
-IF $\rightarrow$ if (CONDITION) \{ LIST\_SENTENCIES \} \\
 
-CONDITIONAL $\rightarrow$ (CONDITION) ? SENTENCE : SENTENCE \\
+SENTENCE $\rightarrow$  E; \\ 
 
-FOR $\rightarrow$ for(ASIGNACION ;CONDITION; AVANZAR) SENTENCE  
+\{ E.nivel = SENTENCE.nivel, SENTENCE.value = E.value \}  \\ \\
 
-FOR $\rightarrow$ (ASIGNACION ;CONDITION; AVANZAR) \{ LIST\_SENTENCIES \} \\
+SENTENCE $\rightarrow$  WHILE  \\ 
 
-ASIGNACION $\rightarrow$ var = EXPRESION  
+\{ WHILE.nivel = SENTENCE.nivel, SENTENCE.value = WHILE.value \}  \\ \\
 
-ASIGNACION $\rightarrow$ var[NUM] = EXPRESION  
+SENTENCE $\rightarrow$  IF\_ELSE  \\ 
 
-ASIGNACION $\rightarrow$ $\lambda$ \\
+\{ IF\_ELSE.nivel = SENTENCE.nivel, SENTENCE.value = IF\_ELSE.value \}  \\ \\
 
-AVANZAR $\rightarrow$ var++   
+SENTENCE $\rightarrow$  CONDITIONAL  \\ 
 
-AVANZAR $\rightarrow$ var$--$   
+\{ CONDITIONAL.nivel = SENTENCE.nivel, SENTENCE.value = CONDITIONAL.value \}  \\ \\
 
-AVANZAR $\rightarrow$ var -= NUM   
+SENTENCE $\rightarrow$  FOR \\ 
 
-AVANZAR $\rightarrow$ var += NUM  
+\{ FOR.nivel = SENTENCE.nivel, SENTENCE.value = FOR.value \}  \\ \\
 
-AVANZAR $\rightarrow$ $\lambda$ \\
+SENTENCE $\rightarrow$  DO\_WHILE \\ 
+
+\{ DO\_WHILE .nivel = SENTENCE.nivel, SENTENCE.value = DO\_WHILE .value \}  \\
+  
+SENTENCE $\rightarrow$  COMMENT \\ 
+
+\{ COMMENT .nivel = SENTENCE.nivel, SENTENCE.value = COMMENT .value \}  \\ \\
+
+
+WHILE $\rightarrow$ while (CONDITION) SENTENCE \\  
+
+\{ SENTENCE.nivel = WHILE.nivel + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+
+WHILE $\rightarrow$ while (CONDITION) \{ LIST\_SENTENCIES \}  \\
+
+\{ LIST\_SENTENCIES.nivel = WHILE.nivel + 1, WHILE.value = 'while (' + CONDITION.value + ')\{' + indentar(SENTENCE.value, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+
+IF\_ELSE $\rightarrow$ IF else SENTENCE   \\
+
+\{ SENTENCE.nivel = IF\_ELSE.nivel + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+
+IF\_ELSE $\rightarrow$ IF else \{ LIST\_SENTENCIES \}  \\
+
+\{ LIST\_SENTENCIES.nivel = IF\_ELSE.nivel + 1, IF\_ELSE.value = IF.value + 'else {' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+
+
+IF $\rightarrow$ if (CONDITION) SENTENCE   \\
+
+\{ SENTENCE.nivel = IF.nivel + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.nivel) \}  \\ \\
+
+IF $\rightarrow$ if (CONDITION) \{ LIST\_SENTENCIES \}  \\
+
+\{ LIST\_SENTENCIES.nivel = IF.nivel + 1, IF.value = 'if (' + CONDITION.value + '){' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+
+
+CONDITIONAL $\rightarrow$ (CONDITION) ? $SENTENCE_{1} : SENTENCE_{2}$  \\
+
+\{ $SENTENCE_{1}$.nivel = CONDITIONAL.nivel + 1,$SENTENCE_{2}$.nivel = CONDITIONAL.nivel + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value \} \\ \\
+
+FOR $\rightarrow$ for(ASSIGNATION ;CONDITION; ADVANCE) SENTENCE  \\
+
+\{ SENTENCE.nivel = FOR.nivel + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.nivel) \} \\ \\
+
+
+FOR $\rightarrow$ (ASSIGNATION ;CONDITION; ADVANCE) \{ LIST\_SENTENCIES \} \\ 
+
+\{ LIST\_SENTENCIES.nivel = FOR.nivel + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + ADVANCE.value'){' + indentar(LIST\_SENTENCIES, SENTENCE.nivel) + '\textbackslash{}n \}' \} \\ \\
+
+
+ASSIGNATION $\rightarrow$ var = EXPRESSION \\  
+
+\{ ASSIGNATION.value = EXPRESSION.value, setVar(var.name, EXPRESSION.type) \}  \\ \\
+
+ASSIGNATION $\rightarrow$ var[NUM] = EXPRESSION  \\
+
+\{ ASSIGNATION.value = EXPRESSION.value, setVar(var.name, 'array ' + EXPRESSION.type) \}  \\ \\
+
+ASSIGNATION $\rightarrow$ $\lambda$ \\
+
+
+ADVANCE $\rightarrow$ var++   \\
+
+\{ ADVANCE.value = var.name + ' ++ ' \}  \\ \\
+
+
+ADVANCE $\rightarrow$ var$--$   \\
+
+\{ ADVANCE.value = var.name + ' -- ' \}  \\ \\
+
+
+ADVANCE $\rightarrow$ var -= NUM  \\ 
+
+\{ ADVANCE.value = var.name + ' -= ' + NUM.value \}  \\ \\
+
+
+ADVANCE $\rightarrow$ var += NUM  \\
+
+\{ ADVANCE.value = var.name + ' += ' + NUM.value \}  \\ \\
+
+
+ADVANCE $\rightarrow$ $\lambda$ \\
 
 DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
-CONDITION $\rightarrow$ CONDITION\_LOGICA   
+\{ LIST\_SENTENCIES.nivel = DO\_WHILE.nivel + 1, DO\_WHILE.value = 'do \{ \textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.nivel)  + '\textbackslash{}n while (' +CONDITION.value +') ' \} \\ \\
 
-CONDITION $\rightarrow$ CONDITION\_AND   
+
+
+CONDITION $\rightarrow$ CONDITION\_LOGICA   \\
+\{ CONDITION.value = CONDITION\_LOGICA,  CONDITION.type = CONDITION\_LOGICA.type \}  \\ \\
+
+
+CONDITION $\rightarrow$ CONDITION\_AND   \\
+
+\{ CONDITION.value = CONDITION\_AND,  CONDITION.type = CONDITION\_AND.type \}  \\ \\
 
 CONDITION $\rightarrow$ CONDITION\_OR \\
 
-CONDITION\_AND $\rightarrow$ CONDITION\_LOGICA AND CONDITION\_LOGICA \\
+\{ CONDITION.value = CONDITION\_OR,  CONDITION.type = CONDITION\_OR.type \}  \\ \\
 
-CONDITION\_OR $\rightarrow$ CONDITION\_LOGICA OR CONDITION\_LOGICA \\
 
-CONDITION\_LOGICA $\rightarrow$ E $>$ E   
+CONDITION\_AND $\rightarrow$ $CONDITION\_LOGICA_{1}$ AND $CONDITION\_LOGICA_{2}$ \\
 
-CONDITION\_LOGICA $\rightarrow$ E $<$ E   
+\{ CONDITION\_AND.value = $CONDITION\_LOGICA_{1}$.value + ' AND' +  , $CONDITION\_LOGICA_{2}$,  ONDITION\_AND.type = 'bool' \}  \\ \\
 
-CONDITION\_LOGICA $\rightarrow$ E == E   
 
-CONDITION\_LOGICA $\rightarrow$ E != E \\
+CONDITION\_OR $\rightarrow$ $CONDITION\_LOGICA_{1}$ OR $CONDITION\_LOGICA_{2}$ \\
 
-E $\rightarrow$ ASIGNACION   
 
-E $\rightarrow$ EXPRESION \\
+\{ CONDITION\_OR.value = $CONDITION\_LOGICA_{1}$.value + ' OR' +  , $CONDITION\_LOGICA_{2}$,  ONDITION\_OR.type = 'bool' \}  \\ \\
 
-VALUE $\rightarrow$ string   
 
-VALUE $\rightarrow$ bool   
+\{ CONDITION\_LOGICA.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
 
-VALUE $\rightarrow$ var   
 
-VALUE $\rightarrow$ NUM   
+CONDITION\_LOGICA $\rightarrow$ $E_{1}$ $>$ $E_{2}$   \\
 
-VALUE $\rightarrow$ FUNCION   
+\{CONDITION\_LOGICA.value = $E_{1}$.value + ' $>$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
 
-VALUE $\rightarrow$ var[NUM]    
+CONDITION\_LOGICA $\rightarrow$ $E_{1}$ $<$ $E_{2}$   \\
 
-VALUE $\rightarrow$ [LIST\_VALUES]   
+\{CONDITION\_LOGICA.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
 
-VALUE $\rightarrow$ \{ LIST\_REGISTERS \}\\
 
-LIST\_REGISTERS $\rightarrow$ REGISTER  
+CONDITION\_LOGICA $\rightarrow$ $E_{1}$ == $E_{2}$   \\
 
-LIST\_REGISTERS $\rightarrow$ LIST\_REGISTERS , REGISTER \\
+\{CONDITION\_LOGICA.value = $E_{1}$.value + ' == ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
 
-REGISTER $\rightarrow$ cadena:VALUE \\
+CONDITION\_LOGICA $\rightarrow$ $E_{1}$ != $E_{2}$ \\
 
-LIST\_VALUES $\rightarrow$ VALUE   
+\{CONDITION\_LOGICA.value = $E_{1}$.value + ' != ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
 
-LIST\_VALUES $\rightarrow$ LIST\_VALUES , VALUE \\
 
-EXPRESION $\rightarrow$ EXPRESION\_ARITMETICA   
+E $\rightarrow$ ASSIGNATION   \\
 
-EXPRESION $\rightarrow$ VALUE \\
+\{E.value = ASSIGNATION.value  \}  \\ \\
 
-FUNCION $\rightarrow$ FUNCION\_CON\_RETORNO \\
+E $\rightarrow$ EXPRESSION \\
 
-FUNCION $\rightarrow$ FUNCION\_SIN\_RETORNO \\
+\{E.value = EXPRESSION.value  , E.type = EXPRESSION.type \}  \\ \\
 
-FUNCION\_SIN\_RETORNO $\rightarrow$ print(EXPRESION)   
 
-FUNCION\_CON\_RETORNO $\rightarrow$ multiplicacionEscalar(PARAM\_ME)   
+VALUE $\rightarrow$ string   \\
 
-FUNCION\_CON\_RETORNO $\rightarrow$ capitalizar(string)   
+\{VALUE.value =  'string' , VALUE.type = 'string' \}  \\ \\
 
-FUNCION\_CON\_RETORNO $\rightarrow$ colineales(var, var)   
 
-FUNCION\_CON\_RETORNO $\rightarrow$ length(PARAM\_LENGTH) \\
+VALUE $\rightarrow$ bool   \\
 
-PARAM\_ME $\rightarrow$ var, NUM, bool   
+\{VALUE.value =  'bool' , VALUE.type = 'bool' \}  \\ \\
+
+
+VALUE $\rightarrow$ var   \\
+
+\{VALUE.value =  var.name , VALUE.type = getType(var.name) \}  \\ \\
+
+
+VALUE $\rightarrow$ NUM   \\
+
+\{VALUE.value =  NUM.value , VALUE.type = NUM.type \}  \\ \\
+
+
+VALUE $\rightarrow$ FUNCTION\_WITH\_RETURN \\
+
+\{VALUE.value =  FUNCTION.value , VALUE.type = FUNCTION.type \}  \\ \\
+
+VALUE $\rightarrow$ var[NUM]    \\
+
+\{VALUE.value =  var.value + '[ ' + NUM.value + ']', VALUE.type = 'array ' + NUM.type \}  \\ \\
+
+
+VALUE $\rightarrow$ [LIST\_VALUES]   \\
+
+\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type \}  \\ \\
+
+VALUE $\rightarrow$ \{ LIST\_REGISTERS \} \\
+
+\{VALUE.value =  '\{ ' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register' \}  \\ \\
+
+
+
+LIST\_REGISTERS $\rightarrow$ ASSIGNATION  \\
+
+\{LIST\_REGISTERS.value =  ASSIGNATION.value  \}  \\ \\
+
+LIST\_REGISTERS $\rightarrow$ ASSIGNATION , $LIST\_REGISTERS{1}$ \\
+
+\{LIST\_REGISTERS.value =  ASSIGNATION.value + ', ' + $LIST\_REGISTERS{1}$  \}  \\ \\
+
+
+
+LIST\_VALUES $\rightarrow$ VALUE   \\
+
+\{LIST\_VALUES.value =  VALUE.value, LIST\_VALUES.type = VALUE.type \}  \\ \\
+
+LIST\_VALUES $\rightarrow$ VALUE, $LIST\_VALUES{1}$ \\
+
+\{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type ) \}  \\ \\
+
+
+EXPRESSION $\rightarrow$ EXPRESSION\_ARITMETICA \\   
+
+\{EXPRESSION.value =  EXPRESSION\_ARITMETICA.value, EXPRESSION.type = EXPRESSION\_ARITMETICA.type  \}  \\ \\
+
+
+EXPRESSION $\rightarrow$ EXPRESSION\_STRING   \\
+
+\{EXPRESSION.value =  EXPRESSION\_STRING.value, EXPRESSION.type = 'string'  \}  \\ \\
+
+
+EXPRESSION $\rightarrow$ VALUE \\
+
+\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type  \}  \\ \\
+
+
+
+FUNCTION $\rightarrow$ FUNCTION\_WITH\_RETURN \\
+
+\{FUNCTION\_WITH\_RETURN.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type  \}  \\ \\
+
+
+FUNCTION $\rightarrow$ FUNCTION\_NO\_RETURN \\
+
+\{FUNCTION\_NO\_RETURN.value =  FUNCTION\_NO\_RETURN.value, FUNCTION.type = FUNCTION\_NO\_RETURN.type  \}  \\ \\
+
+
+
+FUNCTION\_NO\_RETURN $\rightarrow$ print(EXPRESSION) \\   
+
+\{FUNCTION\_NO\_RETURN .value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void'  \}  \\ \\
+
+
+FUNCTION\_WITH\_RETURN $\rightarrow$ multiplicacionEscalar(PARAM\_ME) \\   
+
+\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar (' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??'  \}  \\ \\
+
+
+FUNCTION\_WITH\_RETURN $\rightarrow$ capitalizar(string)   \\
+
+\{FUNCTION\_WITH\_RETURN.value =  'capitalizar (' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string'  \}  \\ \\
+
+
+FUNCTION\_WITH\_RETURN $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
+
+\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array decimal') AND
+($var_{2}$.type == 'array natural' OR $var_{2}$.type == 'array decimal')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool'  \}  \\ \\
+
+
+FUNCTION\_WITH\_RETURN $\rightarrow$ length(PARAM\_LENGTH) \\
+
+\{FUNCTION\_WITH\_RETURN.value =  'length (' + PARAM\_LENGTH.value + ')', FUNCTION\_WITH\_RETURN.type = 'natural'  \}  \\ \\
+
+
+
+PARAM\_ME $\rightarrow$ var, NUM, bool   \\
 
 PARAM\_ME $\rightarrow$ var, NUM \\
 
-PARAM\_LENGTH $\rightarrow$ var    
+PARAM\_LENGTH $\rightarrow$ var    \\
 
 PARAM\_LENGTH $\rightarrow$ string \\
 
-LIST\_PARAMETROS $\rightarrow$ EXPRESION   
 
-LIST\_PARAMETROS $\rightarrow$ LIST\_PARAMETROS , EXPRESION \\
+EXPRESSION\_STRING $\rightarrow$ EXPRESSION\_STRING + string \\  
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERM   
+\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + ' + ' + string.value, EXPRESSION\_STRING.type = 'string') \}  \\ \\
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA - TERM  
 
-EXPRESION\_ARITMETICA $\rightarrow$ TERM \\
+EXPRESSION\_ARITHMETIC $\rightarrow$ EXPRESSION\_ARITHMETIC + TERM   \\
 
-TERM $\rightarrow$ TERM $*$ FACTOR   
+\{EXPRESSION\_ARITHMETIC.value =  EXPRESSION\_ARITHMETIC.value + ' + ' + TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
 
-TERM $\rightarrow$ TERM $/$ FACTOR   
 
-TERM $\rightarrow$ TERM \% FACTOR  
+EXPRESSION\_ARITHMETIC $\rightarrow$ EXPRESSION\_ARITHMETIC - TERM  \\
+
+\{EXPRESSION\_ARITHMETIC.value =  EXPRESSION\_ARITHMETIC.value + ' - ' + TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
+
+
+EXPRESSION\_ARITHMETIC $\rightarrow$ TERM \\
+
+\{EXPRESSION\_ARITHMETIC.value = TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
+
+
+TERM $\rightarrow$ $TERM_{1}$ $*$ FACTOR   \\
+
+\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = ?) \}  \\ \\
+
+
+TERM $\rightarrow$ $TERM_{1}$ $/$ FACTOR   \\
+
+\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = ?) \}  \\ \\
+
+
+TERM $\rightarrow$ $TERM_{1}$ \% FACTOR  \\
+
+\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type) \}  \\ \\
+
 
 TERM $\rightarrow$ FACTOR \\
 
+\{TERM.value = FACTOR.value, TERM.type = FACTOR.type) \}  \\ \\
+
+
 FACTOR $\rightarrow$ NUM   \\
+
+\{FACTOR.value = NUM.value, FACTOR.type = NUM.type) \}  \\ \\
+
 
 FACTOR $\rightarrow$ var[NUM]  \\ 
 
+\{ FACTOR.value = var.name + '[' + NUM.value + ']', FACTOR.type = 'array ' + NUM.type) \}  \\ 
+\\
+
 NUM $\rightarrow$ decimal \\
 
-NUM $\rightarrow$ natural
+\{ NUM.value = decimal.value, NUM.type = 'decimal') \}  \\ 
 
+NUM $\rightarrow$ natural \\
+
+\{ NUM.value = natural.value, NUM.type = 'natural') \}  \\ 
 
 
 
