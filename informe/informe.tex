@@ -26,7 +26,7 @@
 \section{Introducción}
 
 \section{Gramática}
-Expresiones regulares de los tokens y transformaciones\\
+EXPRESSIONes regulares de los tokens y transformaciones\\
 Tipo de Gramática definida \\
 
 
@@ -34,7 +34,7 @@ PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
 LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ SENTENCE LIST\_SENTENCIES\\
 
-SENTENCE $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDITIONAL $|$ FOR $|$ DO\_WHILE $|$ COMENTARIO \\
+SENTENCE $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDITIONAL $|$ FOR $|$ DO\_WHILE $|$ COMMENT \\
 
 WHILE $\rightarrow$ while (CONDITION) SENTENCE $|$ while (CONDITION) \{ LIST\_SENTENCIES \} \\
 
@@ -46,45 +46,45 @@ CONDITIONAL $\rightarrow$ (CONDITION) ? SENTENCE : SENTENCE \\
 
 FOR $\rightarrow$ for(ASIGNACION ;CONDITION; AVANZAR) SENTENCE $|$ (ASIGNACION ;CONDITION; AVANZAR) \{ LIST\_SENTENCIES \} \\
 
-ASIGNACION $\rightarrow$ $\lambda$ $|$ var = EXPRESION $|$ var[NUM] = EXPRESION $|$ var[NUM] = EXPRESION\\
+ASIGNACION $\rightarrow$ $\lambda$ $|$ var = EXPRESSION $|$ var[NUM] = EXPRESSION $|$ var[NUM] = EXPRESSION\\
 
 AVANZAR $\rightarrow$ var++ $|$ var$--$ $|$ var -= NUM $|$ var += NUM $|$ $\lambda$ \\
 
 DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
-CONDITION $\rightarrow$ CONDITION\_LOGICA $|$ CONDITION\_AND $|$ CONDITION\_OR \\
+CONDITION $\rightarrow$ LOGICAL\_CONDITION $|$ CONDITION\_AND $|$ CONDITION\_OR \\
 
-CONDITION\_AND $\rightarrow$ CONDITION\_LOGICA AND CONDITION\_LOGICA \\
+CONDITION\_AND $\rightarrow$ LOGICAL\_CONDITION AND LOGICAL\_CONDITION \\
 
-CONDITION\_OR $\rightarrow$ CONDITION\_LOGICA OR CONDITION\_LOGICA \\
+CONDITION\_OR $\rightarrow$ LOGICAL\_CONDITION OR LOGICAL\_CONDITION \\
 
-CONDITION\_LOGICA $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
+LOGICAL\_CONDITION $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
 
-E $\rightarrow$ ASIGNACION $|$ EXPRESION \\
+E $\rightarrow$ ASIGNACION $|$ EXPRESSION \\
 
 VALUE $\rightarrow$ string $|$ bool $|$ var $|$ NUM $|$FUNCION $|$ var[NUM] $|$ [LIST\_VALUES] $|$ \{ LIST\_REGISTERS \}\\
 
-LIST\_REGISTERS $\rightarrow$ REGISTER $|$ LIST\_REGISTERS , REGISTER \\
+LIST\_REGISTERS $\rightarrow$ REGISTER $|$ REGISTER , LIST\_REGISTERS\\
 
 REGISTER $\rightarrow$ cadena:VALUE \\
 
-LIST\_VALUES $\rightarrow$ VALUE $|$ LIST\_VALUES , VALUE \\
+LIST\_VALUES $\rightarrow$ VALUE $|$ VALUE , LIST\_VALUES \\
 
-EXPRESION $\rightarrow$  EXPRESION\_ARITMETICA $|$ VALUE \\
+EXPRESSION $\rightarrow$  ARITHMETIC\_EXPRESSION $|$ VALUE \\
 
-FUNCION $\rightarrow$ FUNCION\_CON\_RETORNO $|$ FUNCION\_SIN\_RETORNO \\
+FUNCTION $\rightarrow$ FUNCTION\_WITH\_RETURN $|$ FUNCTION\_NO\_RETURN \\
 
-FUNCION\_CON\_RETORNO $\rightarrow$ multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
+FUNCTION\_WITH\_RETURN $\rightarrow$ multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
 
-FUNCION\_SIN\_RETORNO $\rightarrow$ print(EXPRESION) \\
+FUNCTION\_NO\_RETURN $\rightarrow$ print(EXPRESSION) \\
 
 PARAM\_ME $\rightarrow$ var, NUM, bool $|$ var, NUM \\
 
 PARAM\_LENGTH $\rightarrow$ var $|$ string \\
 
-LIST\_PARAMETROS $\rightarrow$ EXPRESION $|$ LIST\_PARAMETROS , EXPRESION \\
+LIST\_PARAMETROS $\rightarrow$ EXPRESSION $|$ LIST\_PARAMETROS , EXPRESSION \\
 
-EXPRESION\_ARITMETICA $\rightarrow$ EXPRESION\_ARITMETICA + TERM $|$ EXPRESION\_ARITMETICA - TERM $|$ TERM \\
+ARITHMETIC\_EXPRESSION $\rightarrow$  + TERM $|$ ARITHMETIC\_EXPRESSION - TERM $|$ TERM \\
 
 TERM $\rightarrow$ TERM $*$ FACTOR $|$ TERM $/$ FACTOR $|$ TERM \% FACTOR $|$ FACTOR \\
 
@@ -93,7 +93,7 @@ FACTOR $\rightarrow$ NUM $|$ var[NUM] \\
 NUM $\rightarrow$ decimal $|$ natural
 
 
-\newpage
+\section{Gramática de Atributos}
 
 PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
@@ -218,8 +218,8 @@ DO\_WHILE $\rightarrow$ do \{ LIST\_SENTENCIES \} while (CONDITION) \\
 
 
 
-CONDITION $\rightarrow$ CONDITION\_LOGICA   \\
-\{ CONDITION.value = CONDITION\_LOGICA,  CONDITION.type = CONDITION\_LOGICA.type \}  \\ \\
+CONDITION $\rightarrow$ LOGICAL\_CONDITION   \\
+\{ CONDITION.value = LOGICAL\_CONDITION,  CONDITION.type = LOGICAL\_CONDITION.type \}  \\ \\
 
 
 CONDITION $\rightarrow$ CONDITION\_AND   \\
@@ -231,36 +231,36 @@ CONDITION $\rightarrow$ CONDITION\_OR \\
 \{ CONDITION.value = CONDITION\_OR,  CONDITION.type = CONDITION\_OR.type \}  \\ \\
 
 
-CONDITION\_AND $\rightarrow$ $CONDITION\_LOGICA_{1}$ AND $CONDITION\_LOGICA_{2}$ \\
+CONDITION\_AND $\rightarrow$ $LOGICAL\_CONDITION_{1}$ AND $LOGICAL\_CONDITION_{2}$ \\
 
-\{ CONDITION\_AND.value = $CONDITION\_LOGICA_{1}$.value + ' AND' +  , $CONDITION\_LOGICA_{2}$,  ONDITION\_AND.type = 'bool' \}  \\ \\
-
-
-CONDITION\_OR $\rightarrow$ $CONDITION\_LOGICA_{1}$ OR $CONDITION\_LOGICA_{2}$ \\
+\{ CONDITION\_AND.value = $LOGICAL\_CONDITION_{1}$.value + ' AND' +  , $LOGICAL\_CONDITION_{2}$,  ONDITION\_AND.type = 'bool' \}  \\ \\
 
 
-\{ CONDITION\_OR.value = $CONDITION\_LOGICA_{1}$.value + ' OR' +  , $CONDITION\_LOGICA_{2}$,  ONDITION\_OR.type = 'bool' \}  \\ \\
+CONDITION\_OR $\rightarrow$ $LOGICAL\_CONDITION_{1}$ OR $LOGICAL\_CONDITION_{2}$ \\
 
 
-\{ CONDITION\_LOGICA.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
+\{ CONDITION\_OR.value = $LOGICAL\_CONDITION_{1}$.value + ' OR' +  , $LOGICAL\_CONDITION_{2}$,  ONDITION\_OR.type = 'bool' \}  \\ \\
 
 
-CONDITION\_LOGICA $\rightarrow$ $E_{1}$ $>$ $E_{2}$   \\
-
-\{CONDITION\_LOGICA.value = $E_{1}$.value + ' $>$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
-
-CONDITION\_LOGICA $\rightarrow$ $E_{1}$ $<$ $E_{2}$   \\
-
-\{CONDITION\_LOGICA.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
+\{ LOGICAL\_CONDITION.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  LOGICAL\_CONDITION.type = 'bool' \}  \\ \\
 
 
-CONDITION\_LOGICA $\rightarrow$ $E_{1}$ == $E_{2}$   \\
+LOGICAL\_CONDITION $\rightarrow$ $E_{1}$ $>$ $E_{2}$   \\
 
-\{CONDITION\_LOGICA.value = $E_{1}$.value + ' == ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
+\{LOGICAL\_CONDITION.value = $E_{1}$.value + ' $>$ ' +  , $E_{2}$,  LOGICAL\_CONDITION.type = 'bool' \}  \\ \\
 
-CONDITION\_LOGICA $\rightarrow$ $E_{1}$ != $E_{2}$ \\
+LOGICAL\_CONDITION $\rightarrow$ $E_{1}$ $<$ $E_{2}$   \\
 
-\{CONDITION\_LOGICA.value = $E_{1}$.value + ' != ' +  , $E_{2}$,  CONDITION\_LOGICA.type = 'bool' \}  \\ \\
+\{LOGICAL\_CONDITION.value = $E_{1}$.value + ' $<$ ' +  , $E_{2}$,  LOGICAL\_CONDITION.type = 'bool' \}  \\ \\
+
+
+LOGICAL\_CONDITION $\rightarrow$ $E_{1}$ == $E_{2}$   \\
+
+\{LOGICAL\_CONDITION.value = $E_{1}$.value + ' == ' +  , $E_{2}$,  LOGICAL\_CONDITION.type = 'bool' \}  \\ \\
+
+LOGICAL\_CONDITION $\rightarrow$ $E_{1}$ != $E_{2}$ \\
+
+\{LOGICAL\_CONDITION.value = $E_{1}$.value + ' != ' +  , $E_{2}$,  LOGICAL\_CONDITION.type = 'bool' \}  \\ \\
 
 
 E $\rightarrow$ ASSIGNATION   \\
@@ -330,9 +330,9 @@ LIST\_VALUES $\rightarrow$ VALUE, $LIST\_VALUES{1}$ \\
 \{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type ) \}  \\ \\
 
 
-EXPRESSION $\rightarrow$ EXPRESSION\_ARITMETICA \\   
+EXPRESSION $\rightarrow$ ARITHMETIC\_EXPRESSION \\   
 
-\{EXPRESSION.value =  EXPRESSION\_ARITMETICA.value, EXPRESSION.type = EXPRESSION\_ARITMETICA.type  \}  \\ \\
+\{EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value, EXPRESSION.type = ARITHMETIC\_EXPRESSION.type  \}  \\ \\
 
 
 EXPRESSION $\rightarrow$ EXPRESSION\_STRING   \\
@@ -359,7 +359,7 @@ FUNCTION $\rightarrow$ FUNCTION\_NO\_RETURN \\
 
 FUNCTION\_NO\_RETURN $\rightarrow$ print(EXPRESSION) \\   
 
-\{FUNCTION\_NO\_RETURN .value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void'  \}  \\ \\
+\{FUNCTION\_NO\_RETURN.value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void'  \}  \\ \\
 
 
 FUNCTION\_WITH\_RETURN $\rightarrow$ multiplicacionEscalar(PARAM\_ME) \\   
@@ -398,19 +398,19 @@ EXPRESSION\_STRING $\rightarrow$ EXPRESSION\_STRING + string \\
 \{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + ' + ' + string.value, EXPRESSION\_STRING.type = 'string') \}  \\ \\
 
 
-EXPRESSION\_ARITHMETIC $\rightarrow$ EXPRESSION\_ARITHMETIC + TERM   \\
+ARITHMETIC\_EXPRESSION $\rightarrow$ ARITHMETIC\_EXPRESSION + TERM   \\
 
-\{EXPRESSION\_ARITHMETIC.value =  EXPRESSION\_ARITHMETIC.value + ' + ' + TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
-
-
-EXPRESSION\_ARITHMETIC $\rightarrow$ EXPRESSION\_ARITHMETIC - TERM  \\
-
-\{EXPRESSION\_ARITHMETIC.value =  EXPRESSION\_ARITHMETIC.value + ' - ' + TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
+\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' + ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type) \}  \\ \\
 
 
-EXPRESSION\_ARITHMETIC $\rightarrow$ TERM \\
+ARITHMETIC\_EXPRESSION $\rightarrow$ ARITHMETIC\_EXPRESSION - TERM  \\
 
-\{EXPRESSION\_ARITHMETIC.value = TERM.value, EXPRESSION\_ARITHMETIC.type = TERM.type) \}  \\ \\
+\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' - ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type) \}  \\ \\
+
+
+ARITHMETIC\_EXPRESSION $\rightarrow$ TERM \\
+
+\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type) \}  \\ \\
 
 
 TERM $\rightarrow$ $TERM_{1}$ $*$ FACTOR   \\
