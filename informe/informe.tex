@@ -115,6 +115,9 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \textbf{G} $\rightarrow$ \textbf{SENTENCE}
 
+\textbf{G} $\rightarrow$ newline
+
+
 \textbf{SENTENCE} $\rightarrow$ \textbf{E}; \textbf{POSSIBLECOMMENT}\\ 
 
 \textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value\}}  \\ \\
@@ -147,20 +150,25 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \textbf{E} $\rightarrow$ \textbf{CONDITIONAL} \\
 
+
 \# Comentarios\\
+
+
 \textbf{POSSIBLECOMMENT} $\rightarrow$ \textbf{COMMENT}
 
 \textbf{POSSIBLECOMMENT} $\rightarrow$ $\lambda$ \\
 
-\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{COMMENT COMMENT\_LIST} 
+\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{COMMENT COMMENT\_LIST } 
 
-\textbf{COMMENT\_LIST} $\rightarrow$$\lambda$ \\
+\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{newline COMMENT\_LIST } 
+
+\textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
 
 \textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
 
 \textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
 
-\textbf{KEYS} $\rightarrow$ \textbf{LIST\_SENTENCIES} \\
+\textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
 
 \textit{\{SENTENCE.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.level)\}}  \\ \\
 
