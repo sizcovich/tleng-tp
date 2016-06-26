@@ -97,8 +97,8 @@ t_NEWLINER = r'newliner'
 # Define a rule so we can track line numbers
 
 def t_NEWLINE(t):
-    r'(?<=;|\)|\{|\})(( )*(\n)( )*)+(?=\#)'
-    #r'\n+'
+    #r'(?<=;|\)|\{|\})(( )*(\n)( )*)+(?=\#)'
+    r'\n+'
     t.lexer.lineno += len(t.value)
     return 'newliner'
 
@@ -107,80 +107,80 @@ def t_INCREMENT(t):
     return t
 
 def t_ELSE(t):
-	r'else'
-	return t
+  r'else'
+  return t
 
 def t_IF(t):
-	r'if'
-	return t
+  r'if'
+  return t
 
 def t_WHILE(t):
-	r'while'
-	return t
+  r'while'
+  return t
 
 def t_BEGIN(t):
-	r'begin'
-	return t
+  r'begin'
+  return t
 
 def t_END(t):
-	r'end'
-	return t
+  r'end'
+  return t
 
 def t_FOR(t):
-	r'for'
-	return t
+  r'for'
+  return t
 
 def t_DO(t):
-	r'do'
-	return t
+  r'do'
+  return t
 
 def t_RES(t):
-	r'res'
-	return t
+  r'res'
+  return t
 
 def t_RETURN(t):
-	r'return'
-	return t
+  r'return'
+  return t
 
 def t_TRUE(t):
-	r'true'
-	return t
+  r'true'
+  return t
 
 def t_FALSE(t):
-	r'false'
-	return t
+  r'false'
+  return t
 
 def t_AND(t):
-	r'and'
-	return t
+  r'and'
+  return t
 
 def t_OR(t):
-	r'or'
-	return t
+  r'or'
+  return t
 
 def t_NOT(t):
-	r'not'
-	return t
+  r'not'
+  return t
 
 def t_PRINT(t):
-	r'print'
-	return t
+  r'print'
+  return t
 
 def t_MULTIPLICACIONESCALAR(t):
-	r'multiplicacionEscalar'
-	return t
+  r'multiplicacionEscalar'
+  return t
 
 def t_CAPITALIZAR(t):
-	r'capitalizar'
-	return t
+  r'capitalizar'
+  return t
 
 def t_COLINEALES(t):
-	r'colineales'
-	return t
+  r'colineales'
+  return t
 
 def t_LENGTH(t):
-	r'length'
-	return t
+  r'length'
+  return t
 
 #end Reserved symbols
 

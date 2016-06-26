@@ -4,4 +4,13 @@
 \paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 0123}
+\f0\fs24 \cf0 r = 18;\
+pi = 3.14159;\
+a = pi * r^2;\
+\
+i = a * 10;\
+if(a > i)\
+	i=-0.5;\
+	print(\'93Se redujo 0.5\'94);\
+else\
+	print(\'93No fue necesario reducir nada\'94);}
