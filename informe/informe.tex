@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc} 
 \usepackage[spanish]{babel}
 \usepackage{a4wide}
+\usepackage{float}
 \usepackage{caratula}
 
 \begin{document}
@@ -14,7 +15,7 @@
 \materia{Teoría de Lenguajes}
 \grupo{Los Libres de Contexto}
 
-\integrante{Apellido, Nombre2}{002/01}{email2@dominio.com}
+\integrante{Castro, Alan}{002/01}{alancastro90@gmail.com}
 \integrante{Bonomi, Cyntia}{134/03}{cyntiab83@gmail.com}
 \integrante{Izcovich, Sabrina}{550/11}{sizcovich@gmail.com}
 
@@ -26,9 +27,8 @@
 \section{Introducción}
 
 \section{Gramática}
-Expresiones regulares de los tokens y transformaciones\\
-Tipo de Gramática definida \\
 
+En lo que sigue, presentamos la gramática utilizada para la realización del parser:\\
 
 PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
 
@@ -95,362 +95,343 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \section{Gramática de Atributos}
 
+\subsection{Inicio del programa}
 \textbf{PROGRAM} $\rightarrow$ \textbf{LIST\_SENTENCIES} \\
-
-\textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value\}} \\ \\
+\textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value\}}\\
 
 
 \textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{G A}\\
+\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + A.value\}} \\
 
-\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + A.value\}}  \\ \\
+\textbf{G} $\rightarrow$ \textbf{COMMENT} \\
+\textit{\{   \}} \\
 
+\textbf{G} $\rightarrow$ \textbf{SENTENCE} \\
+\textit{\{   \}} \\
+
+\textbf{G} $\rightarrow$ newline \\
+\textit{\{   \}} \\
 
 \textbf{A} $\rightarrow$ \textbf{LIST\_SENTENCIES}\\
+\textit{\{SENTENCE.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + LIST\_SENTENCIES.value\}} \\
 
-\textit{\{SENTENCE.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + LIST\_SENTENCIES.value\}} \\  \\
+\textbf{A} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
-\textbf{A} $\rightarrow$ $\lambda$ 
-
-\textbf{G} $\rightarrow$ \textbf{COMMENT}
-
-\textbf{G} $\rightarrow$ \textbf{SENTENCE}
-
-\textbf{G} $\rightarrow$ newline
-
-
+\subsection{Sentencias}
 \textbf{SENTENCE} $\rightarrow$ \textbf{E}; \textbf{POSSIBLECOMMENT}\\ 
-
-\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value\}}  \\ \\
+\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{WHILE} \\ 
-
-\textit{\{WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value\}}  \\ \\
+\textit{\{WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{IF\_ELSE}  \\ 
-
-\textit{\{IF\_ELSE.level = SENTENCE.level, SENTENCE.value = IF\_ELSE.value\}}  \\ \\
+\textit{\{IF\_ELSE.level = SENTENCE.level, SENTENCE.value = IF\_ELSE.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{FOR} \\ 
-
-\textit{\{FOR.level = SENTENCE.level, SENTENCE.value = FOR.value\}}  \\ \\
+\textit{\{FOR.level = SENTENCE.level, SENTENCE.value = FOR.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{DO\_WHILE} \\ 
-
 \textit{\{DO\_WHILE .level = SENTENCE.level, SENTENCE.value = DO\_WHILE .value\}}  \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{FUNCTION}; \textbf{POSSIBLECOMMENT} \\
+\textit{\{   \}} \\
 
-\textbf{E} $\rightarrow$ \textbf{ASSIGNATION}   \\
+\subsection{Terminados en ;}
 
-\textit{\{E.value = ASSIGNATION.value\}} \\ \\
+\textbf{E} $\rightarrow$ \textbf{ASSIGNATION}\\
+\textit{\{E.value = ASSIGNATION.value\}}\\
 
 \textbf{E} $\rightarrow$ \textbf{EXPRESSION} \\
-
-\textit{\{E.value = EXPRESSION.value  , E.type = EXPRESSION.type\}}  \\ \\
+\textit{\{E.value = EXPRESSION.value  , E.type = EXPRESSION.type\}} \\
 
 \textbf{E} $\rightarrow$ \textbf{CONDITIONAL} \\
+\textit{\{   \}} \\
 
+\subsection{Comentarios}
 
-\# Comentarios\\
-
-
-\textbf{POSSIBLECOMMENT} $\rightarrow$ \textbf{COMMENT}
+\textbf{POSSIBLECOMMENT} $\rightarrow$ \textbf{COMMENT} \\
+\textit{\{   \}} \\
 
 \textbf{POSSIBLECOMMENT} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
-\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{COMMENT COMMENT\_LIST } 
+\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{COMMENT COMMENT\_LIST } \\
+\textit{\{   \}} \\
 
-\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{newline COMMENT\_LIST } 
+\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{newline COMMENT\_LIST } \\
+\textit{\{   \}} \\
 
 \textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
+\subsection{Estructuras de control}
 \textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-
-\textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
-
-\textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
-
-\textit{\{SENTENCE.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.level)\}}  \\ \\
+\textit{\{   \}} \\
 
 \textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT KEYS} \\
-
-\textit{\{SENTENCE.level = IF\_ELSE.level + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.level)\}}  \\ \\
+\textit{\{SENTENCE.level = IF\_ELSE.level + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
 
 \textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-
-\textit{\{SENTENCE.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.level)\}}  \\ \\
+\textit{\{SENTENCE.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
 
 \textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
-
-\textit{\{$SENTENCE_{1}$.level = CONDITIONAL.level + 1,$SENTENCE_{2}$.level = CONDITIONAL.level + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value, COND($EXPRESSION_{1}.type == EXPRESSION_{2}.type$)\}} \\ \\
+\textit{\{$SENTENCE_{1}$.level = CONDITIONAL.level + 1,$SENTENCE_{2}$.level = CONDITIONAL.level + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value, COND($EXPRESSION_{1}.type == EXPRESSION_{2}.type$)\}}\\
 	
-\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATION} ;\textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
-
-\textit{\{SENTENCE.level = FOR.level + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.level)\}} \\ \\
+\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATION}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
+\textit{\{SENTENCE.level = FOR.level + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.level)\}}\\
 
 \textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{POSSIBLECOMMENT LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{POSSIBLECOMMENT} \\
+%\textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = 'do \textit{\textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.level)  + '\textbackslash{}n while (' +CONDITION.value +') '\}}\\
 
-%\textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = 'do \textit{\textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.level)  + '\textbackslash{}n while (' +CONDITION.value +') '\}} \\ \\
+\textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
+\textit{\{   \}} \\
 
-\textit{\{ASSIGNATION.value = EXPRESSION.value, setVar(var.name, EXPRESSION.type)\}}  \\ \\
+\textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
+\textit{\{SENTENCE.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
 
+\subsection{Asignaciones}
 \textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
-
-\textbf{B} $\rightarrow$ [\textbf{NUM}] = \textbf{EXPRESSION}  \\
-
-\textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
-
-\textit{\{ASSIGNATION.value = EXPRESSION.value, setVar(var.name, 'array ' + EXPRESSION.type)\}}  \\ \\
+\textit{\{   \}} \\
 
 \textbf{ASSIGNATION} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
+\textbf{B} $\rightarrow$ [\textbf{NUM}] = \textbf{EXPRESSION}  \\
+\textit{\{   \}} \\
 
-\textbf{ADVANCE} $\rightarrow$ var \textbf{C} 
+\textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
+\textit{\{ASSIGNATION.value = EXPRESSION.value, setVar(var.name, 'array ' + EXPRESSION.type)\}} \\
+
+\subsection{Avanzar}
+\textbf{ADVANCE} $\rightarrow$ var \textbf{C} \\
+\textit{\{   \}} \\
 
 \textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
+\subsection{Incremento y Decremento}
 \textbf{C} $\rightarrow$ +\textbf{D} \\ 
+\textit{\{   \}} \\
 
 \textbf{C} $\rightarrow$ -\textbf{F} \\
+\textit{\{   \}} \\
 
 \textbf{D} $\rightarrow$ +   \\
+\textit{\{   \}} \\
 
 \textbf{D} $\rightarrow$ = \textbf{NUM} \\
+\textit{\{   \}} \\
 
 \textbf{F} $\rightarrow$ - \\
+\textit{\{   \}} \\
 
 \textbf{F} $\rightarrow$ = \textbf{NUM} \\
 
-
+\subsection{Condiciones}
 \textbf{CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
-\textit{\{CONDITION.value = LOGICAL\_CONDITION,  CONDITION.type = LOGICAL\_CONDITION.type\}} \\ \\
+\textit{\{CONDITION.value = LOGICAL\_CONDITION,  CONDITION.type = LOGICAL\_CONDITION.type\}}\\
 
-\textbf{CONDITION} $\rightarrow$ \textbf{BOOLEAN\_CONDITION}
+\textbf{CONDITION} $\rightarrow$ \textbf{BOOLEAN\_CONDITION} \\
+\textit{\{   \}} \\
 
 \textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
+\textit{\{   \}} \\
 
 \textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
+\textit{\{   \}} \\
 
 \textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
+\textit{\{   \}} \\
 
 \textbf{H} $\rightarrow$ $lambda$ \\
+\textit{\{   \}} \\
 
-\textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I}
+\subsection{Comparaciones}
+\textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
+\textit{\{   \}} \\
 
 \textbf{I} $\rightarrow$ $>$ \textbf{E}
+\textit{\{   \}} \\
 
 \textbf{I} $\rightarrow$ $<$ \textbf{E}
+\textit{\{   \}} \\
 
 \textbf{I} $\rightarrow$ $==$ \textbf{E}
+\textit{\{   \}} \\
 
 \textbf{I} $\rightarrow$ $!=$ \textbf{E}
+\textit{\{   \}} \\
 
-
+\subsection{Valores}
 \textbf{VALUE} $\rightarrow$ string \\
-
-\textit{\{VALUE.value =  'string' , VALUE.type = 'string'\}}  \\ \\
+\textit{\{VALUE.value =  'string' , VALUE.type = 'string'\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ bool   \\
-
-\textit{\{VALUE.value =  'bool' , VALUE.type = 'bool'\}}  \\ \\
+\textit{\{VALUE.value =  'bool' , VALUE.type = 'bool'\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ var \textbf{J} \\
-
-\textit{\{VALUE.value =  var.name , VALUE.type = getType(var.name)\}}  \\ \\
+\textit{\{VALUE.value =  var.name , VALUE.type = getType(var.name)\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ \textbf{NUM}   \\
-
-\textit{\{VALUE.value =  NUM.value , VALUE.type = NUM.type\}}  \\ \\
+\textit{\{VALUE.value =  NUM.value , VALUE.type = NUM.type\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
+\textit{\{VALUE.value =  FUNCTION.value , VALUE.type = FUNCTION.type\}} \\
 
-\textit{\{VALUE.value =  FUNCTION.value , VALUE.type = FUNCTION.type\}}  \\ \\
-
-\textbf{J} $\rightarrow$ [\textbf{NUM}] 
+\textbf{J} $\rightarrow$ [\textbf{NUM}] \\
+\textit{\{   \}} \\
 
 \textbf{J} $\rightarrow$ $\lambda$   \\
-
+\textit{\{   \}} \\
 
 \textbf{VALUE} $\rightarrow$ [\textbf{LIST\_VALUES}]   \\
-
-%\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}}  \\ \\
+%\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}} \\
 
 \textbf{VALUE} $\rightarrow$ \textbf{LIST\_REGISTERS} \\
+%\textit{\{VALUE.value =  '\textit{' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register'\}} \\
 
-%\textit{\{VALUE.value =  '\textit{' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register'\}}  \\ \\
-
-
-
+\subsection{Listas}
 \textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
+\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value \}} \\
 
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value \}}  \\ \\
-
-\textbf{L} $\rightarrow$ ,\textbf{$LIST\_REGISTERS{1}$} 
+\textbf{L} $\rightarrow$, \textbf{$LIST\_REGISTERS{1}$} \\
+\textit{\{   \}} \\
 
 \textbf{L} $\rightarrow$ $\lambda$\\
-
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + ', ' + $LIST\_REGISTERS{1}$ \}}  \\ \\
-
-
+\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + ', ' + $LIST\_REGISTERS{1}$ \}}  \\ 
 
 \textbf{LIST\_VALUES} $\rightarrow$ \textbf{VALUE M} \\
+\textit{\{LIST\_VALUES.value =  VALUE.value, LIST\_VALUES.type = VALUE.type\}} \\
 
-\textit{\{LIST\_VALUES.value =  VALUE.value, LIST\_VALUES.type = VALUE.type\}}  \\ \\
-
-\textbf{M} $\rightarrow$ ,\textbf{$LIST\_VALUES{1}$}
-
-\textit{\{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type )\}}  \\ \\
+\textbf{M} $\rightarrow$, \textbf{$LIST\_VALUES{1}$} \\
+\textit{\{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type )\}} \\
 
 \textbf{M} $\rightarrow$ $\lambda$ \\
+\textit{\{   \}} \\
 
+\subsection{Expresiones}
 \textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
-
-\textit{\{EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value, EXPRESSION.type = ARITHMETIC\_EXPRESSION.type \}}  \\ \\
-
+\textit{\{EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value, EXPRESSION.type = ARITHMETIC\_EXPRESSION.type \}}  \\
 
 \textbf{EXPRESSION} $\rightarrow$ \textbf{EXPRESSION\_STRING} \\
-
-\textit{\{EXPRESSION.value =  EXPRESSION\_STRING.value, EXPRESSION.type = 'string' \}}  \\ \\
-
+\textit{\{EXPRESSION.value =  EXPRESSION\_STRING.value, EXPRESSION.type = 'string' \}}  \\ 
 
 \textbf{EXPRESSION} $\rightarrow$ \textbf{VALUE} \\
+\textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}} \\
 
-\textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}}  \\ \\
-
-
-
-\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
-
-\textit{\{FUNCTION\_WITH\_RETURN.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type \}}  \\ \\
-
-
-\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_NO\_RETURN} \\
-
-\textit{\{FUNCTION\_NO\_RETURN.value =  FUNCTION\_NO\_RETURN.value, FUNCTION.type = FUNCTION\_NO\_RETURN.type \}}  \\ \\
-
-
-
-\textbf{FUNCTION\_NO\_RETURN} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
-
-\textit{\{FUNCTION\_NO\_RETURN.value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void' \}}  \\ \\
-
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\   
-
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar (' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??' \}}  \\ \\
-
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(string)   \\
-
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar (' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string' \}}  \\ \\
-
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
-
-\textit{\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array decimal') AND
-($var_{2}$.type == 'array natural' OR $var_{2}$.type == 'array decimal')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool' \}}  \\ \\
-
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ length(\textbf{PARAM\_LENGTH}) \\
-
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'length (' + PARAM\_LENGTH.value + ')', FUNCTION\_WITH\_RETURN.type = 'natural' \}}  \\ \\
-
-
-\textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
-\textbf{N} $\rightarrow$ ,bool 
-\textbf{N} $\rightarrow$ $lambda$  \\
-
-\textbf{PARAM\_LENGTH} $\rightarrow$ var \\
-
-\textbf{PARAM\_LENGTH} $\rightarrow$ string \\
-
-
-\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\  
-
-\textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + ' + ' + string.value, EXPRESSION\_STRING.type = 'string')\}}  \\ \\
-
+\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\ \textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + ' + ' + string.value, EXPRESSION\_STRING.type = 'string')\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} + \textbf{TERM} \\
-
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' + ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\ \\
-
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' + ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} - \textbf{TERM}  \\
-
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' - ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\ \\
-
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' - ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{TERM} \\
+\textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\
 
-\textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\ \\
-
-
+\subsection{Términos}
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $*$ \textbf{FACTOR}   \\
-
-\textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = ?)\}}  \\ \\
-
+\textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = ?)\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $/$ \textbf{FACTOR}   \\
-
-\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = ?)\}}  \\ \\
-
+\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = ?)\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} \% \textbf{FACTOR}  \\
-
-\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type)\}}  \\ \\
-
+\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type)\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{FACTOR} \\
-
-\textit{\{TERM.value = FACTOR.value, TERM.type = FACTOR.type)\}}  \\ \\
-
+\textit{\{TERM.value = FACTOR.value, TERM.type = FACTOR.type)\}} \\
 
 \textbf{FACTOR} $\rightarrow$ \textbf{NUM}   \\
-
-\textit{\{FACTOR.value = NUM.value, FACTOR.type = NUM.type)\}}  \\ \\
-
+\textit{\{FACTOR.value = NUM.value, FACTOR.type = NUM.type)\}} \\
 
 \textbf{FACTOR} $\rightarrow$ var[\textbf{NUM}]  \\ 
-
 \textit{\{FACTOR.value = var.name + '[' + NUM.value + ']', FACTOR.type = 'array ' + NUM.type)\}}  \\ 
 \\
 
-\textbf{NUM} $\rightarrow$ decimal \\
+\subsection{Funciones}
+\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type \}} \\
 
+\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_NO\_RETURN} \\
+\textit{\{FUNCTION\_NO\_RETURN.value =  FUNCTION\_NO\_RETURN.value, FUNCTION.type = FUNCTION\_NO\_RETURN.type \}} \\
+
+\textbf{FUNCTION\_NO\_RETURN} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
+\textit{\{FUNCTION\_NO\_RETURN.value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void' \}} \\
+
+\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\ 
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar (' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??' \}} \\
+
+\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(string)   \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar (' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string' \}} \\
+
+\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
+\textit{\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array decimal') AND
+($var_{2}$.type == 'array natural' OR $var_{2}$.type == 'array decimal')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
+
+\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ length(\textbf{PARAM\_LENGTH}) \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'length (' + PARAM\_LENGTH.value + ')', FUNCTION\_WITH\_RETURN.type = 'natural' \}} \\
+
+\subsection{Parámetros de funciones}
+\textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
+\textit{\{   \}} \\
+
+\textbf{N} $\rightarrow$ ,bool \\
+\textit{\{   \}} \\ 
+
+\textbf{N} $\rightarrow$ $lambda$  \\
+\textit{\{   \}} \\
+
+\textbf{PARAM\_LENGTH} $\rightarrow$ var \\
+\textit{\{   \}} \\
+
+\textbf{PARAM\_LENGTH} $\rightarrow$ string \\
+\textit{\{   \}} \\
+
+\subsection{Tipos numéricos}
+\textbf{NUM} $\rightarrow$ decimal \\
 \textit{\{NUM.value = decimal.value, NUM.type = 'decimal')\}}  \\ 
 
 \textbf{NUM} $\rightarrow$ natural \\
-
 \textit{\{NUM.value = natural.value, NUM.type = 'natural')\}}  \\ 
 
-
-\section{Ejemplo de la Gramática de Atributos}
-
-\begin{center}
-\includegraphics[scale=0.7]{imgs/ejemploGramatica.png}
-\end{center}
-
-\section{Descripción}
-
-Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
-
-Asumimos que los Registers toman únicamente literales de tipos básicos.
-
-Decidimos que los comentarios se reescriben en la línea de abajo para mayor claridad del código.
-
-El único newline que nos interesa es entre \{ ; \{ \} ) \} y \#
-
-Gramática de atributos:
+\subsection{Atributos}
 
 \begin{itemize}
 \item \textbf{Value:} string (\textit{sintetizado}) es el código de salida del parser arreglado.
 \item \textbf{Level:} int (\textit{heredado}) almacena el nivel de indentación de la producción actual.
 \item \textbf{Type:} string (\textit{sintetizado}) representa el tipo de la expresión en cuestión.
 \end{itemize}
+
+\section{Ejemplo de la Gramática de Atributos}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{imgs/ejemploGramatica.png}
+\end{center}
+\end{figure}
+
+En el diagrama anterior, se pueden observar las derivaciones de una parte del programa presentado a modo de ejemplo.
+
+\section{Descripción}
+
+Para la realización de nuestro trabajo práctico, tomamos las siguientes decisiones:
+\begin{itemize}
+\item Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
+
+\item Asumimos que los Registers toman únicamente literales de tipos básicos.
+
+\item Decidimos que los comentarios se reescriben en la línea de abajo para mayor claridad del código.
+
+\item El único newline que nos interesa es entre \{ ; \{ \} ) \} y \#
+\end{itemize}
+
 
 \section{Compilación y ejecución}
 
@@ -461,5 +442,10 @@ Gramática de atributos:
 \section{Conclusión}
 
 \section{Referencias}
+\begin{itemize}
+\item \textbf{Aho, Sethi, Ullman}, \textit{Compilers: Principles, Techniques, and Tools}, Addison-Wesley, 1986. ISBN 0-201-10088-6
+
+\item \textbf{Python Lex-Yacc} \textit{http://www.dabeaz.com/ply/}
+\end{itemize}
 
 \end{document}
