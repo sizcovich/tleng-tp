@@ -57,7 +57,7 @@ tokens = (
    'COMMENT',
    'STRING',
    'COMA',
-   'NEWLINER'
+   'NEWLINE'
 )
 
 # Regular expression rules for simple tokens
@@ -90,7 +90,7 @@ t_RBRACKET = r'\]'
 t_POW = r'\^'
 t_COLON = r':'
 t_COMA = r','
-t_NEWLINER = r'newliner'
+#t_NEWLINER = r'newliner'
 
 #regular expression rules with some action code
 #Reserved symbols:
@@ -100,7 +100,7 @@ def t_NEWLINE(t):
     #r'(?<=;|\)|\{|\})(( )*(\n)( )*)+(?=\#)'
     r'\n+'
     t.lexer.lineno += len(t.value)
-    return 'newliner'
+    return t
 
 def t_INCREMENT(t):
     r'\+\+'
