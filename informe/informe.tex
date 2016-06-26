@@ -97,30 +97,29 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \subsection{Inicio del programa}
 \textbf{PROGRAM} $\rightarrow$ \textbf{LIST\_SENTENCIES} \\
-\textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value\}}\\
-
+\textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value, print(PROGRAM.value)\}}\\
 
 \textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{G A}\\
-\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + A.value\}} \\
+\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = IF(G.value=='', '', G.value + '$\setminus$n') + A.value\}} \\
 
-\textbf{G} $\rightarrow$ \textbf{COMMENT} \\
-\textit{\{   \}} \\
+\textbf{G} $\rightarrow$ \textbf{comment} \\
+\textit{\{G.value = comment.value\}} \\
 
 \textbf{G} $\rightarrow$ \textbf{SENTENCE} \\
-\textit{\{   \}} \\
+\textit{\{G.value = indent(G.level) + SENTENCE.value, SENTENCE.level = G.level\}} \\
 
 \textbf{G} $\rightarrow$ newline \\
-\textit{\{   \}} \\
+\textit{\{G.value = ' '\}} \\
 
 \textbf{A} $\rightarrow$ \textbf{LIST\_SENTENCIES}\\
-\textit{\{SENTENCE.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = SENTENCE.value + LIST\_SENTENCIES.value\}} \\
+\textit{\{LIST\_SENTENCIES.level = A.level, A.value = LIST\_SENTENCIES.value\}} \\
 
 \textbf{A} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{A.value = ' '\}} \\
 
 \subsection{Sentencias}
 \textbf{SENTENCE} $\rightarrow$ \textbf{E}; \textbf{POSSIBLECOMMENT}\\ 
-\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value\}} \\
+\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value + ';' + POSSIBLECOMMENT.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{WHILE} \\ 
 \textit{\{WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value\}} \\
@@ -135,7 +134,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{DO\_WHILE .level = SENTENCE.level, SENTENCE.value = DO\_WHILE .value\}}  \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{FUNCTION}; \textbf{POSSIBLECOMMENT} \\
-\textit{\{   \}} \\
+\textit{\{FUNCTION.level = SENTENCE.level, SENTENCE.value = FUNCTION.value + ';' + POSSIBLECOMMENT.value\}} \\
 
 \subsection{Terminados en ;}
 
@@ -143,72 +142,72 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{E.value = ASSIGNATION.value\}}\\
 
 \textbf{E} $\rightarrow$ \textbf{EXPRESSION} \\
-\textit{\{E.value = EXPRESSION.value  , E.type = EXPRESSION.type\}} \\
+\textit{\{E.value = EXPRESSION.value, E.type = EXPRESSION.type\}} \\
 
 \textbf{E} $\rightarrow$ \textbf{CONDITIONAL} \\
-\textit{\{   \}} \\
+\textit{\{E.value = CONDITIONAL.value, E.type = CONDITIONAL.type\}} \\
 
 \subsection{Comentarios}
 
-\textbf{POSSIBLECOMMENT} $\rightarrow$ \textbf{COMMENT} \\
-\textit{\{   \}} \\
+\textbf{POSSIBLECOMMENT} $\rightarrow$ comment \\
+\textit{\{POSSIBLECOMMENT.value = comment.value\}} \\
 
 \textbf{POSSIBLECOMMENT} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{POSSIBLECOMMENT.value = ' '\}} \\
 
-\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{COMMENT COMMENT\_LIST } \\
-\textit{\{   \}} \\
+\textbf{$COMMENT\_LIST\_{1}$} $\rightarrow$ comment \textbf{$COMMENT\_LIST_{2}$} \\
+\textit{\{$COMMENT\_LIST\_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
 
-\textbf{COMMENT\_LIST} $\rightarrow$ \textbf{newline COMMENT\_LIST } \\
-\textit{\{   \}} \\
+\textbf{$COMMENT\_LIST\_{1}$} $\rightarrow$ newline \textbf{$COMMENT\_LIST\_{2}$} \\
+\textit{\{$COMMENT\_LIST\_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
 
 \textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{COMMENT\_LIST.value = ' '\}} \\
 
 \subsection{Estructuras de control}
 \textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{   \}} \\
+\textit{\{KEYS.level = WHILE.level + 1, WHILE.value = indent(WHILE.level) + 'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
 
 \textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{SENTENCE.level = IF\_ELSE.level + 1, IF\_ELSE.value = IF.value + 'else ' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
+\textit{\{KEYS.level = IF\_ELSE.level + 1, IF\_ELSE.value = indent(IF\_ELSE.level) + IF.value + 'else' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
 
 \textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{SENTENCE.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
+\textit{\{KEYS.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
 
 \textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
-\textit{\{$SENTENCE_{1}$.level = CONDITIONAL.level + 1,$SENTENCE_{2}$.level = CONDITIONAL.level + 1 CONDITIONAL.value = '(' + CONDITION.value + ') ?' + $SENTENCE_{1}$.value ': '  + $SENTENCE_{2}$.value, COND($EXPRESSION_{1}.type == EXPRESSION_{2}.type$)\}}\\
+\textit{\{CONDITIONAL.value = '(' + CONDITION.value + ')?' + $EXPRESSION_{1}$.value + ':' + $EXPRESSION_{2}$.value\}}\\
 	
 \textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATION}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
-\textit{\{SENTENCE.level = FOR.level + 1, FOR.value = 'for (' + ASSIGNATION.value + ';' +CONDITION.value + AVANZAR.value') ' + indentar(SENTENCE.value, SENTENCE.level)\}}\\
+\textit{\{KEYS.level = FOR.level + 1, FOR.value = indent(FOR.level) + 'for (' + ASSIGNATION.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}}\\
 
-\textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{POSSIBLECOMMENT LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{POSSIBLECOMMENT} \\
-%\textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = 'do \textit{\textbackslash{}n ' +  indentar(LIST\_SENTENCIES.value, LIST\_SENTENCIES.level)  + '\textbackslash{}n while (' +CONDITION.value +') '\}}\\
+\textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{$POSSIBLECOMMENT_{1}$ LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{$POSSIBLECOMMENT_{2}$} \\
+\textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = indent(DO\_WHILE.level) + 'do{' + $POSSIBLECOMMENT_{1}$.value + '$\setminus$n' + LIST\_SENTENCIES.value + '} while(' + CONDITION.value + '); ' + $POSSIBLECOMMENT_{2}$.value + '$\setminus$n'\}}\\
 
 \textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
-\textit{\{   \}} \\
+\textit{\{COMMENT\_LIST.level = KEYS.level, SENTENCE.level = KEYS.level, KEYS.value = COMMENT\_LIST.value + indent(KEYS.level) + SENTENCE.value\}} \\
 
 \textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
-\textit{\{SENTENCE.level = WHILE.level + 1, WHILE.value = 'while (' + CONDITION.value + ')' + indentar(SENTENCE.value, SENTENCE.level)\}} \\
+\textit{\{LIST\_SENTENCIES.level = KEYS.level, KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
 
 \subsection{Asignaciones}
 \textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
-\textit{\{   \}} \\
+\textit{\{ASSIGNATION.value = var.value + B.value, IF(table(var.value) == None, table.insert(var.value,B.type), COND(table(var.value) == B.type)\}} \\
 
 \textbf{ASSIGNATION} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{ASSIGNATION.value = ' '\}} \\
 
-\textbf{B} $\rightarrow$ [\textbf{NUM}] = \textbf{EXPRESSION}  \\
-\textit{\{   \}} \\
+\textbf{B} $\rightarrow$ [natural] = \textbf{EXPRESSION}  \\
+\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = 'array<' + EXPRESSION.type + '>', B.isArray = true\}} \\
 
 \textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
-\textit{\{ASSIGNATION.value = EXPRESSION.value, setVar(var.name, 'array ' + EXPRESSION.type)\}} \\
+\textit{\{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false\}} \\
 
 \subsection{Avanzar}
 \textbf{ADVANCE} $\rightarrow$ var \textbf{C} \\
 \textit{\{   \}} \\
 
 \textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{ADVANCE.value = ' '\}} \\
 
 \subsection{Incremento y Decremento}
 \textbf{C} $\rightarrow$ +\textbf{D} \\ 
@@ -245,7 +244,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{   \}} \\
 
 \textbf{H} $\rightarrow$ $lambda$ \\
-\textit{\{   \}} \\
+\textit{\{H.value = ' '\}} \\
 
 \subsection{Comparaciones}
 \textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
@@ -287,13 +286,13 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{   \}} \\
 
 \textbf{J} $\rightarrow$ $\lambda$   \\
-\textit{\{   \}} \\
+\textit{\{J.value = ' '\}} \\
 
 \textbf{VALUE} $\rightarrow$ [\textbf{LIST\_VALUES}]   \\
 %\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}} \\
 
 \textbf{VALUE} $\rightarrow$ \textbf{LIST\_REGISTERS} \\
-%\textit{\{VALUE.value =  '\textit{' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register'\}} \\
+\textit{\{VALUE.value =  '\{' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register'\}} \\
 
 \subsection{Listas}
 \textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
@@ -312,7 +311,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type )\}} \\
 
 \textbf{M} $\rightarrow$ $\lambda$ \\
-\textit{\{   \}} \\
+\textit{\{M.value = ' '\}} \\
 
 \subsection{Expresiones}
 \textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
@@ -386,7 +385,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{   \}} \\ 
 
 \textbf{N} $\rightarrow$ $lambda$  \\
-\textit{\{   \}} \\
+\textit{\{N.value = ' '\}} \\
 
 \textbf{PARAM\_LENGTH} $\rightarrow$ var \\
 \textit{\{   \}} \\
@@ -423,6 +422,9 @@ En el diagrama anterior, se pueden observar las derivaciones de una parte del pr
 
 Para la realización de nuestro trabajo práctico, tomamos las siguientes decisiones:
 \begin{itemize}
+
+\item x.valor + y.valor representa la concatenación
+
 \item Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
 
 \item Asumimos que los Registers toman únicamente literales de tipos básicos.
