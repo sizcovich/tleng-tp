@@ -203,7 +203,7 @@ NUM $\rightarrow$ decimal $|$ natural
 IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), table.insertOrUpdate(var.value, B.type) )\}} \\
 
 \textbf{B} $\rightarrow$ [natural] = \textbf{EXPRESSION}  \\
-\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = 'array<' + EXPRESSION.type + '>', B.isArray = true\}} \\
+\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = 'array$<$' + EXPRESSION.type + '$>$', B.isArray = true\}} \\
 
 \textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
 \textit{\{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false\}} \\
@@ -251,7 +251,7 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value   \}} \\
 
 \textbf{H} $\rightarrow$ $lambda$ \\
-\textit{\{H.value = ''\}} \\
+\textit{\{H.value = ' '\}} \\
 
 \subsection{Comparaciones}
 \textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
@@ -264,10 +264,10 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{ I.value = '$<$' + E.value  \}} \\
 
 \textbf{I} $\rightarrow$ $==$ \textbf{E}\\
-\textit{\{ I.value =  '$==$' + E.value  \}} \\
+\textit{\{ I.value =  '==' + E.value  \}} \\
 
 \textbf{I} $\rightarrow$ $!=$ \textbf{E}\\
-\textit{\{ I.value =  '$!=$' + E.value  \}} \\
+\textit{\{ I.value =  '!=' + E.value  \}} \\
 
 \subsection{Valores}
 \textbf{VALUE} $\rightarrow$ string \\
@@ -303,13 +303,13 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 
 \subsection{Listas}
 \textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + L.value, COND(L.value == '' $||$ L.type == ASSIGNATION.type) \}} \\
+\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + L.value, COND(L.value == ' ' $||$ L.type == ASSIGNATION.type) \}} \\
 
-\textbf{L} $\rightarrow$, \textbf{$LIST\_REGISTERS$} \\
+\textbf{L} $\rightarrow$, \textbf{LIST\_REGISTERS} \\
 \textit{\{ L.value = ',' + LIST\_REGISTERS.value, L.type == LIST\_REGISTERS.type  \}} \\
 
 \textbf{L} $\rightarrow$ $\lambda$\\
-\textit{\{LIST\_REGISTERS.value =  '' \}}  \\ 
+\textit{\{LIST\_REGISTERS.value =  ' ' \}}  \\ 
 
 \textbf{LIST\_VALUES} $\rightarrow$ \textbf{VALUE M} \\
 \textit{\{LIST\_VALUES.value =  VALUE.value + M.value, LIST\_VALUES.type = VALUE.type\}} \\
@@ -318,7 +318,7 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{LIST\_VALUES.value = ', ' + LIST\_VALUES.value, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, LIST\_VALUES.type )\}} \\
 
 \textbf{M} $\rightarrow$ $\lambda$ \\
-\textit{\{M.value = ''\}} \\
+\textit{\{M.value = ' '\}} \\
 
 \subsection{Expresiones}
 \textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
@@ -330,13 +330,13 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textbf{EXPRESSION} $\rightarrow$ \textbf{VALUE} \\
 \textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}} \\
 
-\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\ \textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + ' + ' + string.value, EXPRESSION\_STRING.type = 'string')\}} \\
+\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\ \textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + '+' + string.value, EXPRESSION\_STRING.type = 'string')\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} + \textbf{TERM} \\
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' + ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '+' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} - \textbf{TERM}  \\
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + ' - ' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '-' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{TERM} \\
 \textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\
@@ -369,20 +369,21 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{FUNCTION\_NO\_RETURN.value =  FUNCTION\_NO\_RETURN.value, FUNCTION.type = FUNCTION\_NO\_RETURN.type \}} \\
 
 \textbf{FUNCTION\_NO\_RETURN} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
-\textit{\{FUNCTION\_NO\_RETURN.value =  'print (' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void' \}} \\
+\textit{\{FUNCTION\_NO\_RETURN.value =  'print(' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void' \}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\ 
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar (' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??' \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar(' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??' \}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(string)   \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar (' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string' \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string' \}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
-\textit{\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array decimal') AND
-($var_{2}$.type == 'array natural' OR $var_{2}$.type == 'array decimal')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
+\textit{\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array$<$decimal$>$') AND
+($var_{2}$.type == 'array$<$natural$>$' OR $var_{2}$.type == 'array$<$decimal$>$')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ length(\textbf{PARAM\_LENGTH}) \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'length (' + PARAM\_LENGTH.value + ')', FUNCTION\_WITH\_RETURN.type = 'natural' \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'length(' + PARAM\_LENGTH.value + ')',\\ 
+FUNCTION\_WITH\_RETURN.type = 'natural'\}} \\
 
 \subsection{Parámetros de funciones}
 \textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
