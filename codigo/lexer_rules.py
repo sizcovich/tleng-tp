@@ -96,7 +96,6 @@ t_COMA = r','
 # Define a rule so we can track line numbers
 
 def t_NEWLINE(t):
-    #r'(?<=;|\)|\{|\})(( )*(\n)( )*)+(?=\#)'
     r'\n+'
     t.lexer.lineno += len(t.value)
     t.value = 'newline'
@@ -183,6 +182,9 @@ def t_LENGTH(t):
   return t
 
 #end Reserved symbols
+def t_VAR(t):
+    r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
+    return t
 
 def t_NATURAL(t):
     r'\d+'
@@ -194,17 +196,12 @@ def t_DECIMAL(t):
     t.value = float(t.value)
     return t
 
-def t_VAR(t):
-    r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
-    return t
-
 def t_STRING(t):
     r'".*"'
     return t
 
 def t_COMMENT(t):
     r'\#(.|\n)*?(?=\n)'
-    #r'\#(.|\n)*?\n'
     return t
 
 # A string containing ignored characters (spaces and tabs)

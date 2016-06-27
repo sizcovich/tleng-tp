@@ -155,11 +155,11 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{POSSIBLECOMMENT} $\rightarrow$ $\lambda$ \\
 \textit{\{POSSIBLECOMMENT.value = ' '\}} \\
 
-\textbf{$COMMENT\_LIST\_{1}$} $\rightarrow$ comment \textbf{$COMMENT\_LIST_{2}$} \\
-\textit{\{$COMMENT\_LIST\_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
+\textbf{$COMMENT\_LIST_{1}$} $\rightarrow$ comment \textbf{$COMMENT\_LIST_{2}$} \\
+\textit{\{$COMMENT\_LIST_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
 
-\textbf{$COMMENT\_LIST\_{1}$} $\rightarrow$ newline \textbf{$COMMENT\_LIST\_{2}$} \\
-\textit{\{$COMMENT\_LIST\_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
+\textbf{$COMMENT\_LIST_{1}$} $\rightarrow$ newline \textbf{$COMMENT\_LIST_{2}$} \\
+\textit{\{$COMMENT\_LIST_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
 
 \textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
 \textit{\{COMMENT\_LIST.value = ' '\}} \\
@@ -200,17 +200,17 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
 \textit{\{ASSIGNATION.value = var.value + B.value, 
-IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), table.insertOrUpdate(var.value, B.type) )\}} \\
+IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.type \&\& B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value, B.type, B.isArray)\}} \\
 
 \textbf{B} $\rightarrow$ [natural] = \textbf{EXPRESSION}  \\
-\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = 'array$<$' + EXPRESSION.type + '$>$', B.isArray = true\}} \\
+\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, IF(EXPRESSION.type == 'natural', B.type = 'decimal', EXPRESSION.type), B.isArray = true\}} \\
 
 \textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
 \textit{\{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false\}} \\
 
 \subsection{Avanzar}
 \textbf{ADVANCE} $\rightarrow$ var \textbf{C} \\
-\textit{\{COND(var.type == NUM), ADVANCE.value = var.value + C.value  \}} \\
+\textit{\{COND(var.type == NUM), ADVANCE.value = var.value + C.value\}} \\
 
 \textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
 \textit{\{ADVANCE.value = ' '\}} \\
@@ -232,30 +232,30 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{ F.value = '-'  \}} \\
 
 \textbf{F} $\rightarrow$ = \textbf{NUM} \\
-\textit{\{ F.value =  '=' + NUM.value  \}} \\
+\textit{\{ F.value =  '=' + NUM.value\}} \\
 
 \subsection{Condiciones}
 \textbf{CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
 \textit{\{CONDITION.value = LOGICAL\_CONDITION.value\}}\\
 
 \textbf{CONDITION} $\rightarrow$ \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ CONDITION.value = BOOLEAN\_CONDITION.value  \}} \\
+\textit{\{ CONDITION.value = BOOLEAN\_CONDITION.value\}} \\
 
 \textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
-\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value   \}} \\
+\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value\}} \\
 
 \textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value   \}} \\
+\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value\}} \\
 
 \textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value   \}} \\
+\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value\}} \\
 
 \textbf{H} $\rightarrow$ $lambda$ \\
 \textit{\{H.value = ' '\}} \\
 
 \subsection{Comparaciones}
 \textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
-\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value   \}} \\
+\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value\}} \\
 
 \textbf{I} $\rightarrow$ $>$ \textbf{E} \\
 \textit{\{ I.value = '$>$' + E.value  \}} \\
@@ -264,30 +264,32 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textit{\{ I.value = '$<$' + E.value  \}} \\
 
 \textbf{I} $\rightarrow$ $==$ \textbf{E}\\
-\textit{\{ I.value =  '==' + E.value  \}} \\
+\textit{\{ I.value =  '==' + E.value\}} \\
 
 \textbf{I} $\rightarrow$ $!=$ \textbf{E}\\
-\textit{\{ I.value =  '!=' + E.value  \}} \\
+\textit{\{ I.value =  '!=' + E.value\}} \\
 
 \subsection{Valores}
 \textbf{VALUE} $\rightarrow$ string \\
-\textit{\{VALUE.value =  'string' , VALUE.type = 'string'\}} \\
-
+\textit{\{VALUE.value =  'string', VALUE.type = 'string'\}} \\
 
 \textbf{VALUE} $\rightarrow$ bool   \\
-\textit{\{VALUE.value =  'bool' , VALUE.type = 'bool'\}} \\
-
-
-\textbf{VALUE} $\rightarrow$ var \textbf{J} \\
-\textit{\{VALUE.value =  var.name , VALUE.type = IF( J.isArray, getArrayType(table(var.value)) , var.type)\}} \\
-
+\textit{\{VALUE.value =  'bool', VALUE.type = 'bool'\}} \\
 
 \textbf{VALUE} $\rightarrow$ \textbf{NUM}   \\
 \textit{\{VALUE.value =  NUM.value , VALUE.type =  NUM.type\}} \\
 
-
 \textbf{VALUE} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
 \textit{\{VALUE.value =  FUNCTION\_WITH\_RETURN.value, VALUE.type = FUNCTION\_WITH\_RETURN.type\}} \\
+
+\textbf{VALUE} $\rightarrow$ [\textbf{VALUE LIST\_VALUES}]   \\
+\textit{\{VALUE.value =  '[ ' + VALUE.value + LIST\_VALUES.value + ']', LIST\_VALUES.type = IF(VALUE.type == 'natural','decimal',VALUE.type)\}} \\
+
+\textbf{VALUE} $\rightarrow$ \{\textbf{LIST\_REGISTERS}\} \\
+\textit{\{VALUE.value =  LIST\_REGISTERS.value , VALUE.type = 'register'\}} \\
+
+\textbf{VALUE} $\rightarrow$ var \textbf{J} \\
+\textit{\{VALUE.value =  var.value , VALUE.type = IF(J.isArray, table.getType(var.value)) , var.type)\}} \\
 
 \textbf{J} $\rightarrow$ [\textbf{NUM}] \\
 \textit{\{ J.value = '[' + NUM.value + ']', J.isArray = true   \}} \\
@@ -295,30 +297,21 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textbf{J} $\rightarrow$ $\lambda$   \\
 \textit{\{J.value = ' ', J.isArray = false\}} \\
 
-\textbf{VALUE} $\rightarrow$ [\textbf{LIST\_VALUES}]   \\
-\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}} \\
-
-\textbf{VALUE} $\rightarrow$ \textbf{LIST\_REGISTERS} \\
-\textit{\{VALUE.value =  LIST\_REGISTERS.value , VALUE.type = 'register'\}} \\
-
 \subsection{Listas}
 \textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + L.value, COND(L.value == ' ' $||$ L.type == ASSIGNATION.type) \}} \\
+\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + L.value\}} \\
 
 \textbf{L} $\rightarrow$, \textbf{LIST\_REGISTERS} \\
-\textit{\{ L.value = ',' + LIST\_REGISTERS.value, L.type == LIST\_REGISTERS.type  \}} \\
+\textit{\{ L.value = ',' + LIST\_REGISTERS.value\}} \\
 
 \textbf{L} $\rightarrow$ $\lambda$\\
 \textit{\{LIST\_REGISTERS.value =  ' ' \}}  \\ 
 
-\textbf{LIST\_VALUES} $\rightarrow$ \textbf{VALUE M} \\
-\textit{\{LIST\_VALUES.value =  VALUE.value + M.value, LIST\_VALUES.type = VALUE.type\}} \\
+\textbf{LIST\_VALUES} $\rightarrow$ \textbf{, VALUE LIST\_VALUES} \\
+\textit{\{LIST\_VALUES.value =  ',' + VALUE.value + LIST\_VALUES.value, COND(LIST\_VALUES.type, IF(VALUE.type == 'natural','decimal',VALUE.type))\}} \\
 
-\textbf{M} $\rightarrow$, \textbf{LIST\_VALUES} \\
-\textit{\{LIST\_VALUES.value = ', ' + LIST\_VALUES.value, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, LIST\_VALUES.type )\}} \\
-
-\textbf{M} $\rightarrow$ $\lambda$ \\
-\textit{\{M.value = ' '\}} \\
+\textbf{LIST\_VALUES} $\rightarrow$ $\lambda$ \\
+\textit{\{LIST\_VALUES.value = ' '\}} \\
 
 \subsection{Expresiones}
 \textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
@@ -330,56 +323,53 @@ IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), 
 \textbf{EXPRESSION} $\rightarrow$ \textbf{VALUE} \\
 \textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}} \\
 
-\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\ \textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + '+' + string.value, EXPRESSION\_STRING.type = 'string')\}} \\
+\textbf{EXPRESSION\_STRING} $\rightarrow$ \textbf{EXPRESSION\_STRING} + \textbf{string} \\ \textit{\{EXPRESSION\_STRING.value =  EXPRESSION\_STRING.value + '+' + string.value\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} + \textbf{TERM} \\
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '+' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '+' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} - \textbf{TERM}  \\
-\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '-' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}} \\
+\textit{\{ARITHMETIC\_EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value + '-' + TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type\}} \\
 
 \textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{TERM} \\
-\textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type)\}}  \\
+\textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type\}}  \\
 
 \subsection{Términos}
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $*$ \textbf{FACTOR}   \\
-\textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = ?)\}} \\
+\textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = FACTOR.type\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $/$ \textbf{FACTOR}   \\
-\textit{\{TERM.value = $TERM_{1}$.value + '$/$' + FACTOR.value, TERM.type = ?)\}} \\
+\textit{\{TERM.value = $TERM_{1}$.value + '$/$' + FACTOR.value, TERM.type = FACTOR.type\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} \% \textbf{FACTOR}  \\
-\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type)\}} \\
+\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{FACTOR} \\
-\textit{\{TERM.value = FACTOR.value, TERM.type = FACTOR.type)\}} \\
+\textit{\{TERM.value = FACTOR.value, TERM.type = FACTOR.type\}} \\
 
 \textbf{FACTOR} $\rightarrow$ \textbf{NUM}   \\
-\textit{\{FACTOR.value = NUM.value, FACTOR.type = NUM.type)\}} \\
+\textit{\{FACTOR.value = NUM.value, FACTOR.type = 'decimal'\}} \\
 
 \textbf{FACTOR} $\rightarrow$ var[\textbf{NUM}]  \\ 
-\textit{\{FACTOR.value = var.name + '[' + NUM.value + ']', FACTOR.type = 'array$<$' + NUM.type + '$>$' )\}}  \\ 
+\textit{\{FACTOR.value = var.value + '[' + NUM.value + ']', FACTOR.type = 'decimal', COND(NUM.type == 'natural'), COND(table.getType(var.value) == 'natural' || table.getType(var.value) == 'decimal')\}}  \\ 
 \\
 
 \subsection{Funciones}
 \textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type\}} \\
 
-\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_NO\_RETURN} \\
-\textit{\{FUNCTION\_NO\_RETURN.value =  FUNCTION\_NO\_RETURN.value, FUNCTION.type = FUNCTION\_NO\_RETURN.type \}} \\
-
-\textbf{FUNCTION\_NO\_RETURN} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
-\textit{\{FUNCTION\_NO\_RETURN.value =  'print(' + EXPRESSION.value + ')', FUNCTION\_NO\_RETURN .type = 'void' \}} \\
+\textbf{FUNCTION} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
+\textit{\{FUNCTION.value =  'print(' + EXPRESSION.value + ')'\}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\ 
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar(' + PARAM\_ME.value + ')', FUNCTION\_WITH\_RETURN.type = '??' \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar(' + PARAM\_ME.value + ')', , FUNCTION\_WITH\_RETURN.type = PARAM\_ME.type\}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(string)   \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string' \}} \\
+\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string'\}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
-\textit{\{CONDITION: (($var_{1}$.type == 'array natural' OR $ var_{1}$.type == 'array$<$decimal$>$') AND
-($var_{2}$.type == 'array$<$natural$>$' OR $var_{2}$.type == 'array$<$decimal$>$')), FUNCTION\_WITH\_RETURN.value =  'colineales (' + $var_{1}$.value + ', ' +$var_{2}$')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
+\textit{\{COND((table.getType($var_{1}$.value) == natural || table.getType($var_{1}$.value) == 'decimal' \&\& table.isArray($var_{1}$.value) \&\& table.isArray($var_{2}$.value)) \&\&
+(table.getType($var_{2}$.value) == 'natural' || table.getType($var_{2}$.value) == 'decimal')), FUNCTION\_WITH\_RETURN.value = 'colineales (' + $var_{1}$.value + ', ' +$var_{2}$.value')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ length(\textbf{PARAM\_LENGTH}) \\
 \textit{\{FUNCTION\_WITH\_RETURN.value =  'length(' + PARAM\_LENGTH.value + ')',\\ 
@@ -387,19 +377,22 @@ FUNCTION\_WITH\_RETURN.type = 'natural'\}} \\
 
 \subsection{Parámetros de funciones}
 \textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
-\textit{\{ PARAM\_ME.value = var.name + ',' + NUM.value + N.value    \}} \\
+\textit{\{ PARAM\_ME.value = var.value + ',' + NUM.value + N.value, COND((table.getType(var.value) == 'natural' || table.getType(var.value) == 'decimal') \&\& table.isArray(var.value)), IF(table.getType(var.value) == 'decimal' \&\& N.isTrue, PARAM\_ME.type = 'natural' , PARAM\_ME.type = table.getType(var.value))\}} \\
 
 \textbf{N} $\rightarrow$ ,bool \\
-\textit{\{ N.value = ', bool'   \}} \\ 
+\textit{\{ N.value = ', bool', N.isTrue = N.value\}} \\ 
 
 \textbf{N} $\rightarrow$ $lambda$  \\
-\textit{\{N.value = ' '\}} \\
+\textit{\{N.value = ' ', N.isTrue = false\}} \\
 
 \textbf{PARAM\_LENGTH} $\rightarrow$ var \\
-\textit{\{ PARAM\_LENGTH.value = var.value    \}} \\
+\textit{\{PARAM\_LENGTH.value = var.value, COND(table.isArray(var.value) || (table.getType(var.value) == 'string'))\}} \\
+
+\textbf{PARAM\_LENGTH} $\rightarrow$ [VALUE LIST\_VALUES]\\
+\textit{\{PARAM\_LENGTH.value = '[' + VALUE.value + LIST\_VALUES.value + ']', LIST\_VALUES.type = IF(VALUE.type == 'natural','decimal',VALUE.type)\}} \\
 
 \textbf{PARAM\_LENGTH} $\rightarrow$ string \\
-\textit{\{ PARAM\_LENGTH.value = string.value   \}} \\
+\textit{\{PARAM\_LENGTH.value = string.value\}} \\
 
 \subsection{Tipos numéricos}
 \textbf{NUM} $\rightarrow$ decimal \\
@@ -411,9 +404,11 @@ FUNCTION\_WITH\_RETURN.type = 'natural'\}} \\
 \subsection{Atributos}
 
 \begin{itemize}
-\item \textbf{Value:} string (\textit{sintetizado}) es el código de salida del parser arreglado.
+\item Terminales natural.value, decimal.value, string.value
+\item \textbf{PARAM\_LENGTH.value, NUM.value:} string (\textit{sintetizado}) es el código de salida del parser arreglado.
 \item \textbf{Level:} int (\textit{heredado}) almacena el nivel de indentación de la producción actual.
-\item \textbf{Type:} string (\textit{sintetizado}) representa el tipo de la expresión en cuestión.
+\item \textbf{NUM.type:} string (\textit{sintetizado}) representa el tipo de la expresión en cuestión.
+\item \textbf{N.isTrue:} bool (\textit{sintetizado}) almacena la información del booleano dado por parámetro en multiplicacionEscalar.
 \end{itemize}
 
 \section{Ejemplo de la Gramática de Atributos}
@@ -430,8 +425,11 @@ En el diagrama anterior, se pueden observar las derivaciones de una parte del pr
 
 Para la realización de nuestro trabajo práctico, tomamos las siguientes decisiones:
 \begin{itemize}
+\item En la gramática, nuestro diccionario está en $R^2$ 
 
 \item x.valor + y.valor representa la concatenación
+
+\item Por defecto, los arreglos se inicializan como decimales si son números
 
 \item Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
 
@@ -440,6 +438,8 @@ Para la realización de nuestro trabajo práctico, tomamos las siguientes decisi
 \item Decidimos que los comentarios se reescriben en la línea de abajo para mayor claridad del código.
 
 \item El único newline que nos interesa es entre \{ ; \{ \} ) \} y \#
+
+\item Para las expresiones aritméticas, decidimos que se convierten todos los números a decimales para permitir mayor compatibilidad en las operaciones.
 \end{itemize}
 
 
