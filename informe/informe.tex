@@ -15,7 +15,7 @@
 \materia{Teoría de Lenguajes}
 \grupo{Los Libres de Contexto}
 
-\integrante{Castro, Alan}{002/01}{alancastro90@gmail.com}
+\integrante{Castro, Alan}{356/10}{alancastro90@gmail.com}
 \integrante{Bonomi, Cyntia}{134/03}{cyntiab83@gmail.com}
 \integrante{Izcovich, Sabrina}{550/11}{sizcovich@gmail.com}
 
@@ -102,7 +102,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{G A}\\
 \textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = IF(G.value=='', '', G.value + '$\setminus$n') + A.value\}} \\
 
-\textbf{G} $\rightarrow$ \textbf{comment} \\
+\textbf{G} $\rightarrow$ \textbf{comment} \\
 \textit{\{G.value = comment.value\}} \\
 
 \textbf{G} $\rightarrow$ \textbf{SENTENCE} \\
@@ -177,8 +177,8 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
 \textit{\{CONDITIONAL.value = '(' + CONDITION.value + ')?' + $EXPRESSION_{1}$.value + ':' + $EXPRESSION_{2}$.value\}}\\
 	
-\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATION}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
-\textit{\{KEYS.level = FOR.level + 1, FOR.value = indent(FOR.level) + 'for (' + ASSIGNATION.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}}\\
+\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATIONORLAMBDA}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
+\textit{\{KEYS.level = FOR.level + 1, FOR.value = indent(FOR.level) + 'for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}}\\
 
 \textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{$POSSIBLECOMMENT_{1}$ LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{$POSSIBLECOMMENT_{2}$} \\
 \textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = indent(DO\_WHILE.level) + 'do{' + $POSSIBLECOMMENT_{1}$.value + '$\setminus$n' + LIST\_SENTENCIES.value + '} while(' + CONDITION.value + '); ' + $POSSIBLECOMMENT_{2}$.value + '$\setminus$n'\}}\\
@@ -190,11 +190,17 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{LIST\_SENTENCIES.level = KEYS.level, KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
 
 \subsection{Asignaciones}
-\textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
-\textit{\{ASSIGNATION.value = var.value + B.value, IF(table(var.value) == None, table.insert(var.value,B.type), COND(table(var.value) == B.type)\}} \\
 
-\textbf{ASSIGNATION} $\rightarrow$ $\lambda$ \\
-\textit{\{ASSIGNATION.value = ' '\}} \\
+
+\textbf{ASSIGNATIONORLAMBDA} $\rightarrow$ \textbf{ASSIGNATION} \\
+\textit{\{ASSIGNATIONORLAMBDA.value = ASSIGNATION.value\}} \\
+
+\textbf{ASSIGNATIONORLAMBDA} $\rightarrow$ $\lambda$ \\
+\textit{\{ASSIGNATIONORLAMBDA.value = ' '\}} \\
+
+\textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
+\textit{\{ASSIGNATION.value = var.value + B.value, 
+IF(B.isArray, COND(tabla(var.value)!= None $\&\&$ tabla(var.value) == B.type ), table.insertOrUpdate(var.value, B.type) )\}} \\
 
 \textbf{B} $\rightarrow$ [natural] = \textbf{EXPRESSION}  \\
 \textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = 'array<' + EXPRESSION.type + '>', B.isArray = true\}} \\
@@ -204,63 +210,64 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \subsection{Avanzar}
 \textbf{ADVANCE} $\rightarrow$ var \textbf{C} \\
-\textit{\{   \}} \\
+\textit{\{COND(var.type == NUM), ADVANCE.value = var.value + C.value  \}} \\
 
 \textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
 \textit{\{ADVANCE.value = ' '\}} \\
 
 \subsection{Incremento y Decremento}
 \textbf{C} $\rightarrow$ +\textbf{D} \\ 
-\textit{\{   \}} \\
+\textit{\{ C.value = '+' + D.value   \}} \\
 
 \textbf{C} $\rightarrow$ -\textbf{F} \\
-\textit{\{   \}} \\
+\textit{\{ C.value = '-' + F.value   \}} \\
 
 \textbf{D} $\rightarrow$ +   \\
-\textit{\{   \}} \\
+\textit{\{ D.value = '+'  \}} \\
 
 \textbf{D} $\rightarrow$ = \textbf{NUM} \\
-\textit{\{   \}} \\
+\textit{\{ D.value =  '=' + NUM.value  \}} \\
 
 \textbf{F} $\rightarrow$ - \\
-\textit{\{   \}} \\
+\textit{\{ F.value = '-'  \}} \\
 
 \textbf{F} $\rightarrow$ = \textbf{NUM} \\
+\textit{\{ F.value =  '=' + NUM.value  \}} \\
 
 \subsection{Condiciones}
 \textbf{CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
-\textit{\{CONDITION.value = LOGICAL\_CONDITION,  CONDITION.type = LOGICAL\_CONDITION.type\}}\\
+\textit{\{CONDITION.value = LOGICAL\_CONDITION.value\}}\\
 
 \textbf{CONDITION} $\rightarrow$ \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{   \}} \\
+\textit{\{ CONDITION.value = BOOLEAN\_CONDITION.value  \}} \\
 
 \textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
-\textit{\{   \}} \\
+\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value   \}} \\
 
 \textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{   \}} \\
+\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value   \}} \\
 
 \textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{   \}} \\
+\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value   \}} \\
 
 \textbf{H} $\rightarrow$ $lambda$ \\
-\textit{\{H.value = ' '\}} \\
+\textit{\{H.value = ''\}} \\
 
 \subsection{Comparaciones}
 \textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
-\textit{\{   \}} \\
+\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value   \}} \\
 
-\textbf{I} $\rightarrow$ $>$ \textbf{E}
-\textit{\{   \}} \\
+\textbf{I} $\rightarrow$ $>$ \textbf{E} \\
+\textit{\{ I.value = '$>$' + E.value  \}} \\
 
-\textbf{I} $\rightarrow$ $<$ \textbf{E}
-\textit{\{   \}} \\
+\textbf{I} $\rightarrow$ $<$ \textbf{E}\\
+\textit{\{ I.value = '$<$' + E.value  \}} \\
 
-\textbf{I} $\rightarrow$ $==$ \textbf{E}
-\textit{\{   \}} \\
+\textbf{I} $\rightarrow$ $==$ \textbf{E}\\
+\textit{\{ I.value =  '$==$' + E.value  \}} \\
 
-\textbf{I} $\rightarrow$ $!=$ \textbf{E}
-\textit{\{   \}} \\
+\textbf{I} $\rightarrow$ $!=$ \textbf{E}\\
+\textit{\{ I.value =  '$!=$' + E.value  \}} \\
 
 \subsection{Valores}
 \textbf{VALUE} $\rightarrow$ string \\
@@ -272,46 +279,46 @@ NUM $\rightarrow$ decimal $|$ natural
 
 
 \textbf{VALUE} $\rightarrow$ var \textbf{J} \\
-\textit{\{VALUE.value =  var.name , VALUE.type = getType(var.name)\}} \\
+\textit{\{VALUE.value =  var.name , VALUE.type = IF( J.isArray, getArrayType(table(var.value)) , var.type)\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ \textbf{NUM}   \\
-\textit{\{VALUE.value =  NUM.value , VALUE.type = NUM.type\}} \\
+\textit{\{VALUE.value =  NUM.value , VALUE.type =  NUM.type\}} \\
 
 
 \textbf{VALUE} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
-\textit{\{VALUE.value =  FUNCTION.value , VALUE.type = FUNCTION.type\}} \\
+\textit{\{VALUE.value =  FUNCTION\_WITH\_RETURN.value, VALUE.type = FUNCTION\_WITH\_RETURN.type\}} \\
 
 \textbf{J} $\rightarrow$ [\textbf{NUM}] \\
-\textit{\{   \}} \\
+\textit{\{ J.value = '[' + NUM.value + ']', J.isArray = true   \}} \\
 
 \textbf{J} $\rightarrow$ $\lambda$   \\
-\textit{\{J.value = ' '\}} \\
+\textit{\{J.value = ' ', J.isArray = false\}} \\
 
 \textbf{VALUE} $\rightarrow$ [\textbf{LIST\_VALUES}]   \\
-%\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}} \\
+\textit{\{VALUE.value =  '[ ' + LIST\_VALUES.value + ']', VALUE.type = LIST\_VALUES.type\}} \\
 
 \textbf{VALUE} $\rightarrow$ \textbf{LIST\_REGISTERS} \\
-\textit{\{VALUE.value =  '\{' + LIST\_REGISTERS.value + '\}', VALUE.type = 'register'\}} \\
+\textit{\{VALUE.value =  LIST\_REGISTERS.value , VALUE.type = 'register'\}} \\
 
 \subsection{Listas}
 \textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value \}} \\
+\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + L.value, COND(L.value == '' $||$ L.type == ASSIGNATION.type) \}} \\
 
-\textbf{L} $\rightarrow$, \textbf{$LIST\_REGISTERS{1}$} \\
-\textit{\{   \}} \\
+\textbf{L} $\rightarrow$, \textbf{$LIST\_REGISTERS$} \\
+\textit{\{ L.value = ',' + LIST\_REGISTERS.value, L.type == LIST\_REGISTERS.type  \}} \\
 
 \textbf{L} $\rightarrow$ $\lambda$\\
-\textit{\{LIST\_REGISTERS.value =  ASSIGNATION.value + ', ' + $LIST\_REGISTERS{1}$ \}}  \\ 
+\textit{\{LIST\_REGISTERS.value =  '' \}}  \\ 
 
 \textbf{LIST\_VALUES} $\rightarrow$ \textbf{VALUE M} \\
-\textit{\{LIST\_VALUES.value =  VALUE.value, LIST\_VALUES.type = VALUE.type\}} \\
+\textit{\{LIST\_VALUES.value =  VALUE.value + M.value, LIST\_VALUES.type = VALUE.type\}} \\
 
-\textbf{M} $\rightarrow$, \textbf{$LIST\_VALUES{1}$} \\
-\textit{\{LIST\_VALUES.value =  VALUE.value + ', ' + $LIST\_VALUES{1}$, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, $LIST\_VALUES{1}$.type )\}} \\
+\textbf{M} $\rightarrow$, \textbf{LIST\_VALUES} \\
+\textit{\{LIST\_VALUES.value = ', ' + LIST\_VALUES.value, LIST\_VALUES.type = actualizarTipoArray(EXPRESSION.type, LIST\_VALUES.type )\}} \\
 
 \textbf{M} $\rightarrow$ $\lambda$ \\
-\textit{\{M.value = ' '\}} \\
+\textit{\{M.value = ''\}} \\
 
 \subsection{Expresiones}
 \textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
@@ -339,7 +346,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = ?)\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $/$ \textbf{FACTOR}   \\
-\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = ?)\}} \\
+\textit{\{TERM.value = $TERM_{1}$.value + '$/$' + FACTOR.value, TERM.type = ?)\}} \\
 
 \textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} \% \textbf{FACTOR}  \\
 \textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type)\}} \\
@@ -351,7 +358,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{FACTOR.value = NUM.value, FACTOR.type = NUM.type)\}} \\
 
 \textbf{FACTOR} $\rightarrow$ var[\textbf{NUM}]  \\ 
-\textit{\{FACTOR.value = var.name + '[' + NUM.value + ']', FACTOR.type = 'array ' + NUM.type)\}}  \\ 
+\textit{\{FACTOR.value = var.name + '[' + NUM.value + ']', FACTOR.type = 'array$<$' + NUM.type + '$>$' )\}}  \\ 
 \\
 
 \subsection{Funciones}
@@ -379,19 +386,19 @@ NUM $\rightarrow$ decimal $|$ natural
 
 \subsection{Parámetros de funciones}
 \textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
-\textit{\{   \}} \\
+\textit{\{ PARAM\_ME.value = var.name + ',' + NUM.value + N.value    \}} \\
 
 \textbf{N} $\rightarrow$ ,bool \\
-\textit{\{   \}} \\ 
+\textit{\{ N.value = ', bool'   \}} \\ 
 
 \textbf{N} $\rightarrow$ $lambda$  \\
 \textit{\{N.value = ' '\}} \\
 
 \textbf{PARAM\_LENGTH} $\rightarrow$ var \\
-\textit{\{   \}} \\
+\textit{\{ PARAM\_LENGTH.value = var.value    \}} \\
 
 \textbf{PARAM\_LENGTH} $\rightarrow$ string \\
-\textit{\{   \}} \\
+\textit{\{ PARAM\_LENGTH.value = string.value   \}} \\
 
 \subsection{Tipos numéricos}
 \textbf{NUM} $\rightarrow$ decimal \\
