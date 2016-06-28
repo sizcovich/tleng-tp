@@ -167,7 +167,7 @@ def p_e_conditional(subexpressions):
 
 
 def p_possiblecomment_comment(subexpressions):
-    'possiblecomment : comment'
+    'possiblecomment : COMMENT'
 
     
     subexpressions[0] = {"value": subexpressions[1]["value"]}
@@ -264,7 +264,7 @@ def p_conditional(subexpressions):
 
 
 def p_for(subexpressions):
-    'for : FOR LPAREN assignationorlamba SEMICOLON condition SEMICOLON advance RPAREN possiblecomment keys'
+    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advance RPAREN possiblecomment keys'
 
     
     for_level = subexpressions[0]["level"]
@@ -593,7 +593,7 @@ def p_value_var(subexpressions):
 
 
 def p_value_num(subexpressions):
-    'value : NUM'
+    'value : num'
 
     
     num_value = subexpressions[1]["value"]
@@ -613,7 +613,7 @@ def p_value_function_with_return(subexpressions):
 
 
 def p_j_array(subexpressions):
-    'value : LBRACKET num RBRACKET'
+    'j : LBRACKET num RBRACKET'
 
     
     num_value = subexpressions[1]["value"]
@@ -623,7 +623,7 @@ def p_j_array(subexpressions):
 
 
 def p_j_lambda(subexpressions):
-    'value : '
+    'j : '
 
     
     subexpressions[0] = {"value": "", "isArray": false}
@@ -698,7 +698,7 @@ def p_expression_string_exp_string(subexpressions):
     subexpressions[0] = subexpressions[1]
 
 def p_arithmetic_expression_plus(subexpressions):
-    'arithmetic_expression : arithmetic_expression PLUS termino'
+    'arithmetic_expression : arithmetic_expression PLUS term'
     subexpressions[0] = Addition(subexpressions[1], subexpressions[3])
 
 def p_arithmetic_expression_minus(subexpressions):
@@ -730,11 +730,11 @@ def p_factor_number(subexpressions):
     subexpressions[0] = Number(subexpressions[1])
 
 def p_factor_vector(subexpressions):
-    'factor : var LBRACKET NATURAL RBRACKET'
+    'factor : VAR LBRACKET NATURAL RBRACKET'
     subexpressions[0] = Number(subexpressions[1])
 
 def p_func_func_wr(subexpressions):
-    'function : function_wr'
+    'function : function_with_return'
     subexpressions[0] = subexpressions[1]
 
 def p_func_print(subexpressions):
@@ -742,23 +742,23 @@ def p_func_print(subexpressions):
     subexpressions[0] = subexpressions[1]
 
 def p_func_wr_mult(subexpressions):
-    'function_wr : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
+    'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
     subexpressions[0] = subexpressions[1]
     
 def p_func_wr_capi(subexpressions):
-    'function_wr : CAPITALIZAR LPAREN STRING RPAREN'
+    'function_with_return : CAPITALIZAR LPAREN STRING RPAREN'
     subexpressions[0] = subexpressions[1]
     
 def p_func_wr_coli(subexpressions):
-    'function_wr : COLINEALES LPAREN var COMMA var  RPAREN'
+    'function_with_return : COLINEALES LPAREN VAR COMMA VAR  RPAREN'
     subexpressions[0] = subexpressions[1]
 
 def p_func_wr_length(subexpressions):
-    'function_wr : LENGTH LPAREN param_length  RPAREN'
+    'function_with_return : LENGTH LPAREN param_length  RPAREN'
     subexpressions[0] = subexpressions[1]
 
 def p_param_me_var(subexpressions):
-    'param_me : var COMMA num n'
+    'param_me : VAR COMMA num n'
     subexpressions[0] = subexpressions[1]
 
 def p_n_bool(subexpressions):
@@ -770,7 +770,7 @@ def p_n_lambda(subexpressions):
     subexpressions[0] = ""
     
 def p_param_l_var(subexpressions):
-    'param_length : var '
+    'param_length : VAR '
     subexpressions[0] = subexpressions[1]
 
 def p_param_l_vector(subexpressions):

@@ -57,7 +57,8 @@ tokens = (
    'COMMENT',
    'STRING',
    'COMA',
-   'NEWLINE'
+   'NEWLINE',
+   'BOOL'
 )
 
 # Regular expression rules for simple tokens

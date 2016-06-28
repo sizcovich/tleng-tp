@@ -20,9 +20,9 @@ def dump_tokens(lexer, output_file):
 
 if __name__ == "__main__":
     if len(argv) != 3:
-        print "Parametros invalidos."
-        print "Uso:"
-        print "  lexer.py archivo_entrada archivo_salida"
+        print( "Parametros invalidos.")
+        print( "Uso:")
+        print( "  lexer.py archivo_entrada archivo_salida")
         exit()
 
     input_file = open(argv[1], "r")
