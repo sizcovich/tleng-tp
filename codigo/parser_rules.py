@@ -671,13 +671,123 @@ def p_l_coma(subexpressions):
 
 def p_l_lambda(subexpressions):
     'l : '
-
-    
     subexpressions[0] = {"value": ""}
 
+def p_list_values_comma(subexpressions):
+    'list_values : COMMA value list_values'
+    subexpressions[0] = subexpressions[1]
 
+def p_list_values_lambda(subexpressions):
+    'list_values : '
+    subexpressions[0] = ""
 
-def p_list_values(subexpressions):
+def p_expression_arithmetic(subexpressions):
+    'expression : arithmetic_expression'
+    subexpressions[0] = subexpressions[1]
+
+def p_expression_exp_string(subexpressions):
+    'expression : expression_string'
+    subexpressions[0] = subexpressions[1]
+
+def p_expression_value(subexpressions):
+    'expression : value'
+    subexpressions[0] = subexpressions[1]
+    
+def p_expression_string_exp_string(subexpressions):
+    'expression_string : expression_string PLUS STRING'
+    subexpressions[0] = subexpressions[1]
+
+def p_arithmetic_expression_plus(subexpressions):
+    'arithmetic_expression : arithmetic_expression PLUS termino'
+    subexpressions[0] = Addition(subexpressions[1], subexpressions[3])
+
+def p_arithmetic_expression_minus(subexpressions):
+    'arithmetic_expression : arithmetic_expression MINUS term'
+    subexpressions[0] = Subtract(subexpressions[1], subexpressions[3])
+
+def p_arithmetic_expression_term(subexpressions):
+    'arithmetic_expression : term'
+    subexpressions[0] = subexpressions[1]
+
+def p_term_times(subexpressions):
+    'term : term TIMES factor'
+    subexpressions[0] = Multiplication(subexpressions[1], subexpressions[3])
+
+def p_term_divide(subexpressions):
+    'term : term DIVIDE factor'
+    subexpressions[0] = Division(subexpressions[1], subexpressions[3])
+
+def p_term_module(subexpressions):
+    'term : term MODULE factor'
+    subexpressions[0] = Module(subexpressions[1], subexpressions[3])
+
+def p_term_factor(subexpressions):
+    'term : factor'
+    subexpressions[0] = subexpressions[1]
+
+def p_factor_number(subexpressions):
+    'factor : num'
+    subexpressions[0] = Number(subexpressions[1])
+
+def p_factor_vector(subexpressions):
+    'factor : var LBRACKET NATURAL RBRACKET'
+    subexpressions[0] = Number(subexpressions[1])
+
+def p_func_func_wr(subexpressions):
+    'function : function_wr'
+    subexpressions[0] = subexpressions[1]
+
+def p_func_print(subexpressions):
+    'function : PRINT LPAREN expression RPAREN'
+    subexpressions[0] = subexpressions[1]
+
+def p_func_wr_mult(subexpressions):
+    'function_wr : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
+    subexpressions[0] = subexpressions[1]
+    
+def p_func_wr_capi(subexpressions):
+    'function_wr : CAPITALIZAR LPAREN STRING RPAREN'
+    subexpressions[0] = subexpressions[1]
+    
+def p_func_wr_coli(subexpressions):
+    'function_wr : COLINEALES LPAREN var COMMA var  RPAREN'
+    subexpressions[0] = subexpressions[1]
+
+def p_func_wr_length(subexpressions):
+    'function_wr : LENGTH LPAREN param_length  RPAREN'
+    subexpressions[0] = subexpressions[1]
+
+def p_param_me_var(subexpressions):
+    'param_me : var COMMA num n'
+    subexpressions[0] = subexpressions[1]
+
+def p_n_bool(subexpressions):
+    'n : COMMA BOOL'
+    subexpressions[0] = subexpressions[1]
+    
+def p_n_lambda(subexpressions):
+    'n : '
+    subexpressions[0] = ""
+    
+def p_param_l_var(subexpressions):
+    'param_length : var '
+    subexpressions[0] = subexpressions[1]
+
+def p_param_l_vector(subexpressions):
+    'param_length : LBRACKET value list_values RBRACKET '
+    subexpressions[0] = subexpressions[1]
+
+def p_param_l_string(subexpressions):
+    'param_length : STRING '
+    subexpressions[0] = subexpressions[1]
+   
+def p_num_decimal(subexpressions):
+    'num : DECIMAL '
+    subexpressions[0] = subexpressions[1]
+    
+def p_num_natural(subexpressions):
+    'num : NATURAL '
+    subexpressions[0] = subexpressions[1]
 
 
 def p_error(subexpressions):
