@@ -100,26 +100,27 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value, print(PROGRAM.value)\}}\\
 
 \textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{G A}\\
-\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = IF(G.value==' ' , ' ', G.value + '$\setminus$n') + A.value\}} \\
+\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = IF(G.value==' ' , ' ', G.value + '$\setminus$n') + A.value, LIST\_SENTENCIES.element = G.element, A.element = G.element\}} \\
 
 \textbf{G} $\rightarrow$ \textbf{comment} \\
-\textit{\{G.value = comment.value\}} \\
+\textit{\{G.value = comment.value + '$\setminus$n'\}} \\
+G.element = 'comment'
 
 \textbf{G} $\rightarrow$ \textbf{SENTENCE} \\
 \textit{\{G.value = indent(G.level) + SENTENCE.value, SENTENCE.level = G.level\}} \\
 
 \textbf{G} $\rightarrow$ newline \\
-\textit{\{G.value = '$\setminus$n'\}} \\
+\textit{\{G.value = ' '\}} \\
 
 \textbf{A} $\rightarrow$ \textbf{LIST\_SENTENCIES}\\
-\textit{\{LIST\_SENTENCIES.level = A.level, A.value = LIST\_SENTENCIES.value\}} \\
+\textit{\{LIST\_SENTENCIES.level = A.level, A.value = IF(((LIST\_SENTENCIES.element == 'sentence' $||$ LIST\_SENTENCIES.element == 'newline') \&\& A.element == 'sentence') $||$ A.element == 'comment', '$\setminus$n') + LIST\_SENTENCIES.value\}} \\
 
 \textbf{A} $\rightarrow$ $\lambda$ \\
-\textit{\{A.value = ' '\}} \\
+\textit{\{A.value = '$\setminus$n'\}} \\
 
 \subsection{Sentencias}
-\textbf{SENTENCE} $\rightarrow$ \textbf{E}; \textbf{POSSIBLECOMMENT}\\ 
-\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value + ';' + POSSIBLECOMMENT.value\}} \\
+\textbf{SENTENCE} $\rightarrow$ \textbf{E};\\ 
+\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value + ';'\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{WHILE} \\ 
 \textit{\{WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value\}} \\
