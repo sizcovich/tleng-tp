@@ -642,6 +642,11 @@ def p_value_list_values(subexpressions):
 
     subexpressions[0] = {"value": value_value, "type": list_values_type}
 
+def p_value_key(subexpressions):
+    'value : LKEY list_registers RKEY'
+    subexpressions[0] = subexpressions[1]
+
+
 
 def p_list_registers(subexpressions):
     'list_registers : assignation l'
