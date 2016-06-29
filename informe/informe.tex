@@ -379,9 +379,9 @@ FUNCTION\_WITH\_RETURN.type = 'natural'\}} \\
 \subsection{Parámetros de funciones}
 \textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
 \textit{\{ PARAM\_ME.value = var.value + ',' + NUM.value + N.value, COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal'), COND(table.isArray(var.value)),\\
-COND(IF(table.getType(var.value) == 'decimal' \&\& N.isTrue, PARAM\_ME.type = 'natural' , PARAM\_ME.type = table.getType(var.value))\}} \\
+PARAM\_ME.type = IF(table.getType(var.value) == 'decimal' \&\& N.isTrue,  'natural' , table.getType(var.value))\}} \\
 
-\textbf{N} $\rightarrow$ ,bool \\
+\textbf{N} $\rightarrow$ ,\textbf{BOOL} \\
 \textit{\{ N.value = ', bool', N.isTrue = N.value\}} \\ 
 
 \textbf{N} $\rightarrow$ $lambda$  \\
@@ -402,6 +402,14 @@ COND(IF(table.getType(var.value) == 'decimal' \&\& N.isTrue, PARAM\_ME.type = 'n
 
 \textbf{NUM} $\rightarrow$ natural \\
 \textit{\{NUM.value = natural.value, NUM.type = 'natural')\}}  \\ 
+
+\subsection{Tipos Booleanos}
+\textbf{BOOL} $\rightarrow$ true \\
+\textit{\{ BOOL.value = 'true' \}} \\ 
+
+\textbf{BOOL} $\rightarrow$ false \\
+\textit{\{ BOOL.value = 'false' \}} \\ 
+
 
 \subsection{Atributos}
 

@@ -571,7 +571,7 @@ def p_value_string(subexpressions):
     subexpressions[0] = {"value": "string", "type": "string"}
 
 def p_value_bool(subexpressions):
-    'value : BOOL'
+    'value : bool'
 
     
     subexpressions[0] = {"value": "bool", "type": "bool"}
@@ -586,7 +586,7 @@ def p_value_var(subexpressions):
     value_type = var_type
 
     if(j_isArray):
-        value_type = table.gatTipe(var_value)
+        value_type = table.getType(var_value)
 
     subexpressions[0] = {"value": var_value, "type": var_type}
 
@@ -748,52 +748,103 @@ def p_func_print(subexpressions):
 
 def p_func_wr_mult(subexpressions):
     'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
-    subexpressions[0] = subexpressions[1]
+    param_me = subexpressions[3]
+
     
 def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN STRING RPAREN'
-    subexpressions[0] = subexpressions[1]
+    texto = subexpressions[3]
+    subexpressions[0]["Value"] = "capitalizar( " + texto["Value"] + " )"
+    subexpressions[0]["Type"] = "string"
+    #faltan cosas
     
 def p_func_wr_coli(subexpressions):
     'function_with_return : COLINEALES LPAREN VAR COMMA VAR  RPAREN'
-    subexpressions[0] = subexpressions[1]
+    var1 = subexpressions[3]
+    var2 = subexpressions[5]
+    subexpressions[0]["Value"] = "colineales( " + var1["Value"] + ", " + var2["Value"] + " )"
+    #faltan cosas
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN param_length  RPAREN'
-    subexpressions[0] = subexpressions[1]
+     fwr  = subexpressions[0]
+     pl = subexpressions[1]
+     fwr["Value"] = "length( " + pl["Value"] + " )"
+     fwr["Type"] = "natural"
+     subexpressions[0] = fwr
+     #faltan cosas
 
 def p_param_me_var(subexpressions):
     'param_me : VAR COMMA num n'
-    subexpressions[0] = subexpressions[1]
+    param_me = subexpressions[0]
+    var = subexpressions[1]
+    comma = subexpressions[2]
+    num = subexpressions[3]
+    n = subexpressions[4]
+    param_me["Value"] = var["Value"] + "," + num["Value"] + n["Value"]
+    table_var_type = table.getType(var["Value"])
+    assert( table_var_type == "natural" or table_var_type == "decimal" )
+    assert( table.isArray(var["Value"]))
+    if table_var_type == "decimal" and n["isTrue"] :
+        param_me["Type"] = "decimal"
+    else:
+        param_me["Type"] = table_var_type
+    subexpressions[0] = param_me
+
+
 
 def p_n_bool(subexpressions):
-    'n : COMMA BOOL'
-    subexpressions[0] = subexpressions[1]
-    
+    'n : COMMA bool'
+    n = subexpressions[0]
+    booleano = subexpressions[2]
+    n["Value"] = ", " + booleano["Value"]
+    n["isTrue"] = booleano["Value"] == "true"
+    subexpressions[0] = n
+
 def p_n_lambda(subexpressions):
     'n : '
-    subexpressions[0] = ""
+    subexpressions[0] = {"Value": "", "isTrue": false}
     
 def p_param_l_var(subexpressions):
     'param_length : VAR '
-    subexpressions[0] = subexpressions[1]
+    var = subexpressions[1]
+    assert( table.isArray(var["Value"]) or table.getType(var["Value"]) )
+    subexpressions[0] = {"Value": var["Value"]}
 
 def p_param_l_vector(subexpressions):
     'param_length : LBRACKET value list_values RBRACKET '
-    subexpressions[0] = subexpressions[1]
+    val = subexpressions[2]
+    list_val = subexpressions[3]
+    res =  subexpressions[0]
+    res["Value"] = "["+ val["Value"] + list_val["Value"] + "]"
+    if val["Type"] == "natural":
+        res["Type"] = "decimal"
+    else:
+        res["Type"] = val["Type"]
+    subexpressions[0] = res
 
 def p_param_l_string(subexpressions):
     'param_length : STRING '
-    subexpressions[0] = subexpressions[1]
+    texto = subexpressions[1]
+    subexpressions[0] = {"value": texto["Value"]}
    
 def p_num_decimal(subexpressions):
     'num : DECIMAL '
-    subexpressions[0] = subexpressions[1]
+    dec = subexpressions[1]
+    subexpressions[0] = {"value": dec["Value"], "Type": "decimal"}
     
 def p_num_natural(subexpressions):
     'num : NATURAL '
-    subexpressions[0] = subexpressions[1]
+    nat = subexpressions[1]
+    subexpressions[0] = {"value": nat["Value"], "Type": "natural"}
 
+def p_bool_true(subexpressions):
+    'bool : TRUE '
+    subexpressions[0] = {"value": "true"}
+    
+def p_bool_false(subexpressions):
+    'bool : FALSE '
+    subexpressions[0] = {"value": "false"}
 
 def p_error(subexpressions):
     raise Exception("Syntax error.")
