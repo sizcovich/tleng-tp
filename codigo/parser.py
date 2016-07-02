@@ -8,7 +8,7 @@ import yacc
 
 def dump_ast(ast, output_file):
     output_file.write("digraph {\n")
-    
+
     edges = []
     queue = [ast]
     numbers = {ast: 1}
@@ -44,9 +44,13 @@ if __name__ == "__main__":
     lexer = lex.lex(module=lexer_rules)
     parser = yacc.yacc(module=parser_rules)
 
-
-    ast = parser.parse(text, lexer)
-
-    output_file = open(argv[2], "w")
-    dump_ast(ast, output_file)
-    output_file.close()
+    try:
+        ast = parser.parse(text, lexer)
+        output_file = open(argv[2], "w")
+        dump_ast(ast, output_file)
+        output_file.close()
+        #parser.parse(text, lexer)
+    except parser_rules.SemanticException as exception:
+        print "Semantic error: " + str(exception)
+    else:
+        print "Syntax is valid."
