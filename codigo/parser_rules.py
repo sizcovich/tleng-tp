@@ -14,18 +14,52 @@ class SemanticException(Exception):
 #table.getType(var.value)
 
 
+table = {}
+
+def insertOrUpdate(name, type, isArray):
+    datos = (type, isArray)
+    table[name] = datos
+
+def isArray(name):
+
+    isArray = False
+    if (table.has_key(name)!= False):
+        datos =table[name]
+        isArray = datos[1]
+
+    return isArray
+
+def getType(name):
+    type = None
+    if (table.has_key(name)!= False):
+        datos =table[name]
+        type = datos[0]
+
+    return type
+
+def indent(cant):
+    return "        "
+
+
 def p_program(subexpressions):
     'program : list_sentencies'
 
     #{LIST SENTENCIES.level = 0, PROGRAM.value = LIST SENTENCIES.value}
     list_sentencies = subexpressions[1]
 
-    subexpressions[0] = {"level": 0, "value": list_sentencies["value"]}
+    subexpressions[0] = {"value": list_sentencies["value"]}
+    subexpressions[1] = {"level": 0}
+
+    print "g_level"
+    print subexpressions[1]["level"]
+
+
     print(list_sentencies["value"])
 
 def p_list_sentencies(subexpressions):
     'list_sentencies : g a'
     #{G.level = LIST_SENTENCIES.level, A.level = LIST_SENTENCIES.level, LIST_SENTENCIES.value= IF(G.value=='' , '', G.value + '\n') + A.value, LIST_SENTENCIES.element = G.element,A.element = G.element}
+    list_sentencies = subexpressions[0]
     g = subexpressions[1]
     a = subexpressions[2]
 
@@ -52,7 +86,9 @@ def p_g_sentence(subexpressions):
     g = subexpressions[0]
     sentence = subexpressions[1]
 
-    subexpressions[0] = {"value": indent(g["level"]) + sentence["value"]}
+    #level = g["level"]
+    level = 0
+    subexpressions[0] = {"value": indent(level) + sentence["value"]}
     subexpressions[1] = {"level": g["level"]}
 
 
@@ -348,6 +384,7 @@ def p_assignationorlambda_lambda(subexpressions):
     subexpressions[0] = {"value": ""}
 
 
+#ojo cambie la condicion
 def p_assignation(subexpressions):
     'assignation : VAR b'
 
@@ -355,12 +392,15 @@ def p_assignation(subexpressions):
     b = subexpressions[2]
     var = subexpressions[1]
 
-    if not(b["isArray"] and table(var["value"])!= None and table.getType(var["values"]) == b["type"] and b["isArray"] == table.isArray(var["value"])):
-        raise SemanticException("No puede agregarle a un array un elemento de tipo distinto al tipo del array")
 
-    table.insertOrUpdate(var["value"],b["type"], b["isArray"])
+    if table.has_key(var) == True:
+        if getType(var) != b["type"] or b["isArray"] == isArray(var):
+            raise SemanticException("No puede agregarle a un array un elemento de tipo distinto al tipo del array")
 
-    subexpressions[0] = {"value": var["value"] + b["value"]}
+    insertOrUpdate(var,b["type"], b["isArray"])
+
+
+    subexpressions[0] = {"value": var + b["value"]}
 
 
 def p_b_array(subexpressions):
@@ -801,31 +841,58 @@ def p_arithmetic_expression_term(subexpressions):
     subexpressions[0] = {"value": term["value"], "type": term["type"]}
 
 
-
-
 def p_term_times(subexpressions):
     'term : term TIMES factor'
-    subexpressions[0] = Multiplication(subexpressions[1], subexpressions[3])
+    #{TERM.value = TERM1.value +'*'+FACTOR.value, TERM.type=FACTOR.type }
+    term = subexpressions[1]
+    factor = subexpressions[3]
+
+    subexpressions[0] = {"value": term["value"] + " * " + factor["value"], "type": factor["type"]}
 
 def p_term_divide(subexpressions):
     'term : term DIVIDE factor'
-    subexpressions[0] = Division(subexpressions[1], subexpressions[3])
+    #{TERM.value = TERM1.value + '/' + FACTOR.value, TERM.type = FACTOR.type}
+    term = subexpressions[1]
+    factor = subexpressions[3]
+
+    subexpressions[0] = {"value": term["value"] + " / " + factor["value"], "type": factor["type"]}
 
 def p_term_module(subexpressions):
     'term : term MODULE factor'
-    subexpressions[0] = Module(subexpressions[1], subexpressions[3])
+    #{TERM.value = TERM1.value + '%' + FACTOR.value, TERM.type = FACTOR.type}
+    term = subexpressions[1]
+    factor = subexpressions[3]
+
+    subexpressions[0] = {"value": term["value"] + " % " + factor["value"], "type": factor["type"]}
+
 
 def p_term_factor(subexpressions):
     'term : factor'
-    subexpressions[0] = subexpressions[1]
+
+    #{TERM.value = FACTOR.value, TERM.type = FACTOR.type}
+    factor = subexpressions[1]
+    subexpressions[0] = {"value": factor["value"], "type": factor["type"]}
+
 
 def p_factor_number(subexpressions):
     'factor : num'
-    subexpressions[0] = Number(subexpressions[1])
+    #{FACTOR.value = NUM.value, FACTOR.type = 'decimal'}
+    num = subexpressions[1]
+    subexpressions[0] = {"value": num["value"], "type": "decimal"}
 
+#ojo la condicion no va
 def p_factor_vector(subexpressions):
     'factor : VAR LBRACKET NATURAL RBRACKET'
-    subexpressions[0] = Number(subexpressions[1])
+
+    #{FACTOR.value = var.value + '[' + NUM.value + ']', FACTOR.type = 'decimal', COND(NUM.type == 'natural'), COND(table.getType(var.value) == 'natural' || table.getType(var.value) == 'decimal')}
+    var = subexpressions[1]
+    natural = subexpressions[3]
+
+    if not (getType(var) == 'natural' or getType(va) == 'decimal'):
+        raise SemanticException("El tipo de la variable no es numerico")
+
+
+    subexpressions[0] = {"value": var["value"]+ "[" + natual["value"] + "] ", "type": "decimal"}
 
 def p_func_func_wr(subexpressions):
     'function : function_with_return'
@@ -921,13 +988,13 @@ def p_param_l_string(subexpressions):
 def p_num_decimal(subexpressions):
     'num : DECIMAL '
     dec = subexpressions[1]
-    subexpressions[0] = {"value": dec["value"], "type": "decimal"}
+    subexpressions[0] = {"value": str(dec["value"]), "type": "decimal"}
 
 #ojo cambiada
 def p_num_natural(subexpressions):
     'num : NATURAL'
     nat = subexpressions[1]
-    subexpressions[0] = {"value": nat, "type": "natural"}
+    subexpressions[0] = {"value": str(nat), "type": "natural"}
 
 def p_bool_true(subexpressions):
     'bool : TRUE '
