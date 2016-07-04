@@ -93,49 +93,48 @@ FACTOR $\rightarrow$ NUM $|$ var[NUM] \\
 NUM $\rightarrow$ decimal $|$ natural
 
 
+
+\newpage
+
 \section{Gramática de Atributos}
 
 \subsection{Inicio del programa}
 \textbf{PROGRAM} $\rightarrow$ \textbf{LIST\_SENTENCIES} \\
-\textit{\{LIST\_SENTENCIES.level = 0, PROGRAM.value = LIST\_SENTENCIES.value, print(PROGRAM.value)\}}\\
+\textit{\{PROGRAM.value = LIST\_SENTENCIES.value, print(PROGRAM.value)\}}\\
 
-\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{G A}\\
-\textit{\{G.level = LIST\_SENTENCIES.level, A.level = LIST\_SENTENCIES.level, LIST\_SENTENCIES.value = IF(G.value==' ' , ' ', G.value + '$\setminus$n') + A.value, LIST\_SENTENCIES.element = G.element, A.element = G.element\}} \\
+\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{newline A}\\
+\textit{\{LIST\_SENTENCIES.value = A.value, LIST\_SENTENCIES.element = 'newline'\}} \\
 
-\textbf{G} $\rightarrow$ \textbf{comment} \\
-\textit{\{G.value = comment.value + '$\setminus$n'\}} \\
-G.element = 'comment'
+\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{comment A}\\
+\textit{\{LIST\_SENTENCIES.value = A.value, LIST\_SENTENCIES.element = 'comment'\}} \\
 
-\textbf{G} $\rightarrow$ \textbf{SENTENCE} \\
-\textit{\{G.value = indent(G.level) + SENTENCE.value, SENTENCE.level = G.level\}} \\
-
-\textbf{G} $\rightarrow$ newline \\
-\textit{\{G.value = ' '\}} \\
+\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{SENTENCE A}\\
+\textit{\{LIST\_SENTENCIES.value = SENTENCE.value + IF(A.element!='comment' , '$\setminus$n') + A.value, LIST\_SENTENCIES.element = 'sentence'\}} \\
 
 \textbf{A} $\rightarrow$ \textbf{LIST\_SENTENCIES}\\
-\textit{\{LIST\_SENTENCIES.level = A.level, A.value = IF(((LIST\_SENTENCIES.element == 'sentence' $||$ LIST\_SENTENCIES.element == 'newline') \&\& A.element == 'sentence') $||$ A.element == 'comment', '$\setminus$n') + LIST\_SENTENCIES.value\}} \\
+\textit{\{A.value = LIST\_SENTENCIES.value, A.element = LIST\_SENTENCIES.element\}} \\
 
 \textbf{A} $\rightarrow$ $\lambda$ \\
-\textit{\{A.value = '$\setminus$n'\}} \\
+\textit{\{A.value = '', A.element = ''\}} \\
 
 \subsection{Sentencias}
 \textbf{SENTENCE} $\rightarrow$ \textbf{E};\\ 
-\textit{\{E.level = SENTENCE.level, SENTENCE.value = E.value + ';'\}} \\
+\textit{\{SENTENCE.value = E.value + ';'\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{WHILE} \\ 
-\textit{\{WHILE.level = SENTENCE.level, SENTENCE.value = WHILE.value\}} \\
+\textit{\{SENTENCE.value = WHILE.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{IF\_ELSE}  \\ 
-\textit{\{IF\_ELSE.level = SENTENCE.level, SENTENCE.value = IF\_ELSE.value\}} \\
+\textit{\{SENTENCE.value = IF\_ELSE.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{FOR} \\ 
-\textit{\{FOR.level = SENTENCE.level, SENTENCE.value = FOR.value\}} \\
+\textit{\{SENTENCE.value = FOR.value\}} \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{DO\_WHILE} \\ 
-\textit{\{DO\_WHILE.level = SENTENCE.level, SENTENCE.value = DO\_WHILE.value\}}  \\
+\textit{\{SENTENCE.value = DO\_WHILE.value\}}  \\
 
 \textbf{SENTENCE} $\rightarrow$ \textbf{FUNCTION}; \textbf{POSSIBLECOMMENT} \\
-\textit{\{FUNCTION.level = SENTENCE.level, SENTENCE.value = FUNCTION.value + ';' + POSSIBLECOMMENT.value\}} \\
+\textit{\{SENTENCE.value = FUNCTION.value + ';' + POSSIBLECOMMENT.value\}} \\
 
 \subsection{Terminados en ;}
 
@@ -147,6 +146,12 @@ G.element = 'comment'
 
 \textbf{E} $\rightarrow$ \textbf{CONDITIONAL} \\
 \textit{\{E.value = CONDITIONAL.value\}} \\
+
+\textbf{E} $\rightarrow$ var \\
+\textit{\{E.value = var.value\}} \\
+
+\textbf{E} $\rightarrow$ var \textbf{C} \\
+\textit{\{E.value = var.value + C.value\}} \\
 
 \subsection{Comentarios}
 
@@ -167,28 +172,28 @@ G.element = 'comment'
 
 \subsection{Estructuras de control}
 \textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{KEYS.level = WHILE.level + 1, WHILE.value = indent(WHILE.level) + 'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
+\textit{\{'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
 \textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{KEYS.level = IF\_ELSE.level + 1, IF\_ELSE.value = indent(IF\_ELSE.level) + IF.value + 'else' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
+\textit{\{IF\_ELSE.value = IF\_ELSE.level + IF.value + 'else' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
 \textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
-\textit{\{KEYS.level = IF.level + 1, IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}} \\
+\textit{\{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
 \textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
 \textit{\{CONDITIONAL.value = '(' + CONDITION.value + ')?' + $EXPRESSION_{1}$.value + ':' + $EXPRESSION_{2}$.value\}}\\
 	
 \textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATIONORLAMBDA}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
-\textit{\{KEYS.level = FOR.level + 1, FOR.value = indent(FOR.level) + 'for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + KEYS.value\}}\\
+\textit{\{FOR.value = 'for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}}\\
 
 \textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{$POSSIBLECOMMENT_{1}$ LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{$POSSIBLECOMMENT_{2}$} \\
-\textit{\{LIST\_SENTENCIES.level = DO\_WHILE.level + 1, DO\_WHILE.value = indent(DO\_WHILE.level) + 'do{' + $POSSIBLECOMMENT_{1}$.value + '$\setminus$n' + LIST\_SENTENCIES.value + '} while(' + CONDITION.value + '); ' + $POSSIBLECOMMENT_{2}$.value + '$\setminus$n'\}}\\
+\textit{\{DO\_WHILE.value = 'do{' + $POSSIBLECOMMENT_{1}$.value + '$\setminus$n' + indent(LIST\_SENTENCIES.value) + '} while(' + CONDITION.value + '); ' + $POSSIBLECOMMENT_{2}$.value + '$\setminus$n'\}}\\
 
 \textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
-\textit{\{COMMENT\_LIST.level = KEYS.level, SENTENCE.level = KEYS.level, KEYS.value = COMMENT\_LIST.value + indent(KEYS.level) + SENTENCE.value\}} \\
+\textit{\{KEYS.value = COMMENT\_LIST.value + SENTENCE.value\}} \\
 
 \textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
-\textit{\{LIST\_SENTENCIES.level = KEYS.level, KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
+\textit{\{KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
 
 \subsection{Asignaciones}
 
@@ -216,24 +221,20 @@ IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.t
 \textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
 \textit{\{ADVANCE.value = ' '\}} \\
 
+
 \subsection{Incremento y Decremento}
-\textbf{C} $\rightarrow$ +\textbf{D} \\ 
-\textit{\{ C.value = '+' + D.value   \}} \\
+\textbf{C} $\rightarrow$ ++ \\ 
+\textit{\{ C.value = '++' \}} \\
 
-\textbf{C} $\rightarrow$ -\textbf{F} \\
-\textit{\{ C.value = '-' + F.value   \}} \\
+\textbf{C} $\rightarrow$ += \textbf{NUM} \\
+\textit{\{ C.value = '+=' + NUM.value\}} \\
 
-\textbf{D} $\rightarrow$ +   \\
-\textit{\{ D.value = '+'  \}} \\
+\textbf{C} $\rightarrow$ --  \\
+\textit{\{ C.value = '--'  \}} \\
 
-\textbf{D} $\rightarrow$ = \textbf{NUM} \\
-\textit{\{ D.value =  '=' + NUM.value  \}} \\
+\textbf{C} $\rightarrow$ -= \textbf{NUM} \\
+\textit{\{ C.value = '-=' + NUM.value \}} \\
 
-\textbf{F} $\rightarrow$ - \\
-\textit{\{ F.value = '-'  \}} \\
-
-\textbf{F} $\rightarrow$ = \textbf{NUM} \\
-\textit{\{ F.value =  '=' + NUM.value\}} \\
 
 \subsection{Condiciones}
 \textbf{CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
@@ -324,7 +325,18 @@ IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.t
 \textbf{EXPRESSION} $\rightarrow$ \textbf{VALUE} \\
 \textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}} \\
 
-\textbf{$EXPRESSION\_STRING_1$} $\rightarrow$ \textbf{$EXPRESSION\_STRING_2$} + \textbf{string} \\ \textit{\{$EXPRESSION\_STRING_1$.value =  $EXPRESSION\_STRING_2$.value + '+' + string.value\}} \\
+\textbf{$EXPRESSION\_STRING_1$} $\rightarrow$ \textbf{$EXPRESSION\_STRING_2$} \textbf{W}
+\\ \textit{\{$EXPRESSION\_STRING_1$.value =  $EXPRESSION\_STRING_2$.value + W.value\}} \\
+
+\textbf{EXPRESSION\_STRING} $\rightarrow$  $lambda$ \\ 
+\textit{\{EXPRESSION\_STRING.value = ''\}} \\
+
+\textbf{W} $\rightarrow$  $lambda$ \\ 
+\textit{\{W.value = ''\}} \\
+
+\textbf{W} $\rightarrow$ + string \\ 
+\textit{\{W.value = '+' + string.value\}} \\
+
 
 \textbf{$ARITHMETIC\_EXPRESSION_1$} $\rightarrow$ \textbf{$ARITHMETIC\_EXPRESSION_2$} + \textbf{TERM} \\
 \textit{\{$ARITHMETIC\_EXPRESSION_1$.value = $ARITHMETIC\_EXPRESSION_2$.value + '+' + TERM.value, $ARITHMETIC\_EXPRESSION_2$.type = TERM.type\}} \\
@@ -351,9 +363,17 @@ IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.t
 \textbf{FACTOR} $\rightarrow$ \textbf{NUM}   \\
 \textit{\{FACTOR.value = NUM.value, FACTOR.type = 'decimal'\}} \\
 
+\textbf{FACTOR} $\rightarrow$ var  \\ 
+\textit{\{FACTOR.value = var.value, FACTOR.type = 'decimal', COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal')\}}  \\ 
+\\
+
+
 \textbf{FACTOR} $\rightarrow$ var[\textbf{NUM}]  \\ 
 \textit{\{FACTOR.value = var.value + '[' + NUM.value + ']', FACTOR.type = 'decimal', COND(NUM.type == 'natural'), COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal')\}}  \\ 
 \\
+
+
+
 
 \subsection{Funciones}
 \textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\

@@ -46,7 +46,7 @@ tokens = (
    'BEGIN',
    'END',
    'RETURN',
-   'RES',
+   #'RES',
    'DOT',
    'COMMA',
    'LBRACKET',
@@ -133,9 +133,9 @@ def t_DO(t):
   r'do'
   return t
 
-def t_RES(t):
-  r'res'
-  return t
+#def t_RES(t):
+#  r'res'
+#  return t
 
 def t_RETURN(t):
   r'return'
@@ -186,18 +186,19 @@ def t_VAR(t):
     r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
     return t
 
-def t_NATURAL(t):
-    r'\d+'
-    t.value = int(t.value)
-    return t
-
 def t_DECIMAL(t):
     r'\d+.\d+'
     t.value = float(t.value)
     return t
 
+def t_NATURAL(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+
 def t_STRING(t):
-    r'".*"'
+    r'\".*\"'
     return t
 
 def t_COMMENT(t):
