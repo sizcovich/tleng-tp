@@ -201,8 +201,10 @@ def t_STRING(t):
     r'\".*\"'
     return t
 
+
+ 
 def t_COMMENT(t):
-    r'\#(.|\n)*?(?=\n)'
+    r'\#.*'
     return t
 
 # A string containing ignored characters (spaces and tabs)
