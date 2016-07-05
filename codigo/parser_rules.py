@@ -191,13 +191,6 @@ def p_ecomparable_conditional(subexpressions):
 
     subexpressions[0] = {"value": conditional["value"]}
 
-def p_ecomparable_var(subexpressions):
-    'ecomparable : VAR'
-
-    #{ECOMPARABLE.value = CONDITIONAL.value}
-    var = subexpressions[1]
-
-    subexpressions[0] = {"value": var}
 
 def p_possiblecomment_comment(subexpressions):
     'possiblecomment : COMMENT'
@@ -265,6 +258,7 @@ def p_while(subexpressions):
     #{WHILE.value = 'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     while1 = subexpressions[0]
     condition = subexpressions[3]
+
 
 
     possiblecomment = subexpressions[5]
@@ -491,67 +485,80 @@ def p_c_minequal(subexpressions):
     subexpressions[0] = {"value": "-=" + value["value"]}
 
 
-def p_condition_bool(subexpressions):
-    'condition : bool'
 
-    #{CONDITION.value = LOGICAL_CONDITION.value}
-    bool1 = subexpressions[1]
+def p_condition_or(subexpressions):
+    'condition : condition OR x'
 
-    subexpressions[0] = {"value": bool1["value"]}
+    #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
+    condition1 = subexpressions[1]
+    x = subexpressions[3]
+
+    subexpressions[0] = {"value": condition1["value"] + " or " + x["value"]}
+
+
+def p_condition_x(subexpressions):
+    'condition : x'
+
+
+    #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
+    x = subexpressions[1]
+
+    subexpressions[0] = {"value": x["value"]}
+
+
+def p_y_and(subexpressions):
+    'x : x AND y'
+
+    #{ H.value = 'and' + BOOLEAN_CONDITION.value}
+
+    x = subexpressions[1]
+    y = subexpressions[3]
+
+    subexpressions[0] = {"value": x["value"] + " and " + y["value"]}
+
+def p_x_y(subexpressions):
+    'x : y'
+
+    #{ H.value = 'and' + BOOLEAN_CONDITION.value}
+
+    y = subexpressions[1]
+
+    subexpressions[0] = {"value": y["value"]}
 
 
 
-def p_condition_logical_condition(subexpressions):
-    'condition : logical_condition'
+def p_y_not(subexpressions):
+    'y : NOT y'
 
-    #{CONDITION.value = LOGICAL_CONDITION.value}
+    #{ H.value = 'or' + BOOLEAN_CONDITION.value}
+    y = subexpressions[2]
+
+
+    subexpressions[0] = {"value": " not " + y["value"]}
+
+
+def p_y_parent(subexpressions):
+    'y : LPAREN y RPAREN'
+
+    #{ H.value = 'or' + BOOLEAN_CONDITION.value}
+    y = subexpressions[2]
+
+    subexpressions[0] = {"value": " ( " + y["value"] + " ) "}
+
+
+def p_y_logical_condition(subexpressions):
+    'y : logical_condition'
+    #{H.value = ''}
     logical_condition = subexpressions[1]
 
     subexpressions[0] = {"value": logical_condition["value"]}
 
-
-def p_condition_boolean_condition(subexpressions):
-    'condition : boolean_condition'
-
-    #{ CONDITION.value = BOOLEAN_CONDITION.value}
-    boolean_condition = subexpressions[1]
-
-    subexpressions[0] = {"value": boolean_condition["value"]}
-
-
-def p_boolean_condition(subexpressions):
-    'boolean_condition : logical_condition h'
-
-    #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
-    logical_condition = subexpressions[1]
-    h = subexpressions[2]
-
-    subexpressions[0] = {"value": logical_condition["value"] + h["value"]}
-
-
-def p_h_and(subexpressions):
-    'h : AND boolean_condition'
-
-    #{ H.value = 'and' + BOOLEAN_CONDITION.value}
-    boolean_condition = subexpressions[2]
-
-    subexpressions[0] = {"value": "and" + boolean_condition["value"]}
-
-
-def p_h_or(subexpressions):
-    'h : OR boolean_condition'
-
-    #{ H.value = 'or' + BOOLEAN_CONDITION.value}
-    boolean_condition = subexpressions[2]
-
-    subexpressions[0] = {"value": "or" + boolean_condition["value"]}
-
-
-def p_h_lambda(subexpressions):
-    'h : '
-
+def p_y_bool(subexpressions):
+    'y : bool'
     #{H.value = ''}
-    subexpressions[0] = {"value": ""}
+    bool = subexpressions[1]
+
+    subexpressions[0] = {"value": bool["value"]}
 
 
 def p_logical_condition(subexpressions):

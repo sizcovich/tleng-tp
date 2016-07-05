@@ -141,17 +141,18 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{E} $\rightarrow$ \textbf{ASSIGNATION}\\
 \textit{\{E.value = ASSIGNATION.value\}}\\
 
-\textbf{E} $\rightarrow$ \textbf{EXPRESSION} \\
-\textit{\{E.value = EXPRESSION.value\}} \\
+\textbf{E} $\rightarrow$ \textbf{ADVANCE}\\
+\textit{\{E.value = ADVANCE.value\}}\\
 
-\textbf{E} $\rightarrow$ \textbf{CONDITIONAL} \\
-\textit{\{E.value = CONDITIONAL.value\}} \\
+\textbf{E} $\rightarrow$ \textbf{ECOMPARABLE}\\
+\textit{\{E.value = ECOMPARABLE.value\}}\\
 
-\textbf{E} $\rightarrow$ var \\
-\textit{\{E.value = var.value\}} \\
+\textbf{ECOMPARABLE} $\rightarrow$ \textbf{EXPRESSION} \\
+\textit{\{ECOMPARABLE.value = EXPRESSION.value\}} \\
 
-\textbf{E} $\rightarrow$ var \textbf{C} \\
-\textit{\{E.value = var.value + C.value\}} \\
+\textbf{ECOMPARABLE} $\rightarrow$ \textbf{CONDITIONAL} \\
+\textit{\{ECOMPARABLE.value = CONDITIONAL.value\}} \\
+
 
 \subsection{Comentarios}
 
@@ -170,20 +171,28 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
 \textit{\{COMMENT\_LIST.value = ' '\}} \\
 
+\subsection{Newlines}
+\textbf{POSSIBLENEWLINE} $\rightarrow$ newline \\
+\textit{\{POSSIBLENEWLINE.value = newline.value\}} \\
+
+\textbf{POSSIBLENEWLINE} $\rightarrow$ $\lambda$ \\
+\textit{\{POSSIBLENEWLINE.value = ' '\}} \\
+
+
 \subsection{Estructuras de control}
-\textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
+\textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
 \textit{\{'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
-\textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT KEYS} \\
+\textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
 \textit{\{IF\_ELSE.value = IF\_ELSE.level + IF.value + 'else' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
-\textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT KEYS} \\
+\textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
 \textit{\{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
 
 \textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
 \textit{\{CONDITIONAL.value = '(' + CONDITION.value + ')?' + $EXPRESSION_{1}$.value + ':' + $EXPRESSION_{2}$.value\}}\\
 	
-\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATIONORLAMBDA}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT KEYS}  \\
+\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATIONORLAMBDA}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS}  \\
 \textit{\{FOR.value = 'for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}}\\
 
 \textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{$POSSIBLECOMMENT_{1}$ LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{$POSSIBLECOMMENT_{2}$} \\
@@ -192,7 +201,7 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
 \textit{\{KEYS.value = COMMENT\_LIST.value + SENTENCE.value\}} \\
 
-\textbf{KEYS} $\rightarrow$ \{ \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \\
+\textbf{KEYS} $\rightarrow$ \{  \textbf{POSSIBLENEWLINE} \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \textbf{POSSIBLENEWLINE}  \\
 \textit{\{KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
 
 \subsection{Asignaciones}
@@ -208,8 +217,10 @@ NUM $\rightarrow$ decimal $|$ natural
 \textit{\{ASSIGNATION.value = var.value + B.value, 
 IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.type \&\& B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value, B.type, B.isArray)\}} \\
 
-\textbf{B} $\rightarrow$ [natural] = \textbf{EXPRESSION}  \\
+\textbf{B} $\rightarrow$ [EXPRESSION] = \textbf{EXPRESSION}  \\
 \textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true\}} \\
+falta la condicion de que lo que esta entre parentesis sea de tipo natural 
+
 
 \textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
 \textit{\{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false\}} \\
@@ -226,37 +237,62 @@ IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.t
 \textbf{C} $\rightarrow$ ++ \\ 
 \textit{\{ C.value = '++' \}} \\
 
-\textbf{C} $\rightarrow$ += \textbf{NUM} \\
-\textit{\{ C.value = '+=' + NUM.value\}} \\
+\textbf{C} $\rightarrow$ += \textbf{VALUE} \\
+\textit{\{ COND(VALUE.type == 'natural' or VALUE.type ==  'decimal' or VALUE.type ==  'string'), C.value = '+=' + VALUE.value\}} \\
 
 \textbf{C} $\rightarrow$ --  \\
 \textit{\{ C.value = '--'  \}} \\
 
-\textbf{C} $\rightarrow$ -= \textbf{NUM} \\
-\textit{\{ C.value = '-=' + NUM.value \}} \\
+\textbf{C} $\rightarrow$ -= \textbf{VALUE} \\
+\textit{\{ COND(VALUE.type == 'natural' or VALUE.type ==  'decimal' or VALUE.type ==  'string') C.value = '-=' + VALUE.value \}} \\
 
 
 \subsection{Condiciones}
-\textbf{CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
-\textit{\{CONDITION.value = LOGICAL\_CONDITION.value\}}\\
 
-\textbf{CONDITION} $\rightarrow$ \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ CONDITION.value = BOOLEAN\_CONDITION.value\}} \\
+\textbf{CONDITION} $\rightarrow$ \textbf{CONDITION} or \textbf{X} \\
+\textit{\{BCONDITION.value = \}} \\
 
-\textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
-\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value\}} \\
+\textbf{CONDITION} $\rightarrow$ \textbf{X} \\
+\textit{\{CONDITION.value = \}} \\
 
-\textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value\}} \\
 
-\textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
-\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value\}} \\
+\textbf{X} $\rightarrow$  \textbf{X} and \textbf{Y} \\
+\textit{\{ X.value = \}} \\
 
-\textbf{H} $\rightarrow$ $lambda$ \\
-\textit{\{H.value = ' '\}} \\
+\textbf{X} $\rightarrow$ \textbf{Y} \\
+\textit{\{ X.value =\}} \\
+
+\textbf{Y} $\rightarrow$ not \textbf{Y} \\
+\textit{\{Y.value = \}} \\
+
+\textbf{Y} $\rightarrow$ ( \textbf{Y} ) \\
+\textit{\{Y.value = \}} \\
+
+\textbf{Y} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
+\textit{\{Y.value = LOGICAL\_CONDITION.value\}}\\
+
+\textbf{Y} $\rightarrow$ \textbf{BOOL}   \\
+\textit{\{Y.value = BOOL.value\}}\\
+
 
 \textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
 \textit{\{ LOGICAL\_CONDITION.value = E.value + I.value\}} \\
+
+
+%\textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
+%\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value\}} \\
+
+%\textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
+%\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value\}} \\
+
+%\textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
+%\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value\}} \\
+
+%\textbf{H} $\rightarrow$ $lambda$ \\
+%\textit{\{H.value = ' '\}} \\
+
+%\textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
+%\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value\}} \\
 
 \subsection{Comparaciones}
 \textbf{I} $\rightarrow$ $>$ \textbf{E} \\
