@@ -10,6 +10,7 @@ def dump_ast(ast, output_file):
     output_file.write("digraph {\n")
     key = frozenset(ast.items())
 
+
     edges = []
     queue = [ast]
     numbers = {ast: 1}
@@ -47,7 +48,6 @@ if __name__ == "__main__":
 
     try:
         ast = parser.parse(text, lexer)
-        print ast
         output_file = open(argv[2], "w")
         #dump_ast(ast, output_file)
         output_file.close()
