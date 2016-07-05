@@ -205,7 +205,7 @@ def p_possiblecomment_comment(subexpressions):
     #{POSSIBLECOMMENT.value = comment.value}
     comment = subexpressions[1]
 
-    subexpressions[0] = {"value": comment["value"]}
+    subexpressions[0] = {"value": comment}
 
 
 def p_possiblecomment_lambda(subexpressions):
@@ -214,6 +214,22 @@ def p_possiblecomment_lambda(subexpressions):
     #{POSSIBLECOMMENT.value = ''}
 
     subexpressions[0] = {"value": ""}
+
+def p_possiblenewline_newline(subexpressions):
+    'possiblenewline : NEWLINE'
+
+    #{POSSIBLECOMMENT.value = ''}
+
+    subexpressions[0] = {"value": ""}
+
+def p_possiblenewline_lambda(subexpressions):
+    'possiblenewline : '
+
+    #{POSSIBLECOMMENT.value = comment.value}
+
+    subexpressions[0] = {"value": ""}
+
+
 
 
 #semantica corregida
@@ -224,16 +240,16 @@ def p_comment_list_append(subexpressions):
     comment = subexpressions[1]
     comment_list2 = subexpressions[2]
 
-    subexpressions[0] = {"value": comment["value"] + "\n" + comment_list2["value"]}
+    subexpressions[0] = {"value": comment + "\n" + comment_list2["value"]}
 
 
 def p_comment_list_newline(subexpressions):
     'comment_list : NEWLINE comment_list'
 
     #{COMMENT_LIST1.value = '\n' + COMMENT_LIST2}
-    comment_list2 = subexpressions[1]
+    comment_list2 = subexpressions[2]
 
-    subexpressions[0] = {"value":  '\n' + comment_list2["value"]}
+    subexpressions[0] = {"value":  "\n" + comment_list2["value"]}
 
 
 def p_comment_list_lambda(subexpressions):
@@ -244,25 +260,27 @@ def p_comment_list_lambda(subexpressions):
 
 
 def p_while(subexpressions):
-    'while : WHILE LPAREN condition RPAREN possiblecomment keys'
+    'while : WHILE LPAREN condition RPAREN possiblecomment possiblenewline keys'
 
     #{WHILE.value = 'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     while1 = subexpressions[0]
     condition = subexpressions[3]
+
+
     possiblecomment = subexpressions[5]
-    keys = subexpressions[6]
+    keys = subexpressions[7]
 
     subexpressions[0] = {"value": "while(" + condition["value"] + ")" + possiblecomment["value"] + "\n" + keys["value"]}
 
 
 def p_if_else(subexpressions):
-    'if_else : if ELSE possiblecomment keys'
+    'if_else : if ELSE possiblecomment possiblenewline keys'
 
     #{IF_ELSE.value = IF.value + 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     if_else = subexpressions[0]
     if1 = subexpressions[1]
     possiblecomment = subexpressions[3]
-    keys = subexpressions[4]
+    keys = subexpressions[5]
 
     subexpressions[0] = {"value": if1["value"] + "else" + possiblecomment["value"] + "\n" + keys["value"]}
 
@@ -270,13 +288,13 @@ def p_if_else(subexpressions):
 
 
 def p_if(subexpressions):
-    'if : IF LPAREN condition RPAREN possiblecomment keys'
+    'if : IF LPAREN condition RPAREN possiblecomment possiblenewline keys'
 
     #{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     if1 = subexpressions[0]
     condition = subexpressions[3]
     possiblecomment = subexpressions[5]
-    keys = subexpressions[6]
+    keys = subexpressions[7]
 
     subexpressions[0] = {"value": "if(" + condition["value"] + ")" + possiblecomment["value"] + "\n" + keys["value"]}
 
@@ -293,7 +311,7 @@ def p_conditional(subexpressions):
 
 
 def p_for(subexpressions):
-    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advanceorlambda RPAREN possiblecomment keys'
+    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advanceorlambda RPAREN possiblecomment possiblenewline keys'
 
     #{FOR.value ='for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
 
@@ -301,13 +319,13 @@ def p_for(subexpressions):
     condition = subexpressions[5]
     advance = subexpressions[7]
     possiblecomment = subexpressions[9]
-    keys = subexpressions[10]
+    keys = subexpressions[11]
 
     subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advance["value"]+ ")" + possiblecomment["value"] + "\n" + keys["value"]}
 
 
 def p_do_while(subexpressions):
-    'do_while : DO LKEY possiblecomment list_sentencies RKEY WHILE LPAREN condition RPAREN SEMICOLON possiblecomment'
+    'do_while : DO LKEY possiblecomment list_sentencies RKEY WHILE LPAREN condition RPAREN SEMICOLON possiblecomment possiblenewline'
 
     #{DO_WHILE.value = 'do' + POSSIBLECOMMENT1.value + '\n' + LIST_SENTENCIES.value + ' while(' + CONDITION.value + '); ' + POSSIBLECOMMENT2.value + '\n'}
     do_while = subexpressions[0]
@@ -331,12 +349,13 @@ def p_keys_append_sentence(subexpressions):
 
 
 def p_keys_append_possiblecomment(subexpressions):
-    'keys : RKEY possiblecomment list_sentencies LKEY'
+    'keys : LKEY possiblenewline possiblecomment list_sentencies RKEY possiblenewline'
+
 
     #{KEYS.value = '{' + POSSIBLECOMMENT.value + '\n' + LIST_SENTENCIES.value + '} \n'}
     keys = subexpressions[0]
-    possiblecomment = subexpressions[2]
-    list_sentencies = subexpressions[3]
+    possiblecomment = subexpressions[3]
+    list_sentencies = subexpressions[4]
 
     subexpressions[0] = {"value": "{ " + possiblecomment["value"] +  "\n" + list_sentencies["value"] + "}\n"}
 
@@ -383,19 +402,23 @@ def p_assignation(subexpressions):
 
 
 def p_b_array(subexpressions):
-    'b : LBRACKET NATURAL RBRACKET ASSIGN expression'
+    'b : LBRACKET expression RBRACKET ASSIGN expression'
 
 
     #{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true}
-    natural = subexpressions[2]
-    expression =  subexpressions[5]
+    expression1 = subexpressions[2]
+    expression2 =  subexpressions[5]
 
-    if expression["type"] == "natural":
+    if expression1["type"] != "natural":
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
+
+    if expression2["type"] == "natural":
     	b_type = "decimal"
     else:
-    	b_type = expression["type"]
+    	b_type = expression2["type"]
 
-    subexpressions[0] = {"value": "[" +  natural["value"] + "] = " +  expression["value"], "type": b_type, "isArray": true}
+    subexpressions[0] = {"value": "[" +  expression1["value"] + "] = " +  expression2["value"], "type": b_type, "isArray": True}
 
 
 def p_b_expression(subexpressions):
@@ -466,6 +489,16 @@ def p_c_minequal(subexpressions):
 
     value = subexpressions[2]
     subexpressions[0] = {"value": "-=" + value["value"]}
+
+
+def p_condition_bool(subexpressions):
+    'condition : bool'
+
+    #{CONDITION.value = LOGICAL_CONDITION.value}
+    bool1 = subexpressions[1]
+
+    subexpressions[0] = {"value": bool1["value"]}
+
 
 
 def p_condition_logical_condition(subexpressions):
@@ -628,6 +661,16 @@ def p_value_list_registers(subexpressions):
 
 
 def p_value_var(subexpressions):
+    'value : VAR'
+
+    #{value.value = var.value + J.value, value.type = IF(J.isArray, table.getType(var.value), var.type)}
+    var = subexpressions[1]
+
+    type = getType(var)
+
+    subexpressions[0] = {"value":  var, "type": type}
+
+def p_value_var_array(subexpressions):
     'value : VAR j'
 
     #{value.value = var.value + J.value, value.type = IF(J.isArray, table.getType(var.value), var.type)}
@@ -636,16 +679,19 @@ def p_value_var(subexpressions):
 
     type = getType(var)
 
-    subexpressions[0] = {"value":  type + j["value"], "type": type}
+    subexpressions[0] = {"value":  var + j["value"], "type": type}
 
 
 def p_j_array(subexpressions):
-    'j : LBRACKET num RBRACKET'
+    'j : LBRACKET expression RBRACKET'
 
     #{J.value = '[' + NUM.value + ']', J.isArray = true }
-    num = subexpressions[1]
+    expression = subexpressions[2]
 
-    subexpressions[0] = {"value": "[" + num["value"] + "]", "isArray": true}
+    if expression["type"] != 'natural':
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
+    subexpressions[0] = {"value": "[" + expression["value"] + "]", "isArray": True}
 
 
 def p_j_lambda(subexpressions):
@@ -825,50 +871,16 @@ def p_term_factor(subexpressions):
     subexpressions[0] = {"value": factor["value"], "type": factor["type"]}
 
 
-def p_factor_number(subexpressions):
-    'factor : num'
+def p_factor_value(subexpressions):
+    'factor : value'
     #{FACTOR.value = NUM.value, FACTOR.type = 'decimal'}
-    num = subexpressions[1]
-    subexpressions[0] = {"value": num["value"], "type": "decimal"}
+    value = subexpressions[1]
 
-def p_factor_var(subexpressions):
-    'factor : VAR'
-    #{FACTOR.value = NUM.value, FACTOR.type = 'decimal'}
-    var = subexpressions[1]
+    if value["type"] != 'natural' and value["type"] != 'decimal':
+        raise SemanticException("No puede hacer operaciones con tipos que no son numericos")
 
+    subexpressions[0] = {"value": value["value"], "type": value["type"]}
 
-    if not (getType(var) == 'natural' or getType(var) == 'decimal'):
-        raise SemanticException("El tipo de la variable no es numerico")
-
-    subexpressions[0] = {"value": var, "type": getType(var)}
-
-def p_factor_function_with_return(subexpressions):
-    'factor : function_with_return'
-    #{FACTOR.value = NUM.value, FACTOR.type = 'decimal'}
-    function_with_return = subexpressions[1]
-
-
-    if not (function_with_return["type"] == 'natural' or function_with_return["type"] == 'decimal'):
-        raise SemanticException("El tipo de la variable no es numerico")
-
-    subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"]}
-
-
-
-
-#ojo la condicion no va
-def p_factor_vector(subexpressions):
-    'factor : VAR LBRACKET NATURAL RBRACKET'
-
-    #{FACTOR.value = var.value + '[' + NUM.value + ']', FACTOR.type = 'decimal', COND(NUM.type == 'natural'), COND(table.getType(var.value) == 'natural' || table.getType(var.value) == 'decimal')}
-    var = subexpressions[1]
-    natural = subexpressions[3]
-
-    if not (getType(var) == 'natural' or getType(va) == 'decimal'):
-        raise SemanticException("El tipo de la variable no es numerico")
-
-
-    subexpressions[0] = {"value": var["value"]+ "[" + natual["value"] + "] ", "type": "decimal"}
 
 def p_func_func_wr(subexpressions):
     'function : function_with_return'
