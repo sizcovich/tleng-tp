@@ -204,6 +204,7 @@ def p_ecomparable_expression(subexpressions):
     expression = subexpressions[1]
     subexpressions[0] = {"value": expression["value"], "type": expression["type"], "isArray": expression["isArray"]}
 
+
 def p_ecomparable_condition(subexpressions):
     'ecomparable : condition'
 
@@ -536,10 +537,10 @@ def p_condition_or(subexpressions):
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     condition1 = subexpressions[1]
     x = subexpressions[3]
-    if(condition1["type"] != "bool" or x["type"]!="bool"):
+    if (condition1["type"] != "bool") or (x["type"]!="bool"):
         raise SemanticException("Solo puede operar con booleanos")
 
-    subexpressions[0] = {"value": condition1["value"] + " or " + x["value"], "type": x["type"]}
+    subexpressions[0] = {"value": condition1["value"] + " or " + x["value"], "type": "bool"}
 
 
 def p_condition_x(subexpressions):
@@ -547,7 +548,6 @@ def p_condition_x(subexpressions):
 
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     x = subexpressions[1]
-
     subexpressions[0] = {"value": x["value"], "type": x["type"]}
 
 
@@ -555,13 +555,10 @@ def p_y_and(subexpressions):
     'x : x AND y'
 
     #{ H.value = 'and' + BOOLEAN_CONDITION.value}
-
     x = subexpressions[1]
     y = subexpressions[3]
     if (x["type"] != "bool" or y["type"]!= "bool"):
         raise SemanticException("Solo puede operar con booleanos")
-
-
     subexpressions[0] = {"value": x["value"] + " and " + y["value"], "type": x["type"]}
 
 def p_x_y(subexpressions):
@@ -592,9 +589,9 @@ def p_y_parent(subexpressions):
     'y : LPAREN condition RPAREN'
 
     #{ H.value = 'or' + BOOLEAN_CONDITION.value}
-    y = subexpressions[2]
+    condition = subexpressions[2]
 
-    subexpressions[0] = {"value": " ( " + y["value"] + " ) ", "type": y["type"]}
+    subexpressions[0] = {"value": " ( " + condition["value"] + " ) ", "type": condition["type"]}
 
 
 def p_y_logical_condition(subexpressions):
@@ -627,15 +624,18 @@ def p_logical_condition_less(subexpressions):
     #{ I.value = '<' + E.value }
     ecomparable = subexpressions[2]
 
-    subexpressions[0] = {"value": " <" + ecomparable["value"], "type": "bool"}
+    subexpressions[0] = {"value": " < " + ecomparable["value"], "type": "bool"}
 
 
 def p_logical_condition_greater(subexpressions):
+<<<<<<< Updated upstream
     'i : GREATER possibleparen'
 
+=======
+    'i : GREATER ecomparable' 
+>>>>>>> Stashed changes
     #{ I.value = '>' + E.value }
     ecomparable = subexpressions[2]
-
     subexpressions[0] = {"value": " > " + ecomparable["value"], "type": "bool"}
 
 
