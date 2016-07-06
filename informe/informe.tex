@@ -136,6 +136,9 @@ NUM $\rightarrow$ decimal $|$ natural
 \textbf{SENTENCE} $\rightarrow$ \textbf{FUNCTION}; \textbf{POSSIBLECOMMENT} \\
 \textit{\{SENTENCE.value = FUNCTION.value + ';' + POSSIBLECOMMENT.value\}} \\
 
+\textbf{SENTENCE} $\rightarrow$ \textbf{RETURN EXPRESSION}; \\ 
+\textit{\{SENTENCE.value = 'return' + EXPRESSION.value + ';'\}}  \\
+
 \subsection{Terminados en ;}
 
 \textbf{E} $\rightarrow$ \textbf{ASSIGNATION}\\

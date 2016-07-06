@@ -150,6 +150,14 @@ def p_sentence_function(subexpressions):
 
     subexpressions[0] = {"value": function["value"] + ";"}
 
+def p_sentence_return(subexpressions):
+    'sentence : RETURN expression'
+
+    #{SENTENCE.value = 'return' + E.value + ';'}
+    exp = subexpressions[2]
+
+    subexpressions[0] = {"value": "return " + exp["value"] + "; "}
+
 
 def p_e_ecomparable(subexpressions):
     'e : ecomparable'
@@ -647,16 +655,19 @@ def p_value_list_values(subexpressions):
     'value : LBRACKET value list_values RBRACKET'
 
     #{value1.value = '[ ' + value2.value + LIST_valueS.value + ']', LIST_valueS.type = IF(value2.type == 'natural','decimal',value2.type), value1.type = value2.type}
-    value1 = subexpressions[0]
     value2 = subexpressions[2]
     list_values = subexpressions[3]
 
-    if value2["type"] == 'natural':
-        value1["type"] = 'decimal'
+    if list_values["value"] == "":
+        value1 = value2["type"]
+    elif value2["type"] == "natural" and list_values["type"] == "decimal":
+        value1 = "decimal"
+    elif value2["type"] == "decimal" and list_values["type"] == "natural":
+        value1 = "decimal"
     else:
-        value1["type"] = value2["type"]
+        value1 = value2["type"]
 
-    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1["type"]}
+    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1}
 
 
 #semantica corregida
@@ -727,10 +738,10 @@ def p_list_values_comma(subexpressions):
     value = subexpressions[2]
     list_values2 = subexpressions[3]
 
-    if(value["type"] == 'natural'):
-        value["type"] == 'decimal'
+    if(value["type"] == "natural"):
+        value["type"] = "decimal"
 
-    if ( list_values2["value"] != "" and list_values2["type"] != value["type"]) :
+    if (list_values2["value"] != "" and list_values2["type"] != value["type"]) :
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
     subexpressions[0] = {"value": "," + value["value"] + list_values2["value"], "type": value["type"]}
@@ -934,8 +945,6 @@ def p_param_me_var(subexpressions):
     else:
         param_me["type"] = table_var_type
     subexpressions[0] = param_me
-
-
 
 def p_n_bool(subexpressions):
     'n : COMMA bool'
