@@ -1,5 +1,5 @@
 from lexer_rules import tokens
-import pdb; 
+import pdb;
 
 #from expressions import Addition, Multiplication, Number
 
@@ -200,7 +200,6 @@ def p_ecomparable_expression(subexpressions):
 
     #{ECOMPARABLE.value = EXPRESSION.value}
     expression = subexpressions[1]
-
     subexpressions[0] = {"value": expression["value"], "type": expression["type"]}
 
 def p_ecomparable_conditional(subexpressions):
@@ -420,27 +419,17 @@ def p_assignation(subexpressions):
                     raise SemanticException("No puede agregarle a un array un elemento de tipo distinto al tipo del array")
 
     insertOrUpdate(var,b["type"], b["isArray"])
-
-
     subexpressions[0] = {"value": var + b["value"]}
 
 
 def p_b_array(subexpressions):
     'b : LBRACKET expression RBRACKET ASSIGN expression'
-
-
     #{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true}
     expression1 = subexpressions[2]
     expression2 =  subexpressions[5]
-
     if expression1["type"] != "natural":
         raise SemanticException("El valor para acceder a un array debe ser natural")
-
-
-    if expression2["type"] == "natural":
-        b_type = "decimal"
-    else:
-        b_type = expression2["type"]
+    b_type = expression2["type"]
 
     subexpressions[0] = {"value": "[" +  expression1["value"] + "] = " +  expression2["value"], "type": b_type, "isArray": True}
 
@@ -450,7 +439,6 @@ def p_b_expression(subexpressions):
 
     #{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false}
     ecomparable =  subexpressions[2]
-
     subexpressions[0] = {"value": "= " + ecomparable["value"] , "type": ecomparable["type"], "isArray": False}
 
 
@@ -479,8 +467,6 @@ def p_advance_var(subexpressions):
         raise SemanticException("El tipo a avanzar no es un numero")
 
     subexpressions[0] = {"value":  var + c["value"]}
-
-
 
 def p_c_increment(subexpressions):
     'c : INCREMENT'
@@ -685,9 +671,9 @@ def p_value_list_values(subexpressions):
 
     if list_values["value"] == "":
         value1 = value2["type"]
-    elif value2["type"] == "natural" and list_values["type"] == "decimal":
+    elif (value2["type"] == "natural" and list_values["type"] == "decimal"):
         value1 = "decimal"
-    elif value2["type"] == "decimal" and list_values["type"] == "natural":
+    elif (value2["type"] == "decimal" and list_values["type"] == "natural"):
         value1 = "decimal"
     else:
         value1 = value2["type"]
@@ -763,14 +749,19 @@ def p_list_values_comma(subexpressions):
     value = subexpressions[2]
     list_values2 = subexpressions[3]
 
-    if(value["type"] == "natural"):
-        value["type"] = "decimal"
+    if list_values2["value"] == "":
+        value1 = value["type"]
+    elif (value["type"] == "natural" and list_values2["type"] == "decimal"):
+        value1 = "decimal"
+    elif (value["type"] == "decimal" and list_values2["type"] == "natural"):
+        value1 = "decimal"
+    else:
+        value1 = value["type"]
 
     if (list_values2["value"] != "" and list_values2["type"] != value["type"]) :
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
-    subexpressions[0] = {"value": "," + value["value"] + list_values2["value"], "type": value["type"]}
-
+    subexpressions[0] = {"value": "," + value["value"] + list_values2["value"], "type": value1}
 
 
 def p_list_values_lambda(subexpressions):
@@ -829,7 +820,6 @@ def p_expression_term(subexpressions):
 
     #{ARITHMETIC_EXPRESSION.value = TERM.value, ARITHMETIC_EXPRESSION.type = TERM.type}
     term = subexpressions[1]
-
     subexpressions[0] = {"value": term["value"], "type": term["type"]}
 
 
@@ -889,7 +879,6 @@ def p_term_factor(subexpressions):
 
     #{TERM.value = FACTOR.value, TERM.type = FACTOR.type}
     factor = subexpressions[1]
-
     subexpressions[0] = {"value": factor["value"], "type": factor["type"]}
 
 
@@ -979,10 +968,16 @@ def p_param_l_vector(subexpressions):
     list_val = subexpressions[3]
     res =  subexpressions[0]
     res["value"] = "["+ val["value"] + list_val["value"] + "]"
-    if val["type"] == "natural":
+
+    if list_val["value"] == "":
+        res["type"] = value["type"]
+    elif (val["type"] == "natural" and list_val["type"] == "decimal"):
+        res["type"] = "decimal"
+    elif (val["type"] == "decimal" and list_val["type"] == "natural"):
         res["type"] = "decimal"
     else:
-        res["type"] = val["type"]
+        res["type"] = value["type"]
+
     subexpressions[0] = res
 
 #esta mas arriba?
