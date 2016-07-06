@@ -959,8 +959,8 @@ def p_func_print(subexpressions):
 
 def p_func_wr_mult(subexpressions):
     'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
-    exp = subexpressions[1]
-    subexpressions[0] = {"value": exp["value"], "type": exp["type"], "isArray": False}
+    param_me = subexpressions[3]
+    subexpressions[0] = {"value":"multiplicacionEscalar("+ param_me["value"] + ")", "type": param_me["type"], "isArray": False}
 
 def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN ecomparable RPAREN'
@@ -981,29 +981,31 @@ def p_func_wr_length(subexpressions):
     subexpressions[0] = {"value": "length( " + pl["value"] + " )", "type": "natural", "isArray": pl["isArray"]}
 
 def p_param_me_var(subexpressions):
-    'param_me : VAR COMMA value n' 
+    'param_me : VAR COMMA value n'
     var1 = subexpressions[1]
     comma = subexpressions[2]
     var2 = subexpressions[3]
     n = subexpressions[4]
 
-    assert(var2["type"] == "natural" or var2["type"] == "decimal")
+    if not(var2["type"] == "natural" or var2["type"] == "decimal"):
+        raise SemanticException("El tercer parametro de multiplicacionEscalar debe ser un numero")
+
     table_var1_type = getType(var1)
-    assert(table_var1_type == "natural" or table_var1_type == "decimal" )
-    assert(isArray(var1))
+    if not((table_var1_type == "natural" or table_var1_type == "decimal") and (isArray(var1)) ):
+        raise SemanticException("El primer parametro de multiplicacionEscalar debe ser un numero")
+
     if table_var1_type == "decimal" and n["isTrue"] :
         typ = "decimal"
     else:
         typ = table_var1_type
+
     subexpressions[0] = {"value": var1 + "," + var2["value"] + n["value"], "type": typ}
 
 def p_n_bool(subexpressions):
     'n : COMMA bool'
-    n = subexpressions[0]
     booleano = subexpressions[2]
-    n["value"] = ", " + booleano["value"]
-    n["isTrue"] = booleano["value"] == "true"
-    subexpressions[0] = n
+
+    subexpressions[0] = {"value": ", " + booleano["value"], "isTrue":booleano["value"] == "true"}
 
 def p_n_lambda(subexpressions):
     'n : '
