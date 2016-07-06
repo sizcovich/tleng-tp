@@ -197,7 +197,7 @@ def t_NATURAL(t):
 
 
 def t_STRING(t):
-    r'\".*\"'
+    r'\"([^\"]+)\"'
     return t
 
 
