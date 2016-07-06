@@ -706,7 +706,7 @@ def p_value_list_values(subexpressions):
     else:
         value1 = value2["type"]
 
-    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1}
+    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1, "isArray": True}
 
 
 #semantica corregida
@@ -813,7 +813,7 @@ def p_expression_plus(subexpressions):
     expression = subexpressions[1]
     term  = subexpressions[3]
 
-    if not(((expression["type"] == 'natural' or expression["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')) or (expression["type"] == 'string' or term["type"] == 'string')):
+    if not(((expression["type"] == 'natural' or expression["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')) or (expression["type"] == 'string' and term["type"] == 'string')):
         raise SemanticException("No puede utilizar el + si ambos tipos no son numericos o strings")
 
     type = 'string'
@@ -852,70 +852,62 @@ def p_expression_term(subexpressions):
 
 
 def p_term_times(subexpressions):
-    'term : term TIMES factor'
+    'term : term TIMES value'
     #{TERM.value = TERM1.value +'*'+FACTOR.value, TERM.type=FACTOR.type }
     term = subexpressions[1]
-    factor = subexpressions[3]
+    value = subexpressions[3]
 
-    if not((factor["type"] == 'natural' or factor["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
+    if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
         raise SemanticException("No puede multiplicar tipos que no son numericos")
 
     type = 'natural'
-    if  factor["type"] == 'decimal' or term["type"] == 'decimal':
+    if  value["type"] == 'decimal' or term["type"] == 'decimal':
         type = 'decimal'
 
 
-    subexpressions[0] = {"value": term["value"] + " * " + factor["value"], "type": type}
+    subexpressions[0] = {"value": term["value"] + " * " + value["value"], "type": type}
 
 def p_term_divide(subexpressions):
-    'term : term DIVIDE factor'
+    'term : term DIVIDE value'
     #{TERM.value = TERM1.value + '/' + FACTOR.value, TERM.type = FACTOR.type}
     term = subexpressions[1]
-    factor = subexpressions[3]
+    value = subexpressions[3]
 
-    if(factor["value"] == 0):
+    if(value["value"] == 0):
         raise SemanticException("No puede dividir por cero")
 
-    if not((factor["type"] == 'natural' or factor["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
+    if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
         raise SemanticException("No puede dividir tipos que no son numericos")
 
     type = 'decimal'
-    if  factor["type"] == 'natural' and term["type"] == 'natural' and multiplo(term, factor):
+    if  value["type"] == 'natural' and term["type"] == 'natural' and multiplo(term, value):
         type = 'natural'
 
-    subexpressions[0] = {"value": term["value"] + " / " + factor["value"], "type": type}
+    subexpressions[0] = {"value": term["value"] + " / " + value["value"], "type": type}
 
 def p_term_module(subexpressions):
-    'term : term MODULE factor'
+    'term : term MODULE value'
     #{TERM.value = TERM1.value + '%' + FACTOR.value, TERM.type = FACTOR.type}
     term = subexpressions[1]
-    factor = subexpressions[3]
+    value = subexpressions[3]
 
-    #el factor debe ser natural y el termino un numero
-    if not(factor["type"] == 'natural' and (term["type"] == 'natural' or term["type"] == 'decimal')):
+    #el value debe ser natural y el termino un numero
+    if not(value["type"] == 'natural' and (term["type"] == 'natural' or term["type"] == 'decimal')):
         raise SemanticException("No puede hacer operaciones con tipos que no son numericos")
 
     type = 'natural'
     if term["type"] == 'decimal':
         type = 'decimal'
 
-    subexpressions[0] = {"value": term["value"] + " % " + factor["value"], "type": type}
+    subexpressions[0] = {"value": term["value"] + " % " + value["value"], "type": type}
 
 
-def p_term_factor(subexpressions):
-    'term : factor'
+def p_term_value(subexpressions):
+    'term : value'
 
     #{TERM.value = FACTOR.value, TERM.type = FACTOR.type}
-    factor = subexpressions[1]
-    subexpressions[0] = {"value": factor["value"], "type": factor["type"]}
-
-
-def p_factor_value(subexpressions):
-    'factor : value'
-    #{FACTOR.value = NUM.value, FACTOR.type = 'decimal'}
     value = subexpressions[1]
     subexpressions[0] = {"value": value["value"], "type": value["type"]}
-
 
 def p_func_func_wr(subexpressions):
     'function : function_with_return'
@@ -990,7 +982,8 @@ def p_n_lambda(subexpressions):
 def p_param_l_var(subexpressions):
     'param_length : VAR '
     var = subexpressions[1]
-    assert( isArray(var) or getType(var) == "string")
+    print table
+    assert(isArray(var) or getType(var) == "string")
     subexpressions[0] = {"value": var}
 
 def p_param_l_vector(subexpressions):
@@ -1009,6 +1002,7 @@ def p_param_l_vector(subexpressions):
     else:
         res["type"] = value["type"]
 
+    res["isArray"] = True
     subexpressions[0] = res
 
 #esta mas arriba?
