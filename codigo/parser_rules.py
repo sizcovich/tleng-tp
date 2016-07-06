@@ -944,21 +944,21 @@ def p_func_wr_length(subexpressions):
     subexpressions[0] = {"value": "length( " + pl["value"] + " )", "type": "natural", "isArray": pl["isArray"]}
 
 def p_param_me_var(subexpressions):
-    'param_me : VAR COMMA num n'
-    param_me = subexpressions[0]
-    var = subexpressions[1]
+    'param_me : VAR COMMA value n' 
+    var1 = subexpressions[1]
     comma = subexpressions[2]
-    num = subexpressions[3]
+    var2 = subexpressions[3]
     n = subexpressions[4]
-    param_me["value"] = var["value"] + "," + num["value"] + n["value"]
-    table_var_type = table.getType(var["value"])
-    assert( table_var_type == "natural" or table_var_type == "decimal" )
-    assert( table.isArray(var["value"]))
-    if table_var_type == "decimal" and n["isTrue"] :
-        param_me["type"] = "decimal"
+
+    assert(var2["type"] == "natural" or var2["type"] == "decimal")
+    table_var1_type = getType(var1)
+    assert(table_var1_type == "natural" or table_var1_type == "decimal" )
+    assert(isArray(var1))
+    if table_var1_type == "decimal" and n["isTrue"] :
+        typ = "decimal"
     else:
-        param_me["type"] = table_var_type
-    subexpressions[0] = param_me
+        typ = table_var1_type
+    subexpressions[0] = {"value": var1 + "," + var2["value"] + n["value"], "type": typ}
 
 def p_n_bool(subexpressions):
     'n : COMMA bool'
@@ -970,7 +970,7 @@ def p_n_bool(subexpressions):
 
 def p_n_lambda(subexpressions):
     'n : '
-    subexpressions[0] = {"value": "", "isTrue": false}
+    subexpressions[0] = {"value": "", "isTrue": False}
 
 def p_param_l_var(subexpressions):
     'param_length : VAR '
