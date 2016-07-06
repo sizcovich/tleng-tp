@@ -19,8 +19,6 @@ table = {}
 
 def multiplo(a, b):
     res = False
-    print b
-    print a
     for x in range(1, int(b)):
         if (int(b) == int(a) * x):
             res = True
@@ -205,6 +203,14 @@ def p_ecomparable_expression(subexpressions):
     #{ECOMPARABLE.value = EXPRESSION.value}
     expression = subexpressions[1]
     subexpressions[0] = {"value": expression["value"], "type": expression["type"], "isArray": expression["isArray"]}
+
+def p_ecomparable_condition(subexpressions):
+    'ecomparable : condition'
+
+    #{ECOMPARABLE.value = CONDITION.value}
+    condition = subexpressions[1]
+    subexpressions[0] = {"value": condition["value"], "type": condition["type"], "isArray": False}
+
 
 def p_ecomparable_conditional(subexpressions):
     'ecomparable : conditional'
@@ -530,7 +536,7 @@ def p_condition_or(subexpressions):
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     condition1 = subexpressions[1]
     x = subexpressions[3]
-    if(condition1["type"] != "bool" or y["type"]!=bool):
+    if(condition1["type"] != "bool" or x["type"]!="bool"):
         raise SemanticException("Solo puede operar con booleanos")
 
     subexpressions[0] = {"value": condition1["value"] + " or " + x["value"], "type": x["type"]}
@@ -538,7 +544,6 @@ def p_condition_or(subexpressions):
 
 def p_condition_x(subexpressions):
     'condition : x'
-
 
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     x = subexpressions[1]
