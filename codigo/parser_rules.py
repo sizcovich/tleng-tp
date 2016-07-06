@@ -628,12 +628,7 @@ def p_logical_condition_less(subexpressions):
 
 
 def p_logical_condition_greater(subexpressions):
-<<<<<<< Updated upstream
     'i : GREATER possibleparen'
-
-=======
-    'i : GREATER ecomparable' 
->>>>>>> Stashed changes
     #{ I.value = '>' + E.value }
     ecomparable = subexpressions[2]
     subexpressions[0] = {"value": " > " + ecomparable["value"], "type": "bool"}
