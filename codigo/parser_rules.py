@@ -17,6 +17,13 @@ class SemanticException(Exception):
 
 table = {}
 
+def indent( texto ):
+    arregloDeLineas = texto.splitlines(True)
+    res = ""
+    for line in arregloDeLineas:
+        res = res + "\t" + line
+    return res
+
 def multiplo(a, b):
     res = False
     for x in range(1, int(b)):
@@ -393,7 +400,7 @@ def p_keys_append_sentence(subexpressions):
     comment_list = subexpressions[1]
     sentence = subexpressions[2]
 
-    subexpressions[0] = {"value": comment_list["value"] +  sentence["value"]}
+    subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
 
 
 def p_keys_append_possiblecomment(subexpressions):
@@ -404,7 +411,7 @@ def p_keys_append_possiblecomment(subexpressions):
     possiblecomment = subexpressions[3]
     list_sentencies = subexpressions[4]
 
-    subexpressions[0] = {"value": "{ " + possiblecomment["value"] +  "\n" + list_sentencies["value"] + "}\n"}
+    subexpressions[0] = {"value": "{ " + indent(possiblecomment["value"] +  "\n" + list_sentencies["value"]) + "}\n"}
 
 
 
