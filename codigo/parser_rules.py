@@ -896,7 +896,7 @@ def p_func_func_wr(subexpressions):
     subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"] }
 
 def p_func_print(subexpressions):
-    'function : PRINT LPAREN expression RPAREN'
+    'function : PRINT LPAREN ecomparable RPAREN'
     expression = subexpressions[3]
     subexpressions[0] = {"value": "(" + expression["value"] + ")"}
 
@@ -906,9 +906,12 @@ def p_func_wr_mult(subexpressions):
 
 
 def p_func_wr_capi(subexpressions):
-    'function_with_return : CAPITALIZAR LPAREN STRING RPAREN'
-    texto = subexpressions[3]
-    subexpressions[0]["value"] = "capitalizar( " + texto["value"] + " )"
+    'function_with_return : CAPITALIZAR LPAREN ecomparable RPAREN'
+    ecomp = subexpressions[3]
+    if not(ecomp["type"] == 'string'):
+        raise SemanticException("Capitalizar recibe solo strings")
+
+    subexpressions[0]["value"] = "capitalizar( " + ecomp["value"] + " )"
     subexpressions[0]["type"] = "string"
     #faltan cosas
 

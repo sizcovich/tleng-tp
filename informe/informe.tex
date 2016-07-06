@@ -418,14 +418,14 @@ falta la condicion de que lo que esta entre parentesis sea de tipo natural
 \textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
 \textit{\{FUNCTION.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type\}} \\
 
-\textbf{FUNCTION} $\rightarrow$ print(\textbf{EXPRESSION}) \\   
-\textit{\{FUNCTION.value =  'print(' + EXPRESSION.value + ')', FUNCTION.type = 'void'\}} \\
+\textbf{FUNCTION} $\rightarrow$ print(\textbf{ECOMPARABLE}) \\   
+\textit{\{FUNCTION.value =  'print(' + ECOMPARABLE.value + ')', FUNCTION.type = 'void'\}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\ 
 \textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar(' + PARAM\_ME.value + ')', , FUNCTION\_WITH\_RETURN.type = PARAM\_ME.type\}} \\
 
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(string)   \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + string.value + ')', FUNCTION\_WITH\_RETURN.type = 'string'\}} \\
+\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(ECOMPARABLE)   \\
+\textit{\{COND(ECOMPARABLE.type == 'string'), FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + ECOMPARABLE.value + ')', FUNCTION\_WITH\_RETURN.type = 'string'\}} \\
 
 \textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
 \textit{\{COND((table.getType($var_{1}$.value) == natural $||$ table.getType($var_{1}$.value) == 'decimal' \&\& table.isArray($var_{1}$.value) \&\& table.isArray($var_{2}$.value)) \&\&
