@@ -667,15 +667,6 @@ def p_value_list_registers(subexpressions):
     subexpressions[0] = {"value": "{" + list_registers["value"] + "}", "type": "register"}
 
 
-def p_value_var(subexpressions):
-    'value : VAR'
-
-    #{value.value = var.value + J.value, value.type = IF(J.isArray, table.getType(var.value), var.type)}
-    var = subexpressions[1]
-
-    type = getType(var)
-
-    subexpressions[0] = {"value":  var, "type": type}
 
 def p_value_var_array(subexpressions):
     'value : VAR j'
