@@ -553,8 +553,7 @@ def p_y_and(subexpressions):
 
     x = subexpressions[1]
     y = subexpressions[3]
-
-    if(x["type"] != "bool" or y["type"]!=bool):
+    if (x["type"] != "bool" or y["type"]!= "bool"):
         raise SemanticException("Solo puede operar con booleanos")
 
 
