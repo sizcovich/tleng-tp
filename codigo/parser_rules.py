@@ -589,7 +589,7 @@ def p_y_not(subexpressions):
 
 
 def p_y_parent(subexpressions):
-    'y : LPAREN y RPAREN'
+    'y : LPAREN condition RPAREN'
 
     #{ H.value = 'or' + BOOLEAN_CONDITION.value}
     y = subexpressions[2]
@@ -622,7 +622,7 @@ def p_logical_condition(subexpressions):
     subexpressions[0] = {"value": ecomparable["value"] + i["value"], "type": "bool"}
 
 def p_logical_condition_less(subexpressions):
-    'i : LESS ecomparable'
+    'i : LESS possibleparen'
 
     #{ I.value = '<' + E.value }
     ecomparable = subexpressions[2]
@@ -631,7 +631,7 @@ def p_logical_condition_less(subexpressions):
 
 
 def p_logical_condition_greater(subexpressions):
-    'i : GREATER ecomparable'
+    'i : GREATER possibleparen'
 
     #{ I.value = '>' + E.value }
     ecomparable = subexpressions[2]
@@ -640,7 +640,7 @@ def p_logical_condition_greater(subexpressions):
 
 
 def p_logical_condition_equal(subexpressions):
-    'i : EQUAL ecomparable'
+    'i : EQUAL possibleparen'
 
     #{ I.value = '==' + E.value}
     ecomparable = subexpressions[2]
@@ -648,13 +648,34 @@ def p_logical_condition_equal(subexpressions):
     subexpressions[0] = {"value": " == " +  ecomparable["value"], "type": "bool"}
 
 
+
 def p_logical_condition_unequal(subexpressions):
-    'i : UNEQUAL ecomparable'
+    'i : UNEQUAL possibleparen'
 
     #{ I.value = '!=' + E.value}
     ecomparable = subexpressions[2]
 
     subexpressions[0] = {"value": " != " +  ecomparable["value"], "type": "bool"}
+
+
+def p_possibleparen_paren(subexpressions):
+    'possibleparen : LPAREN ecomparable RPAREN'
+
+    #{ I.value = '==' + E.value}
+    ecomparable = subexpressions[2]
+
+    subexpressions[0] = {"value": "(" +  ecomparable["value"] + ")", "type": "bool"}
+
+def p_possibleparen_ecomparable(subexpressions):
+    'possibleparen : ecomparable'
+
+    #{ I.value = '==' + E.value}
+    ecomparable = subexpressions[1]
+
+    subexpressions[0] = {"value": ecomparable["value"], "type": "bool"}
+
+
+
 
 
 def p_value_string(subexpressions):
