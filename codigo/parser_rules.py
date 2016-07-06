@@ -68,6 +68,8 @@ def p_list_sentencies_newline(subexpressions):
     #{LIST_SENTENCIES.value= A.value, LIST_SENTENCIES.element = 'newline'}
     a = subexpressions[2]
 
+
+
     subexpressions[0] = {"value":  a["value"], "element": "newline"}
 
 def p_list_sentencies_comment(subexpressions):
@@ -287,21 +289,34 @@ def p_while(subexpressions):
 
 
 def p_if_else(subexpressions):
-    'if_else : if ELSE possiblecomment possiblenewline keys'
+    'if_else : if possibleelse'
 
     #{IF_ELSE.value = IF.value + 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
-    if_else = subexpressions[0]
     if1 = subexpressions[1]
-    possiblecomment = subexpressions[3]
-    keys = subexpressions[5]
+    possibleelse = subexpressions[2]
 
-    subexpressions[0] = {"value": if1["value"] + "else" + possiblecomment["value"] + "\n" + keys["value"]}
-
+    subexpressions[0] = {"value": if1["value"] + possibleelse["value"]}
 
 
+def p_possibleelse_else(subexpressions):
+    'possibleelse : ELSE possiblecomment possiblenewline keys'
+
+    #{IF_ELSE.value = IF.value + 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
+    possiblecomment = subexpressions[2]
+    keys = subexpressions[4]
+
+    subexpressions[0] = {"value":  " else " + possiblecomment["value"] + "\n" + keys["value"]}
+
+def p_possibleelse_lambda(subexpressions):
+    'possibleelse : '
+
+    #{IF_ELSE.value = IF.value + 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
+
+    subexpressions[0] = {"value":  ""}
 
 def p_if(subexpressions):
     'if : IF LPAREN condition RPAREN possiblecomment possiblenewline keys'
+
 
     #{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     if1 = subexpressions[0]
@@ -427,6 +442,7 @@ def p_b_array(subexpressions):
     #{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true}
     expression1 = subexpressions[2]
     expression2 =  subexpressions[5]
+
     if expression1["type"] != "natural":
         raise SemanticException("El valor para acceder a un array debe ser natural")
     b_type = expression2["type"]
@@ -511,8 +527,10 @@ def p_condition_or(subexpressions):
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     condition1 = subexpressions[1]
     x = subexpressions[3]
+    if(condition1["type"] != "bool" or y["type"]!=bool):
+        raise SemanticException("Solo puede operar con booleanos")
 
-    subexpressions[0] = {"value": condition1["value"] + " or " + x["value"]}
+    subexpressions[0] = {"value": condition1["value"] + " or " + x["value"], "type": x["type"]}
 
 
 def p_condition_x(subexpressions):
@@ -522,7 +540,7 @@ def p_condition_x(subexpressions):
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     x = subexpressions[1]
 
-    subexpressions[0] = {"value": x["value"]}
+    subexpressions[0] = {"value": x["value"], "type": x["type"]}
 
 
 def p_y_and(subexpressions):
@@ -533,7 +551,11 @@ def p_y_and(subexpressions):
     x = subexpressions[1]
     y = subexpressions[3]
 
-    subexpressions[0] = {"value": x["value"] + " and " + y["value"]}
+    if(x["type"] != "bool" or y["type"]!=bool):
+        raise SemanticException("Solo puede operar con booleanos")
+
+
+    subexpressions[0] = {"value": x["value"] + " and " + y["value"], "type": x["type"]}
 
 def p_x_y(subexpressions):
     'x : y'
@@ -542,7 +564,7 @@ def p_x_y(subexpressions):
 
     y = subexpressions[1]
 
-    subexpressions[0] = {"value": y["value"]}
+    subexpressions[0] = {"value": y["value"], "type": y["type"]}
 
 
 
@@ -552,8 +574,11 @@ def p_y_not(subexpressions):
     #{ H.value = 'or' + BOOLEAN_CONDITION.value}
     y = subexpressions[2]
 
+    if  y["type"] != 'bool':
+        raise SemanticException("Solo puede operar con booleanos")
 
-    subexpressions[0] = {"value": " not " + y["value"]}
+
+    subexpressions[0] = {"value": " not " + y["value"], "type": y["type"]}
 
 
 def p_y_parent(subexpressions):
@@ -562,7 +587,7 @@ def p_y_parent(subexpressions):
     #{ H.value = 'or' + BOOLEAN_CONDITION.value}
     y = subexpressions[2]
 
-    subexpressions[0] = {"value": " ( " + y["value"] + " ) "}
+    subexpressions[0] = {"value": " ( " + y["value"] + " ) ", "type": y["type"]}
 
 
 def p_y_logical_condition(subexpressions):
@@ -570,14 +595,14 @@ def p_y_logical_condition(subexpressions):
     #{H.value = ''}
     logical_condition = subexpressions[1]
 
-    subexpressions[0] = {"value": logical_condition["value"]}
+    subexpressions[0] = {"value": logical_condition["value"], "type": logical_condition["type"]}
 
-def p_y_bool(subexpressions):
-    'y : bool'
+def p_y_value(subexpressions):
+    'y : value'
     #{H.value = ''}
-    bool = subexpressions[1]
+    value = subexpressions[1]
 
-    subexpressions[0] = {"value": bool["value"]}
+    subexpressions[0] = {"value": value["value"], "type": value["type"] }
 
 
 def p_logical_condition(subexpressions):
@@ -587,7 +612,7 @@ def p_logical_condition(subexpressions):
     ecomparable = subexpressions[1]
     i = subexpressions[2]
 
-    subexpressions[0] = {"value": ecomparable["value"] + i["value"]}
+    subexpressions[0] = {"value": ecomparable["value"] + i["value"], "type": "bool"}
 
 def p_logical_condition_less(subexpressions):
     'i : LESS ecomparable'
@@ -595,7 +620,7 @@ def p_logical_condition_less(subexpressions):
     #{ I.value = '<' + E.value }
     ecomparable = subexpressions[2]
 
-    subexpressions[0] = {"value": " <" + ecomparable["value"]}
+    subexpressions[0] = {"value": " <" + ecomparable["value"], "type": "bool"}
 
 
 def p_logical_condition_greater(subexpressions):
@@ -604,7 +629,7 @@ def p_logical_condition_greater(subexpressions):
     #{ I.value = '>' + E.value }
     ecomparable = subexpressions[2]
 
-    subexpressions[0] = {"value": " > " + ecomparable["value"]}
+    subexpressions[0] = {"value": " > " + ecomparable["value"], "type": "bool"}
 
 
 def p_logical_condition_equal(subexpressions):
@@ -613,7 +638,7 @@ def p_logical_condition_equal(subexpressions):
     #{ I.value = '==' + E.value}
     ecomparable = subexpressions[2]
 
-    subexpressions[0] = {"value": " == " +  ecomparable["value"]}
+    subexpressions[0] = {"value": " == " +  ecomparable["value"], "type": "bool"}
 
 
 def p_logical_condition_unequal(subexpressions):
@@ -622,7 +647,7 @@ def p_logical_condition_unequal(subexpressions):
     #{ I.value = '!=' + E.value}
     ecomparable = subexpressions[2]
 
-    subexpressions[0] = {"value": " != " +  ecomparable["value"]}
+    subexpressions[0] = {"value": " != " +  ecomparable["value"], "type": "bool"}
 
 
 def p_value_string(subexpressions):
@@ -650,6 +675,7 @@ def p_value_num(subexpressions):
     #{value.value = NUM.value , value.type = NUM.type}
     num = subexpressions[1]
 
+
     subexpressions[0] = {"value": num["value"], "type": num["type"]}
 
 
@@ -668,6 +694,8 @@ def p_value_list_values(subexpressions):
     #{value1.value = '[ ' + value2.value + LIST_valueS.value + ']', LIST_valueS.type = IF(value2.type == 'natural','decimal',value2.type), value1.type = value2.type}
     value2 = subexpressions[2]
     list_values = subexpressions[3]
+
+
 
     if list_values["value"] == "":
         value1 = value2["type"]
