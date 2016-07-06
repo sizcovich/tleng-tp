@@ -56,7 +56,6 @@ tokens = (
    'VAR',
    'COMMENT',
    'STRING',
-   'COMA',
    'NEWLINE'
 )
 
@@ -89,7 +88,7 @@ t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_POW = r'\^'
 t_COLON = r':'
-t_COMA = r','
+t_COMMA = r','
 
 #regular expression rules with some action code
 #Reserved symbols:
@@ -187,7 +186,7 @@ def t_VAR(t):
     return t
 
 def t_DECIMAL(t):
-    r'\d+.\d+'
+    r'\d+\.\d+'
     t.value = float(t.value)
     return t
 

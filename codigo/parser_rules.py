@@ -408,9 +408,9 @@ def p_b_array(subexpressions):
 
 
     if expression2["type"] == "natural":
-    	b_type = "decimal"
+        b_type = "decimal"
     else:
-    	b_type = expression2["type"]
+        b_type = expression2["type"]
 
     subexpressions[0] = {"value": "[" +  expression1["value"] + "] = " +  expression2["value"], "type": b_type, "isArray": True}
 
@@ -651,9 +651,9 @@ def p_value_list_values(subexpressions):
     list_values = subexpressions[3]
 
     if value_type == "natural":
-    	value1_type = "decimal"
+        value1_type = "decimal"
     else:
-    	value1_type = value2["type"]
+        value1_type = value2["type"]
 
     subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1_type}
 
@@ -665,8 +665,6 @@ def p_value_list_registers(subexpressions):
     list_registers = subexpressions[1]
 
     subexpressions[0] = {"value": "{" + list_registers["value"] + "}", "type": "register"}
-
-
 
 def p_value_var_array(subexpressions):
     'value : VAR j'
@@ -710,7 +708,7 @@ def p_list_registers(subexpressions):
 
 
 def p_l_list_registers(subexpressions):
-    'l : COMA list_registers'
+    'l : COMMA list_registers'
 
     #{L.value = ',' + LIST REGISTERS.value}
     list_registers = subexpressions[1]
@@ -720,6 +718,7 @@ def p_l_list_registers(subexpressions):
 
 
 #aca habria que agregar en la tabla que cambia el tipo de la lista no?
+
 def p_list_values_comma(subexpressions):
     'list_values : COMMA value list_values'
 
@@ -730,10 +729,10 @@ def p_list_values_comma(subexpressions):
     if(value["type"] == 'natural'):
         value["type"] == 'decimal'
 
-    if (list_values2["type"] != value["type"]) :
+    if ( list_values2["value"] != "" and list_values2["type"] != value["type"]) :
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
-    subexpressions[0] = {"value": "," + value["value"] + list_values2["value"], "type": list_values2["type"]}
+    subexpressions[0] = {"value": "," + value["value"] + list_values2["value"], "type": value["type"]}
 
 
 
