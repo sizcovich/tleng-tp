@@ -647,15 +647,16 @@ def p_value_list_values(subexpressions):
     'value : LBRACKET value list_values RBRACKET'
 
     #{value1.value = '[ ' + value2.value + LIST_valueS.value + ']', LIST_valueS.type = IF(value2.type == 'natural','decimal',value2.type), value1.type = value2.type}
+    value1 = subexpressions[0]
     value2 = subexpressions[2]
     list_values = subexpressions[3]
 
-    if value_type == "natural":
-        value1_type = "decimal"
+    if value2["type"] == 'natural':
+        value1["type"] = 'decimal'
     else:
-        value1_type = value2["type"]
+        value1["type"] = value2["type"]
 
-    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1_type}
+    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": value1["type"]}
 
 
 #semantica corregida
@@ -899,7 +900,7 @@ def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN STRING RPAREN'
     texto = subexpressions[3]
     subexpressions[0]["value"] = "capitalizar( " + texto["value"] + " )"
-    subexpressions[0]["Type"] = "string"
+    subexpressions[0]["type"] = "string"
     #faltan cosas
 
 def p_func_wr_coli(subexpressions):
@@ -929,9 +930,9 @@ def p_param_me_var(subexpressions):
     assert( table_var_type == "natural" or table_var_type == "decimal" )
     assert( table.isArray(var["value"]))
     if table_var_type == "decimal" and n["isTrue"] :
-        param_me["Type"] = "decimal"
+        param_me["type"] = "decimal"
     else:
-        param_me["Type"] = table_var_type
+        param_me["type"] = table_var_type
     subexpressions[0] = param_me
 
 
@@ -960,10 +961,10 @@ def p_param_l_vector(subexpressions):
     list_val = subexpressions[3]
     res =  subexpressions[0]
     res["value"] = "["+ val["value"] + list_val["value"] + "]"
-    if val["Type"] == "natural":
-        res["Type"] = "decimal"
+    if val["type"] == "natural":
+        res["type"] = "decimal"
     else:
-        res["Type"] = val["Type"]
+        res["type"] = val["type"]
     subexpressions[0] = res
 
 #esta mas arriba?
@@ -994,3 +995,8 @@ def p_bool_false(subexpressions):
 def p_error(subexpressions):
     print subexpressions
     raise Exception("Syntax error.")
+
+precedence = (
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'TIMES', 'DIVIDE'),
+)
