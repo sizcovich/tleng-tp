@@ -1,4 +1,5 @@
 from lexer_rules import tokens
+import pdb; pdb.set_trace()
 
 #from expressions import Addition, Multiplication, Number
 
@@ -335,17 +336,17 @@ def p_conditional(subexpressions):
 
 
 def p_for(subexpressions):
-    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON conditionfor RPAREN possiblecomment possiblenewline keys'
+    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advancefor RPAREN possiblecomment possiblenewline keys'
 
     #{FOR.value ='for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
 
     assignationorlamba = subexpressions[3]
     condition = subexpressions[5]
-    conditionfor = subexpressions[7]
+    advancefor = subexpressions[7]
     possiblecomment = subexpressions[9]
     keys = subexpressions[11]
 
-    subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +conditionfor["value"]+ ")" + possiblecomment["value"] + "\n" + keys["value"]}
+    subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + possiblecomment["value"] + "\n" + keys["value"]}
 
 
 def p_do_while(subexpressions):
@@ -454,17 +455,17 @@ def p_b_expression(subexpressions):
 
 
 
-def p_conditionfor_advance(subexpressions):
-    'conditionfor : advance'
+def p_advancefor_advance(subexpressions):
+    'advancefor : advance'
 
     advance = subexpressions[1]
     subexpressions[0] = {"value":  advance["value"]}
 
-def p_conditionfor_assignationorlambda(subexpressions):
-    'conditionfor : assignationorlambda'
+def p_advancefor_assignationorlambda(subexpressions):
+    'advancefor : assignationorlambda'
 
     assignationorlambda = subexpressions[1]
-    subexpressions[0] = {"value":  assignationorlambda["value"]}
+    subexpressions[0] = {"value": assignationorlambda["value"]}
 
 #semantica corregida
 def p_advance_var(subexpressions):
