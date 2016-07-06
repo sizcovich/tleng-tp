@@ -105,31 +105,31 @@ def t_INCREMENT(t):
     return t
 
 def t_ELSE(t):
-  r'else'
+  r'else|ELSE'
   return t
 
 def t_IF(t):
-  r'if'
+  r'if|IF'
   return t
 
 def t_WHILE(t):
-  r'while'
+  r'while|WHILE'
   return t
 
 def t_BEGIN(t):
-  r'begin'
+  r'begin|BEGIN'
   return t
 
 def t_END(t):
-  r'end'
+  r'end|END'
   return t
 
 def t_FOR(t):
-  r'for'
+  r'for|FOR'
   return t
 
 def t_DO(t):
-  r'do'
+  r'do|DO'
   return t
 
 #def t_RES(t):
@@ -137,47 +137,47 @@ def t_DO(t):
 #  return t
 
 def t_RETURN(t):
-  r'return'
+  r'return|RETURN'
   return t
 
 def t_TRUE(t):
-  r'true'
+  r'true|TRUE'
   return t
 
 def t_FALSE(t):
-  r'false'
+  r'false|FALSE'
   return t
 
 def t_AND(t):
-  r'and'
+  r'and|AND'
   return t
 
 def t_OR(t):
-  r'or'
+  r'or|OR'
   return t
 
 def t_NOT(t):
-  r'not'
+  r'not|NOT'
   return t
 
 def t_PRINT(t):
-  r'print'
+  r'print|PRINT'
   return t
 
 def t_MULTIPLICACIONESCALAR(t):
-  r'multiplicacionEscalar'
+  r'multiplicacionEscalar|MULTIPLICACIONESCALAR'
   return t
 
 def t_CAPITALIZAR(t):
-  r'capitalizar'
+  r'capitalizar|CAPITALIZAR'
   return t
 
 def t_COLINEALES(t):
-  r'colineales'
+  r'colineales|COLINEALES'
   return t
 
 def t_LENGTH(t):
-  r'length'
+  r'length|LENGTH'
   return t
 
 #end Reserved symbols
@@ -201,7 +201,7 @@ def t_STRING(t):
     return t
 
 
- 
+
 def t_COMMENT(t):
     r'\#.*'
     return t
