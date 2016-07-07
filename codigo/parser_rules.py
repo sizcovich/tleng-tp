@@ -570,6 +570,7 @@ def p_condition_x(subexpressions):
 
     #{BOOLEAN_CONDITION.value = LOGICAL_CONDITION + H.value}
     x = subexpressions[1]
+
     subexpressions[0] = {"value": x["value"], "type": x["type"]}
 
 
@@ -750,7 +751,7 @@ def p_value_list_values(subexpressions):
 def p_value_list_registers(subexpressions):
     'value : LKEY list_registers RKEY'
     #{value.value = '{' + LIST_REGISTERS.value + '}', value.type = 'register'}
-    list_registers = subexpressions[1]
+    list_registers = subexpressions[2]
 
     subexpressions[0] = {"value": "{" + list_registers["value"] + "}", "type": "register", "isArray": True}
 
@@ -798,7 +799,7 @@ def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
 
     #{L.value = ',' + LIST REGISTERS.value}
-    list_registers = subexpressions[1]
+    list_registers = subexpressions[2]
 
     subexpressions[0] = {"value": ", " + list_registers["value"]}
 
