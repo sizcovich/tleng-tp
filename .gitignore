@@ -22,3 +22,29 @@ codigo_arreglos/lexer_rules.py
 codigo_arreglos/parser.py
 
 codigo/archivos de test/parser.out
+
+informe/informe.synctex.gz
+
+*.pyc
+
+*.out
+
+*.xml
+
+.idea/.name
+
+codigo/out.txt
+
+*.pyc
+
+codigo/parsetab.py
+
+informe/informe.synctex.gz
+
+*.pyc
+
+*.pyc
+
+*.gz
+
+.idea/tleng.iml
