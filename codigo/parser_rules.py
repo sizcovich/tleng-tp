@@ -344,9 +344,9 @@ def p_if(subexpressions):
 
 
 def p_conditional_paren(subexpressions):
-    'conditional : LPAREN condition RPAREN QUESTIONMARK expression COLON expression'
+    'conditional : LPAREN condition RPAREN QUESTIONMARK ecomparable COLON expression'
 
-    #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + EXPRESSION1.value + ':' + EXPRESSION2.value}
+    #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + ECOMPARABLE.value + ':' + EXPRESSION2.value}
     condition = subexpressions[2]
     expression1 = subexpressions[5]
     expression2 = subexpressions[7]
@@ -354,15 +354,14 @@ def p_conditional_paren(subexpressions):
     subexpressions[0] = {"value": "(" + condition["value"] + ")?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"]}
 
 def p_conditional(subexpressions):
-    'conditional : condition QUESTIONMARK expression COLON expression'
+    'conditional : condition QUESTIONMARK ecomparable COLON expression'
 
-    #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + EXPRESSION1.value + ':' + EXPRESSION2.value}
+    #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + ECOMPARABLE.value + ':' + EXPRESSION2.value}
     condition = subexpressions[1]
     expression1 = subexpressions[3]
     expression2 = subexpressions[5]
 
     subexpressions[0] = {"value": condition["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"]}
-
 
 
 def p_for(subexpressions):
