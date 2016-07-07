@@ -24,474 +24,132 @@
 \tableofcontents
 
 \newpage
-\section{Introducción}
 
 \section{Gramática}
 
 En lo que sigue, presentamos la gramática utilizada para la realización del parser:\\
 
-PROGRAM $\rightarrow$ LIST\_SENTENCIES \\
-
-LIST\_SENTENCIES $\rightarrow$ SENTENCE $|$ SENTENCE LIST\_SENTENCIES\\
-
-SENTENCE $\rightarrow$ E; $|$ WHILE $|$ IF\_ELSE $|$ CONDITIONAL $|$ FOR $|$ DO\_WHILE $|$ COMMENT \\
-
-WHILE $\rightarrow$ while (CONDITION) SENTENCE $|$ while (CONDITION) {LIST\_SENTENCIES} \\
-
-IF\_ELSE $\rightarrow$ IF else SENTENCE $|$ IF else {LIST\_SENTENCIES} \\
-
-IF $\rightarrow$ if (CONDITION) SENTENCE $|$ if (CONDITION) {LIST\_SENTENCIES} \\
-
-CONDITIONAL $\rightarrow$ (CONDITION) ? SENTENCE : SENTENCE \\
-
-FOR $\rightarrow$ for(ASIGNACION ;CONDITION; AVANZAR) SENTENCE $|$ (ASIGNACION ;CONDITION; AVANZAR) {LIST\_SENTENCIES} \\
-
-ASIGNACION $\rightarrow$ $\lambda$ $|$ var = EXPRESSION $|$ var[NUM] = EXPRESSION $|$ var[NUM] = EXPRESSION\\
-
-AVANZAR $\rightarrow$ var++ $|$ var$--$ $|$ var -= NUM $|$ var += NUM $|$ $\lambda$ \\
-
-DO\_WHILE $\rightarrow$ do LIST\_SENTENCIES while (CONDITION) \\
-
-CONDITION $\rightarrow$ LOGICAL\_CONDITION $|$ CONDITION\_AND $|$ CONDITION\_OR \\
-
-CONDITION\_AND $\rightarrow$ LOGICAL\_CONDITION AND LOGICAL\_CONDITION \\
-
-CONDITION\_OR $\rightarrow$ LOGICAL\_CONDITION OR LOGICAL\_CONDITION \\
-
-LOGICAL\_CONDITION $\rightarrow$ E $>$ E $|$ E $<$ E $|$ E == E $|$ E != E \\
-
-E $\rightarrow$ ASIGNACION $|$ EXPRESSION \\
-
-VALUE $\rightarrow$ string $|$ bool $|$ var $|$ NUM $|$FUNCION $|$ var[NUM] $|$ [LIST\_VALUES] $|$ LIST\_REGISTERS\\
-
-LIST\_REGISTERS $\rightarrow$ REGISTER $|$ REGISTER , LIST\_REGISTERS\\
-
-REGISTER $\rightarrow$ cadena:VALUE \\
-
-LIST\_VALUES $\rightarrow$ VALUE $|$ VALUE , LIST\_VALUES \\
-
-EXPRESSION $\rightarrow$  ARITHMETIC\_EXPRESSION $|$ VALUE \\
-
-FUNCTION $\rightarrow$ FUNCTION\_WITH\_RETURN $|$ FUNCTION\_NO\_RETURN \\
-
-FUNCTION\_WITH\_RETURN $\rightarrow$ multiplicacionEscalar(PARAM\_ME) $|$  capitalizar(string) $|$  colineales(var, var) $|$ length(PARAM\_LENGTH) \\
-
-FUNCTION\_NO\_RETURN $\rightarrow$ print(EXPRESSION) \\
-
-PARAM\_ME $\rightarrow$ var, NUM, bool $|$ var, NUM \\
-
-PARAM\_LENGTH $\rightarrow$ var $|$ string \\
-
-LIST\_PARAMETROS $\rightarrow$ EXPRESSION $|$ LIST\_PARAMETROS , EXPRESSION \\
-
-ARITHMETIC\_EXPRESSION $\rightarrow$  + TERM $|$ ARITHMETIC\_EXPRESSION - TERM $|$ TERM \\
-
-TERM $\rightarrow$ TERM $*$ FACTOR $|$ TERM $/$ FACTOR $|$ TERM \% FACTOR $|$ FACTOR \\
-
-FACTOR $\rightarrow$ NUM $|$ var[NUM] \\
-
-NUM $\rightarrow$ decimal $|$ natural
-
-
+S' $\rightarrow$ program \\ 
+program $\rightarrow$ list\_sentencies \\
+list\_sentencies $\rightarrow$ NEWLINE a \\
+list\_sentencies $\rightarrow$ COMMENT a \\
+list\_sentencies $\rightarrow$ sentence a \\
+a $\rightarrow$ list\_sentencies \\
+a $\rightarrow$ $\lambda$ \\
+sentence $\rightarrow$ e SEMICOLON \\
+sentence $\rightarrow$ while \\
+sentence $\rightarrow$ if\_else \\
+sentence $\rightarrow$ for \\
+sentence $\rightarrow$ do\_while \\
+sentence $\rightarrow$ function SEMICOLON \\
+sentence $\rightarrow$ RETURN expression \\
+e $\rightarrow$ assignation \\
+e $\rightarrow$ advance \\
+e $\rightarrow$ ecomparable \\
+ecomparable $\rightarrow$ expression \\
+ecomparable $\rightarrow$ condition \\
+ecomparable $\rightarrow$ conditional \\
+possiblecomment $\rightarrow$ COMMENT \\
+possiblecomment $\rightarrow$ $\lambda$ \\
+comment\_list $\rightarrow$ COMMENT comment\_list \\
+comment\_list $\rightarrow$ NEWLINE comment\_list \\
+comment\_list $\rightarrow$ $\lambda$ \\
+possiblenewline $\rightarrow$ NEWLINE \\
+possiblenewline $\rightarrow$ $\lambda$ \\
+while $\rightarrow$ WHILE LPAREN condition RPAREN possiblecomment possiblenewline keys \\
+if\_else $\rightarrow$ if possibleelse \\
+possibleelse $\rightarrow$ ELSE possiblecomment possiblenewline keys \\
+if $\rightarrow$ IF LPAREN condition RPAREN possiblecomment possiblenewline keys \\
+conditional $\rightarrow$ LPAREN condition RPAREN QUESTIONMARK ecomparable COLON expression \\
+possibleelse $\rightarrow$ $\lambda$ \\
+conditional $\rightarrow$ condition QUESTIONMARK ecomparable COLON expression \\
+for $\rightarrow$ FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advancefor RPAREN possiblecomment possiblenewline keys \\
+do\_while $\rightarrow$ DO keys\_do WHILE LPAREN condition RPAREN SEMICOLON possiblecomment possiblenewline \\
+keys\_do $\rightarrow$ comment\_list sentence possiblenewline \\
+keys\_do $\rightarrow$ LKEY possiblenewline possiblecomment list\_sentencies RKEY possiblenewline \\
+keys $\rightarrow$ comment\_list sentence possiblenewline \\
+keys $\rightarrow$ LKEY possiblenewline possiblecomment list\_sentencies RKEY possiblenewline \\
+assignationorlambda $\rightarrow$ assignation \\
+assignationorlambda $\rightarrow$ $\lambda$ \\
+assignation $\rightarrow$ VAR b \\
+b $\rightarrow$ LBRACKET expression RBRACKET ASSIGN expression \\
+b $\rightarrow$ ASSIGN ecomparable \\
+b $\rightarrow$ COLON ecomparable \\
+advancefor $\rightarrow$ advance \\
+advancefor $\rightarrow$ assignationorlambda \\
+advance $\rightarrow$ VAR c \\
+c $\rightarrow$ INCREMENT \\
+c $\rightarrow$ PLUSEQUAL value \\
+c $\rightarrow$ DECREMENT \\
+c $\rightarrow$ MINEQUAL value \\
+condition $\rightarrow$ condition OR x \\
+condition $\rightarrow$ x \\
+x $\rightarrow$ x AND y \\
+x $\rightarrow$ y \\
+y $\rightarrow$ NOT y \\
+y $\rightarrow$ LPAREN condition RPAREN \\
+y $\rightarrow$ logical\_condition \\
+y $\rightarrow$ value \\
+logical\_condition $\rightarrow$ ecomparable i \\
+i $\rightarrow$ LESS possibleparen \\
+i $\rightarrow$ GREATER possibleparen \\
+i $\rightarrow$ EQUAL possibleparen \\
+i $\rightarrow$ UNEQUAL possibleparen \\
+possibleparen $\rightarrow$ LPAREN ecomparable RPAREN \\
+possibleparen $\rightarrow$ ecomparable \\
+value $\rightarrow$ STRING \\
+value $\rightarrow$ bool \\
+value $\rightarrow$ num \\
+value $\rightarrow$ function\_with\_return \\
+value $\rightarrow$ LBRACKET expression list\_values RBRACKET \\
+value $\rightarrow$ LKEY list\_registers RKEY \\
+value $\rightarrow$ VAR j \\
+j $\rightarrow$ LBRACKET expression RBRACKET \\
+j $\rightarrow$ $\lambda$ \\
+list\_registers $\rightarrow$ assignation l \\
+l $\rightarrow$ COMMA list\_registers \\
+list\_values $\rightarrow$ COMMA expression list\_values \\
+list\_values $\rightarrow$ $\lambda$ \\
+l $\rightarrow$ $\lambda$ \\
+expression $\rightarrow$ expression PLUS term \\
+expression $\rightarrow$ expression MINUS term \\
+expression $\rightarrow$ term \\
+term $\rightarrow$ term POW factor \\
+term $\rightarrow$ term TIMES factor \\
+term $\rightarrow$ term DIVIDE factor \\
+term $\rightarrow$ term MODULE factor \\
+factor $\rightarrow$ LPAREN expression RPAREN \\
+factor $\rightarrow$ value \\
+term $\rightarrow$ factor \\
+function $\rightarrow$ function\_with\_return \\
+function $\rightarrow$ PRINT LPAREN ecomparable RPAREN \\
+function\_with\_return $\rightarrow$ MULTIPLICACIONESCALAR LPAREN param\_me RPAREN \\
+function\_with\_return $\rightarrow$ CAPITALIZAR LPAREN ecomparable RPAREN \\
+function\_with\_return $\rightarrow$ COLINEALES LPAREN VAR COMMA VAR RPAREN \\
+function\_with\_return $\rightarrow$ LENGTH LPAREN param\_length RPAREN \\
+param\_me $\rightarrow$ VAR COMMA value n \\
+n $\rightarrow$ COMMA bool \\
+n $\rightarrow$ $\lambda$ \\
+param\_length $\rightarrow$ VAR \\
+param\_length $\rightarrow$ function\_with\_return \\
+param\_length $\rightarrow$ LBRACKET value list\_values RBRACKET \\
+param\_length $\rightarrow$ STRING \\
+num $\rightarrow$ DECIMAL \\
+num $\rightarrow$ NATURAL \\
+bool $\rightarrow$ TRUE \\
+bool $\rightarrow$ FALSE \\
 
 \newpage
-
-\section{Gramática de Atributos}
-
-\subsection{Inicio del programa}
-\textbf{PROGRAM} $\rightarrow$ \textbf{LIST\_SENTENCIES} \\
-\textit{\{PROGRAM.value = LIST\_SENTENCIES.value, print(PROGRAM.value)\}}\\
-
-\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{newline A}\\
-\textit{\{LIST\_SENTENCIES.value = A.value, LIST\_SENTENCIES.element = 'newline'\}} \\
-
-\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{comment A}\\
-\textit{\{LIST\_SENTENCIES.value = A.value, LIST\_SENTENCIES.element = 'comment'\}} \\
-
-\textbf{LIST\_SENTENCIES} $\rightarrow$ \textbf{SENTENCE A}\\
-\textit{\{LIST\_SENTENCIES.value = SENTENCE.value + IF(A.element!='comment' , '$\setminus$n') + A.value, LIST\_SENTENCIES.element = 'sentence'\}} \\
-
-\textbf{A} $\rightarrow$ \textbf{LIST\_SENTENCIES}\\
-\textit{\{A.value = LIST\_SENTENCIES.value, A.element = LIST\_SENTENCIES.element\}} \\
-
-\textbf{A} $\rightarrow$ $\lambda$ \\
-\textit{\{A.value = '', A.element = ''\}} \\
-
-\subsection{Sentencias}
-\textbf{SENTENCE} $\rightarrow$ \textbf{E};\\ 
-\textit{\{SENTENCE.value = E.value + ';'\}} \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{WHILE} \\ 
-\textit{\{SENTENCE.value = WHILE.value\}} \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{IF\_ELSE}  \\ 
-\textit{\{SENTENCE.value = IF\_ELSE.value\}} \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{FOR} \\ 
-\textit{\{SENTENCE.value = FOR.value\}} \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{DO\_WHILE} \\ 
-\textit{\{SENTENCE.value = DO\_WHILE.value\}}  \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{FUNCTION}; \textbf{POSSIBLECOMMENT} \\
-\textit{\{SENTENCE.value = FUNCTION.value + ';' + POSSIBLECOMMENT.value\}} \\
-
-\textbf{SENTENCE} $\rightarrow$ \textbf{RETURN EXPRESSION}; \\ 
-\textit{\{SENTENCE.value = 'return' + EXPRESSION.value + ';'\}}  \\
-
-\subsection{Terminados en ;}
-
-\textbf{E} $\rightarrow$ \textbf{ASSIGNATION}\\
-\textit{\{E.value = ASSIGNATION.value\}}\\
-
-\textbf{E} $\rightarrow$ \textbf{ADVANCE}\\
-\textit{\{E.value = ADVANCE.value\}}\\
-
-\textbf{E} $\rightarrow$ \textbf{ECOMPARABLE}\\
-\textit{\{E.value = ECOMPARABLE.value\}}\\
-
-\textbf{ECOMPARABLE} $\rightarrow$ \textbf{EXPRESSION} \\
-\textit{\{ECOMPARABLE.value = EXPRESSION.value\}} \\
-
-\textbf{ECOMPARABLE} $\rightarrow$ \textbf{CONDITIONAL} \\
-\textit{\{ECOMPARABLE.value = CONDITIONAL.value\}} \\
-
-
-\subsection{Comentarios}
-
-\textbf{POSSIBLECOMMENT} $\rightarrow$ comment \\
-\textit{\{POSSIBLECOMMENT.value = comment.value\}} \\
-
-\textbf{POSSIBLECOMMENT} $\rightarrow$ $\lambda$ \\
-\textit{\{POSSIBLECOMMENT.value = ' '\}} \\
-
-\textbf{$COMMENT\_LIST_{1}$} $\rightarrow$ comment \textbf{$COMMENT\_LIST_{2}$} \\
-\textit{\{$COMMENT\_LIST_{1}$.value = comment.value + '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
-
-\textbf{$COMMENT\_LIST_{1}$} $\rightarrow$ newline \textbf{$COMMENT\_LIST_{2}$} \\
-\textit{\{$COMMENT\_LIST_{1}$.value = '$\setminus$n' + $COMMENT\_LIST_{2}$\}} \\
-
-\textbf{COMMENT\_LIST} $\rightarrow$ $\lambda$ \\
-\textit{\{COMMENT\_LIST.value = ' '\}} \\
-
-\subsection{Newlines}
-\textbf{POSSIBLENEWLINE} $\rightarrow$ newline \\
-\textit{\{POSSIBLENEWLINE.value = newline.value\}} \\
-
-\textbf{POSSIBLENEWLINE} $\rightarrow$ $\lambda$ \\
-\textit{\{POSSIBLENEWLINE.value = ' '\}} \\
-
-
-\subsection{Estructuras de control}
-\textbf{WHILE} $\rightarrow$ while (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
-\textit{\{'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
-
-\textbf{IF\_ELSE} $\rightarrow$ \textbf{IF} else \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
-\textit{\{IF\_ELSE.value = IF\_ELSE.level + IF.value + 'else' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
-
-\textbf{IF} $\rightarrow$ if (\textbf{CONDITION}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS} \\
-\textit{\{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}} \\
-
-\textbf{CONDITIONAL} $\rightarrow$ (\textbf{CONDITION}) ? \textbf{$EXPRESSION_{1}$} : \textbf{$EXPRESSION_{2}$}  \\
-\textit{\{CONDITIONAL.value = '(' + CONDITION.value + ')?' + $EXPRESSION_{1}$.value + ':' + $EXPRESSION_{2}$.value\}}\\
-	
-\textbf{FOR} $\rightarrow$ for(\textbf{ASSIGNATIONORLAMBDA}; \textbf{CONDITION}; \textbf{ADVANCE}) \textbf{POSSIBLECOMMENT POSSIBLENEWLINE KEYS}  \\
-\textit{\{FOR.value = 'for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '$\setminus$n' + indent(KEYS.value)\}}\\
-
-\textbf{DO\_WHILE} $\rightarrow$ do \{\textbf{$POSSIBLECOMMENT_{1}$ LIST\_SENTENCIES}\} while (\textbf{CONDITION}); \textbf{$POSSIBLECOMMENT_{2}$} \\
-\textit{\{DO\_WHILE.value = 'do{' + $POSSIBLECOMMENT_{1}$.value + '$\setminus$n' + indent(LIST\_SENTENCIES.value) + '} while(' + CONDITION.value + '); ' + $POSSIBLECOMMENT_{2}$.value + '$\setminus$n'\}}\\
-
-\textbf{KEYS} $\rightarrow$ \textbf{COMMENT\_LIST SENTENCE} \\ 
-\textit{\{KEYS.value = COMMENT\_LIST.value + SENTENCE.value\}} \\
-
-\textbf{KEYS} $\rightarrow$ \{  \textbf{POSSIBLENEWLINE} \textbf{POSSIBLECOMMENT} \textbf{LIST\_SENTENCIES} \} \textbf{POSSIBLENEWLINE}  \\
-\textit{\{KEYS.value = '\{' + POSSIBLECOMMENT.value + '$\setminus$n' + LIST\_SENTENCIES.value + '\}' + '$\setminus$n'\}} \\
-
-\subsection{Asignaciones}
-
-
-\textbf{ASSIGNATIONORLAMBDA} $\rightarrow$ \textbf{ASSIGNATION} \\
-\textit{\{ASSIGNATIONORLAMBDA.value = ASSIGNATION.value\}} \\
-
-\textbf{ASSIGNATIONORLAMBDA} $\rightarrow$ $\lambda$ \\
-\textit{\{ASSIGNATIONORLAMBDA.value = ' '\}} \\
-
-\textbf{ASSIGNATION} $\rightarrow$ var \textbf{B} \\
-\textit{\{ASSIGNATION.value = var.value + B.value, 
-IF(B.isArray, COND(table(var.value) != None \&\& table.getType(var.value) == B.type \&\& B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value, B.type, B.isArray)\}} \\
-
-\textbf{B} $\rightarrow$ [EXPRESSION] = \textbf{EXPRESSION}  \\
-\textit{\{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true\}} \\
-falta la condicion de que lo que esta entre parentesis sea de tipo natural 
-
-
-\textbf{B} $\rightarrow$ = \textbf{EXPRESSION} \\
-\textit{\{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false\}} \\
-
-\subsection{Avanzar}
-\textbf{ADVANCE} $\rightarrow$ var \textbf{C} \\
-\textit{\{COND(var.type == NUM), ADVANCE.value = var.value + C.value\}} \\
-
-\textbf{ADVANCE} $\rightarrow$ $\lambda$ \\
-\textit{\{ADVANCE.value = ' '\}} \\
-
-
-\subsection{Incremento y Decremento}
-\textbf{C} $\rightarrow$ ++ \\ 
-\textit{\{ C.value = '++' \}} \\
-
-\textbf{C} $\rightarrow$ += \textbf{VALUE} \\
-\textit{\{ COND(VALUE.type == 'natural' or VALUE.type ==  'decimal' or VALUE.type ==  'string'), C.value = '+=' + VALUE.value\}} \\
-
-\textbf{C} $\rightarrow$ --  \\
-\textit{\{ C.value = '--'  \}} \\
-
-\textbf{C} $\rightarrow$ -= \textbf{VALUE} \\
-\textit{\{ COND(VALUE.type == 'natural' or VALUE.type ==  'decimal' or VALUE.type ==  'string') C.value = '-=' + VALUE.value \}} \\
-
-
-\subsection{Condiciones}
-
-\textbf{CONDITION} $\rightarrow$ \textbf{CONDITION} or \textbf{X} \\
-\textit{\{BCONDITION.value = \}} \\
-
-\textbf{CONDITION} $\rightarrow$ \textbf{X} \\
-\textit{\{CONDITION.value = \}} \\
-
-
-\textbf{X} $\rightarrow$  \textbf{X} and \textbf{Y} \\
-\textit{\{ X.value = \}} \\
-
-\textbf{X} $\rightarrow$ \textbf{Y} \\
-\textit{\{ X.value =\}} \\
-
-\textbf{Y} $\rightarrow$ not \textbf{Y} \\
-\textit{\{Y.value = \}} \\
-
-\textbf{Y} $\rightarrow$ ( \textbf{Y} ) \\
-\textit{\{Y.value = \}} \\
-
-\textbf{Y} $\rightarrow$ \textbf{LOGICAL\_CONDITION}   \\
-\textit{\{Y.value = LOGICAL\_CONDITION.value\}}\\
-
-\textbf{Y} $\rightarrow$ \textbf{BOOL}   \\
-\textit{\{Y.value = BOOL.value\}}\\
-
-
-\textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
-\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value\}} \\
-
-
-%\textbf{BOOLEAN\_CONDITION} $\rightarrow$ \textbf{LOGICAL\_CONDITION H} \\
-%\textit{\{BOOLEAN\_CONDITION.value = LOGICAL\_CONDITION + H.value\}} \\
-
-%\textbf{H} $\rightarrow$ and \textbf{BOOLEAN\_CONDITION} \\
-%\textit{\{ H.value = 'and' + BOOLEAN\_CONDITION.value\}} \\
-
-%\textbf{H} $\rightarrow$ or \textbf{BOOLEAN\_CONDITION} \\
-%\textit{\{ H.value = 'or' + BOOLEAN\_CONDITION.value\}} \\
-
-%\textbf{H} $\rightarrow$ $lambda$ \\
-%\textit{\{H.value = ' '\}} \\
-
-%\textbf{LOGICAL\_CONDITION} $\rightarrow$ \textbf{E I} \\
-%\textit{\{ LOGICAL\_CONDITION.value = E.value + I.value\}} \\
-
-\subsection{Comparaciones}
-\textbf{I} $\rightarrow$ $>$ \textbf{E} \\
-\textit{\{ I.value = '$>$' + E.value  \}} \\
-
-\textbf{I} $\rightarrow$ $<$ \textbf{E}\\
-\textit{\{ I.value = '$<$' + E.value  \}} \\
-
-\textbf{I} $\rightarrow$ $==$ \textbf{E}\\
-\textit{\{ I.value =  '==' + E.value\}} \\
-
-\textbf{I} $\rightarrow$ $!=$ \textbf{E}\\
-\textit{\{ I.value =  '!=' + E.value\}} \\
-
-\subsection{Valores}
-\textbf{VALUE} $\rightarrow$ string \\
-\textit{\{VALUE.value = string.value, VALUE.type = 'string'\}} \\
-
-\textbf{VALUE} $\rightarrow$ bool   \\
-\textit{\{VALUE.value = bool.value, VALUE.type = 'bool'\}} \\
-
-\textbf{VALUE} $\rightarrow$ \textbf{NUM}   \\
-\textit{\{VALUE.value =  NUM.value , VALUE.type =  NUM.type\}} \\
-
-\textbf{VALUE} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
-\textit{\{VALUE.value =  FUNCTION\_WITH\_RETURN.value, VALUE.type = FUNCTION\_WITH\_RETURN.type\}} \\
-
-\textbf{$VALUE_1$} $\rightarrow$ [\textbf{$VALUE_2$ LIST\_VALUES}]   \\
-\textit{\{$VALUE_1$.value =  '[ ' + $VALUE_2$.value + LIST\_VALUES.value + ']', LIST\_VALUES.type = IF($VALUE_2$.type == 'natural','decimal',$VALUE_2$.type), $VALUE_1$.type = $VALUE_2$.type\}} \\
-
-\textbf{VALUE} $\rightarrow$ \{\textbf{LIST\_REGISTERS}\} \\
-\textit{\{VALUE.value =  LIST\_REGISTERS.value , VALUE.type = 'register'\}} \\
-
-\textbf{VALUE} $\rightarrow$ var \textbf{J} \\
-\textit{\{VALUE.value =  var.value + J.value, VALUE.type = IF(J.isArray, table.getType(var.value), var.type)\}} \\
-
-\textbf{J} $\rightarrow$ [\textbf{NUM}] \\
-\textit{\{J.value = '[' + NUM.value + ']', J.isArray = true   \}} \\
-
-\textbf{J} $\rightarrow$ $\lambda$   \\
-\textit{\{J.value = ' ', J.isArray = false\}} \\
-
-\subsection{Listas}
-\textbf{LIST\_REGISTERS} $\rightarrow$ \textbf{ASSIGNATION L} \\
-\textit{\{LIST\_REGISTERS.value = ASSIGNATION.value + L.value\}} \\
-
-\textbf{L} $\rightarrow$, \textbf{LIST\_REGISTERS} \\
-\textit{\{L.value = ',' + LIST\_REGISTERS.value\}} \\
-
-\textbf{L} $\rightarrow$ $\lambda$\\
-\textit{\{LIST\_REGISTERS.value =  ' ' \}}  \\ 
-
-\textbf{$LIST\_VALUES_1$} $\rightarrow$ \textbf{, VALUE $LIST\_VALUES_2$} \\
-\textit{\{$LIST\_VALUES_1$.value =  ',' + VALUE.value + $LIST\_VALUES_2$.value, $LIST\_VALUES_1$.type = $LIST\_VALUES_2$.type, COND($LIST\_VALUES_2$.type == IF(VALUE.type == 'natural','decimal',VALUE.type))\}} \\
-
-\textbf{LIST\_VALUES} $\rightarrow$ $\lambda$ \\
-\textit{\{LIST\_VALUES.value = ' '\}} \\
-
-\subsection{Expresiones}
-\textbf{EXPRESSION} $\rightarrow$ \textbf{ARITHMETIC\_EXPRESSION} \\   
-\textit{\{EXPRESSION.value =  ARITHMETIC\_EXPRESSION.value, EXPRESSION.type = ARITHMETIC\_EXPRESSION.type \}}  \\
-
-\textbf{EXPRESSION} $\rightarrow$ \textbf{EXPRESSION\_STRING} \\
-\textit{\{EXPRESSION.value =  EXPRESSION\_STRING.value, EXPRESSION.type = 'string' \}}  \\ 
-
-\textbf{EXPRESSION} $\rightarrow$ \textbf{VALUE} \\
-\textit{\{EXPRESSION.value =  VALUE.value, EXPRESSION.type = VALUE.type \}} \\
-
-\textbf{$EXPRESSION\_STRING_1$} $\rightarrow$ \textbf{$EXPRESSION\_STRING_2$} \textbf{W}
-\\ \textit{\{$EXPRESSION\_STRING_1$.value =  $EXPRESSION\_STRING_2$.value + W.value\}} \\
-
-\textbf{EXPRESSION\_STRING} $\rightarrow$  $lambda$ \\ 
-\textit{\{EXPRESSION\_STRING.value = ''\}} \\
-
-\textbf{W} $\rightarrow$  $lambda$ \\ 
-\textit{\{W.value = ''\}} \\
-
-\textbf{W} $\rightarrow$ + string \\ 
-\textit{\{W.value = '+' + string.value\}} \\
-
-
-\textbf{$ARITHMETIC\_EXPRESSION_1$} $\rightarrow$ \textbf{$ARITHMETIC\_EXPRESSION_2$} + \textbf{TERM} \\
-\textit{\{$ARITHMETIC\_EXPRESSION_1$.value = $ARITHMETIC\_EXPRESSION_2$.value + '+' + TERM.value, $ARITHMETIC\_EXPRESSION_2$.type = TERM.type\}} \\
-
-\textbf{$ARITHMETIC\_EXPRESSION_1$} $\rightarrow$ \textbf{$ARITHMETIC\_EXPRESSION_2$} - \textbf{TERM}  \\
-\textit{\{$ARITHMETIC\_EXPRESSION_1$.value = $ARITHMETIC\_EXPRESSION_2$.value + '-' + TERM.value, $ARITHMETIC\_EXPRESSION_1$.type = TERM.type\}} \\
-
-\textbf{ARITHMETIC\_EXPRESSION} $\rightarrow$ \textbf{TERM} \\
-\textit{\{ARITHMETIC\_EXPRESSION.value = TERM.value, ARITHMETIC\_EXPRESSION.type = TERM.type\}}  \\
-
-\subsection{Términos}
-\textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $*$ \textbf{FACTOR}   \\
-\textit{\{TERM.value = $TERM_{1}$.value + '$*$' + FACTOR.value, TERM.type = FACTOR.type\}} \\
-
-\textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} $/$ \textbf{FACTOR}   \\
-\textit{\{TERM.value = $TERM_{1}$.value + '$/$' + FACTOR.value, TERM.type = FACTOR.type\}} \\
-
-\textbf{TERM} $\rightarrow$ \textbf{$TERM_{1}$} \% \textbf{FACTOR}  \\
-\textit{\{TERM.value = $TERM_{1}$.value + '\%' + FACTOR.value, TERM.type = FACTOR.type\}} \\
-
-\textbf{TERM} $\rightarrow$ \textbf{FACTOR} \\
-\textit{\{TERM.value = FACTOR.value, TERM.type = FACTOR.type\}} \\
-
-\textbf{FACTOR} $\rightarrow$ \textbf{NUM}   \\
-\textit{\{FACTOR.value = NUM.value, FACTOR.type = 'decimal'\}} \\
-
-\textbf{FACTOR} $\rightarrow$ var  \\ 
-\textit{\{FACTOR.value = var.value, FACTOR.type = 'decimal', COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal')\}}  \\ 
-\\
-
-
-\textbf{FACTOR} $\rightarrow$ var[\textbf{NUM}]  \\ 
-\textit{\{FACTOR.value = var.value + '[' + NUM.value + ']', FACTOR.type = 'decimal', COND(NUM.type == 'natural'), COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal')\}}  \\ 
-\\
-
-
-
-
-\subsection{Funciones}
-\textbf{FUNCTION} $\rightarrow$ \textbf{FUNCTION\_WITH\_RETURN} \\
-\textit{\{FUNCTION.value =  FUNCTION\_WITH\_RETURN.value, FUNCTION.type = FUNCTION\_WITH\_RETURN.type\}} \\
-
-\textbf{FUNCTION} $\rightarrow$ print(\textbf{ECOMPARABLE}) \\   
-\textit{\{FUNCTION.value =  'print(' + ECOMPARABLE.value + ')', FUNCTION.type = 'void'\}} \\
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ multiplicacionEscalar(\textbf{PARAM\_ME}) \\ 
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'multiplicacionEscalar(' + PARAM\_ME.value + ')', , FUNCTION\_WITH\_RETURN.type = PARAM\_ME.type\}} \\
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ capitalizar(ECOMPARABLE)   \\
-\textit{\{COND(ECOMPARABLE.type == 'string'), FUNCTION\_WITH\_RETURN.value =  'capitalizar(' + ECOMPARABLE.value + ')', FUNCTION\_WITH\_RETURN.type = 'string'\}} \\
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ colineales($var_{1}$, $var_{2}$)   \\
-\textit{\{COND((table.getType($var_{1}$.value) == natural $||$ table.getType($var_{1}$.value) == 'decimal' \&\& table.isArray($var_{1}$.value) \&\& table.isArray($var_{2}$.value)) \&\&
-(table.getType($var_{2}$.value) == 'natural' $||$ table.getType($var_{2}$.value) == 'decimal')), FUNCTION\_WITH\_RETURN.value = 'colineales (' + $var_{1}$.value + ', ' +$var_{2}$.value')', FUNCTION\_WITH\_RETURN.type = 'bool' \}} \\
-
-\textbf{FUNCTION\_WITH\_RETURN} $\rightarrow$ length(\textbf{PARAM\_LENGTH}) \\
-\textit{\{FUNCTION\_WITH\_RETURN.value =  'length(' + PARAM\_LENGTH.value + ')',\\ 
-FUNCTION\_WITH\_RETURN.type = 'natural'\}} \\
-
-\subsection{Parámetros de funciones}
-\textbf{PARAM\_ME} $\rightarrow$ var, \textbf{NUM N} \\
-\textit{\{ PARAM\_ME.value = var.value + ',' + NUM.value + N.value, COND(table.getType(var.value) == 'natural' $||$ table.getType(var.value) == 'decimal'), COND(table.isArray(var.value)),\\
-PARAM\_ME.type = IF(table.getType(var.value) == 'decimal' \&\& N.isTrue,  'natural' , table.getType(var.value))\}} \\
-
-\textbf{N} $\rightarrow$ ,\textbf{BOOL} \\
-\textit{\{ N.value = ', bool', N.isTrue = N.value\}} \\ 
-
-\textbf{N} $\rightarrow$ $lambda$  \\
-\textit{\{N.value = ' ', N.isTrue = false\}} \\
-
-\textbf{PARAM\_LENGTH} $\rightarrow$ var \\
-\textit{\{PARAM\_LENGTH.value = var.value, COND(table.isArray(var.value) $||$ (table.getType(var.value) == 'string'))\}} \\
-
-\textbf{PARAM\_LENGTH} $\rightarrow$ [VALUE LIST\_VALUES]\\
-\textit{\{PARAM\_LENGTH.value = '[' + VALUE.value + LIST\_VALUES.value + ']', LIST\_VALUES.type = IF(VALUE.type == 'natural','decimal',VALUE.type)\}} \\
-
-\textbf{PARAM\_LENGTH} $\rightarrow$ string \\
-\textit{\{PARAM\_LENGTH.value = string.value\}} \\
-
-\subsection{Tipos numéricos}
-\textbf{NUM} $\rightarrow$ decimal \\
-\textit{\{NUM.value = decimal.value, NUM.type = 'decimal')\}}  \\ 
-
-\textbf{NUM} $\rightarrow$ natural \\
-\textit{\{NUM.value = natural.value, NUM.type = 'natural')\}}  \\ 
-
-\subsection{Tipos Booleanos}
-\textbf{BOOL} $\rightarrow$ true \\
-\textit{\{ BOOL.value = 'true' \}} \\ 
-
-\textbf{BOOL} $\rightarrow$ false \\
-\textit{\{ BOOL.value = 'false' \}} \\ 
-
-
-\subsection{Limitaciones}
-
-Los siguientes casos no son condirados correctos por nuestra gramatica:
-
-\begin{itemize}
-\item las condicionales no son expresiones, por esta razon no se puden realizar operaciones aritmeticas o de strings con los mismos.
-\item no aceptamos *= ni /=
-\item --f para nosotros no es valido. Si es valido f--. tampoco aceptamos ++  o -- para algo que no sea una variable. 
-\item No contemplamos numeros negativos. 
-\item Todas las funciones toman paramtros basicos como var, booleanos, o vectores en los casos que corresponda.  
-\item No permitimos una sentencia cortada en diferentes lineas. i newline ++ no es valido
-\end{itemize}
-
-
 \subsection{Atributos}
 
+Dada la limitación de \textit{PLY} para manejar atributos heredados, todos nuestros atributos son sintetizados.\\
+
+Los atributos con los que contamos son:
 \begin{itemize}
-\item Terminales natural.value, decimal.value, string.value
-\item \textbf{PARAM\_LENGTH.value, NUM.value:} string (\textit{sintetizado}) es el código de salida del parser arreglado.
-\item \textbf{Level:} int (\textit{heredado}) almacena el nivel de indentación de la producción actual.
-\item \textbf{NUM.type:} string (\textit{sintetizado}) representa el tipo de la expresión en cuestión.
-\item \textbf{N.isTrue:} bool (\textit{sintetizado}) almacena la información del booleano dado por parámetro en multiplicacionEscalar.
+\item \textbf{NoTerminal.value}: Consiste en el valor asociado
+\item \textbf{NoTerminal.type}: \textit{tipo}. Representa el tipo asociado. El tipo puede ser ``natural'', ``decimal'' o ``string''.
+\item \textbf{NoTerminal.isTrue}: \textit{bool}. Almacena la información del booleano dado por parámetro en multiplicacionEscalar.
+\item \textbf{NoTerminal.isArray}: \textit{bool}. Guarda la información de si el no terminal deriva en un arreglo o no.
 \end{itemize}
 
 \section{Ejemplo de la Gramática de Atributos}
@@ -504,35 +162,60 @@ Los siguientes casos no son condirados correctos por nuestra gramatica:
 
 En el diagrama anterior, se pueden observar las derivaciones de una parte del programa presentado a modo de ejemplo.
 
+\section{Conflictos}
+Los conflictos shift/reduce fueron resueltos priorizando los shifts por sobre los reduce. En el caso de conflictos generados por el fin de un comentario, éstos fueron siempre resueltos reduciendo $comment\_list$.
+\begin{verbatim}
+    LKEY            shift and go to state 48
+    COMMENT         shift and go to state 52
+    NEWLINE         shift and go to state 51
+    RETURN          reduce using rule 26 (comment_list -> .)
+    WHILE           reduce using rule 26 (comment_list -> .)
+    FOR             reduce using rule 26 (comment_list -> .)
+    DO              reduce using rule 26 (comment_list -> .)
+    PRINT           reduce using rule 26 (comment_list -> .)
+    VAR             reduce using rule 26 (comment_list -> .)
+    IF              reduce using rule 26 (comment_list -> .)
+    MULTIPLICACIONESCALAR reduce using rule 26 (comment_list -> .)
+    CAPITALIZAR     reduce using rule 26 (comment_list -> .)
+    COLINEALES      reduce using rule 26 (comment_list -> .)
+    LENGTH          reduce using rule 26 (comment_list -> .)
+    LPAREN          reduce using rule 26 (comment_list -> .)
+    NOT             reduce using rule 26 (comment_list -> .)
+    STRING          reduce using rule 26 (comment_list -> .)
+    LBRACKET        reduce using rule 26 (comment_list -> .)
+    TRUE            reduce using rule 26 (comment_list -> .)
+    FALSE           reduce using rule 26 (comment_list -> .)
+    DECIMAL         reduce using rule 26 (comment_list -> .)
+    NATURAL         reduce using rule 26 (comment_list -> .)
+\end{verbatim}
 \section{Descripción}
 
-Para la realización de nuestro trabajo práctico, tomamos las siguientes decisiones:
-\begin{itemize}
-\item En la gramática, nuestro diccionario está en $R^2$ 
+Dadas las decisiones tomadas al momento de formular la gramática, consideramos los siguientes casos como incorrectos:
 
+\begin{itemize}
+\item Los operadores ternarios no son considerados expresiones, por lo que no permitimos la realización de operaciones aritméticas ni entre strings.
+\item No aceptamos *= ni /=
+\item No aceptamos --f pues no aparecía en el enunciado, pero sí aceptamos f--. Tampoco aceptamos ++ o -- para algo que no sea una variable. 
+\item Asumimos que los Registers toman únicamente literales de tipos básicos.
 \item x.valor + y.valor representa la concatenación
 
-\item Por defecto, los arreglos se inicializan como decimales si son números
-
-\item Asumimos que ASIGNACION $\rightarrow$ VAR = NUM 
-
-\item Asumimos que los Registers toman únicamente literales de tipos básicos.
-
-\item Decidimos que los comentarios se reescriben en la línea de abajo para mayor claridad del código.
-
-\item El único newline que nos interesa es entre \{ ; \{ \} ) \} y \#
-
-\item Para las expresiones aritméticas, decidimos que se convierten todos los números a decimales para permitir mayor compatibilidad en las operaciones.
+\item Dado que en los ejemplos no hay enteros negativos decidimos no contemplar ese caso. 
+\item No permitimos sentencias separadas en diferentes renglones. Por ejemplo, hacer ``i newline ++'' no lo consideramos válido.
 \end{itemize}
 
+Nuestras decisiones fueron tomadas antes de la publicación de los tests dado que el enunciado no especifica explícitamente qué efectuar en esos casos.
+
+Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: \textbf{nombre, tipo, isArray, isTrue} para las variables que así lo requieran para la ejecución de funciones que las utilizan.
 
 \section{Compilación y ejecución}
+Para compilar nuestro trabajo práctico y ejecutarlo, alcanza con correr en la consola el siguiente comando:
+\textbf{python parser.py archivoEntrada archivoSalida}
 
 \section{Casos de prueba}
-
-\section{Resultados}
+Los casos de prueba utilizados fueron los del enunciado, con los que nos aseguramos que se devolviera un error en cuanto la sintáxis no era correcta. Dadas algunas decisiones mencionadas anteriormente, no todos los tests de la cátedra son aceptados por nuestra gramática. En particular, agregamos la carpeta \textbf{test} con los casos de tests subidos por la cátedra con algunas modificaciones para los casos que excluímos.
 
 \section{Conclusión}
+Podemos concluir que resulta muy complicado realizar una gramática de tal dimensión sin tener problemas de ambigüedad. A pesar de ello, PLY es una excelente herramienta para dicho fin dado que resuelve los conflictos solucionándole muchos problemas al programador.
 
 \section{Referencias}
 \begin{itemize}
