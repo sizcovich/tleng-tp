@@ -375,16 +375,33 @@ def p_for(subexpressions):
 
 
 def p_do_while(subexpressions):
-    'do_while : DO LKEY possiblecomment list_sentencies RKEY WHILE LPAREN condition RPAREN SEMICOLON possiblecomment possiblenewline'
+    'do_while : DO keys_do WHILE LPAREN condition RPAREN SEMICOLON possiblecomment possiblenewline'
 
     #{DO_WHILE.value = 'do' + POSSIBLECOMMENT1.value + '\n' + LIST_SENTENCIES.value + ' while(' + CONDITION.value + '); ' + POSSIBLECOMMENT2.value + '\n'}
-    do_while = subexpressions[0]
-    possiblecomment1 = subexpressions[3]
-    list_sentencies = subexpressions[4]
-    condition = subexpressions[8]
-    possiblecomment2 = subexpressions[11]
+    keysdo = subexpressions[2]
+    condition = subexpressions[5]
+    possiblecomment2 = subexpressions[8]
 
-    subexpressions[0] = {"value": "do(" + possiblecomment1["value"] + "\n" + list_sentencies["value"] + "while(" + condition["value"]+ ");" + possiblecomment2["value"] + "\n"}
+    subexpressions[0] = {"value": "do \n" + keysdo["value"] + "while(" + condition["value"] + ");" + possiblecomment2["value"] + "\n"}
+
+def p_keys_do_append_sentence(subexpressions):
+    'keys_do : comment_list sentence possiblenewline'
+
+    #{ KEYS.value = COMMENT_LIST.value + SENTENCE.value}
+    comment_list = subexpressions[1]
+    sentence = subexpressions[2]
+
+    subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
+
+
+def p_keys_do_append_possiblecomment(subexpressions):
+    'keys_do : LKEY possiblenewline possiblecomment list_sentencies RKEY possiblenewline'
+
+    #{KEYS.value = '{' + POSSIBLECOMMENT.value + '\n' + LIST_SENTENCIES.value + '} \n'}
+    possiblecomment = subexpressions[3]
+    list_sentencies = subexpressions[4]
+
+    subexpressions[0] = {"value": "{ " + indent(possiblecomment["value"] +  "\n" + list_sentencies["value"]) + "} "}
 
 
 def p_keys_append_sentence(subexpressions):
