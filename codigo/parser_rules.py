@@ -474,6 +474,12 @@ def p_b_expression(subexpressions):
     ecomparable =  subexpressions[2]
     subexpressions[0] = {"value": "= " + ecomparable["value"] , "type": ecomparable["type"], "isArray": ecomparable["isArray"]}
 
+def p_b_registers(subexpressions):
+    'b : COLON ecomparable'
+
+    #{B.value = '=' + EXPRESSION.value, B.type = EXPRESSION.type, B.isArray = false}
+    ecomparable =  subexpressions[2]
+    subexpressions[0] = {"value": ": " + ecomparable["value"] , "type": ecomparable["type"], "isArray": ecomparable["isArray"]}
 
 
 def p_advancefor_advance(subexpressions):
@@ -663,7 +669,7 @@ def p_logical_condition_unequal(subexpressions):
 def p_possibleparen_paren(subexpressions):
     'possibleparen : LPAREN ecomparable RPAREN'
 
-    #{ I.value = '==' + E.value}
+    #{ possibleparen.value = "(" +  ecomparable["value"] + ")"}
     ecomparable = subexpressions[2]
 
     subexpressions[0] = {"value": "(" +  ecomparable["value"] + ")", "type": "bool"}
@@ -675,9 +681,6 @@ def p_possibleparen_ecomparable(subexpressions):
     ecomparable = subexpressions[1]
 
     subexpressions[0] = {"value": ecomparable["value"], "type": "bool"}
-
-
-
 
 
 def p_value_string(subexpressions):
