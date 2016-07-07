@@ -470,6 +470,20 @@ PARAM\_ME.type = IF(table.getType(var.value) == 'decimal' \&\& N.isTrue,  'natur
 \textit{\{ BOOL.value = 'false' \}} \\ 
 
 
+\subsection{Limitaciones}
+
+Los siguientes casos no son condirados correctos por nuestra gramatica:
+
+\begin{itemize}
+\item las condicionales no son expresiones, por esta razon no se puden realizar operaciones aritmeticas o de strings con los mismos.
+\item no aceptamos *= ni /=
+\item --f para nosotros no es valido. Si es valido f--. tampoco aceptamos ++  o -- para algo que no sea una variable. 
+\item No contemplamos numeros negativos. 
+\item Todas las funciones toman paramtros basicos como var, booleanos, o vectores en los casos que corresponda.  
+\item No permitimos una sentencia cortada en diferentes lineas. i newline ++ no es valido
+\end{itemize}
+
+
 \subsection{Atributos}
 
 \begin{itemize}
