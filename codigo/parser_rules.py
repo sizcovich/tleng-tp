@@ -54,10 +54,6 @@ def getType(name):
 
     return type
 
-def indent(cant):
-    return "        "
-
-
 
 def p_program(subexpressions):
     'program : list_sentencies'
