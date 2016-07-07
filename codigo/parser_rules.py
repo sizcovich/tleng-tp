@@ -746,7 +746,7 @@ def p_value_var_array(subexpressions):
 
     typ = getType(var)
 
-    subexpressions[0] = {"value":  var + j["value"], "type": typ, "isArray": False}
+    subexpressions[0] = {"value":  var + j["value"], "type": typ, "isArray": j["isArray"]}
 
 
 def p_j_array(subexpressions):
@@ -757,7 +757,7 @@ def p_j_array(subexpressions):
 
     if expression["type"] != 'natural':
         raise SemanticException("El valor para acceder a un array debe ser natural")   
-    subexpressions[0] = {"value": "[" + expression["value"] + "]", "isArray": False}
+    subexpressions[0] = {"value": "[" + expression["value"] + "]", "isArray": expression["isArray"]}
 
 
 def p_j_lambda(subexpressions):
@@ -998,12 +998,11 @@ def p_param_me_var(subexpressions):
     comma = subexpressions[2]
     var2 = subexpressions[3]
     n = subexpressions[4]
-
     if not(var2["type"] == "natural" or var2["type"] == "decimal"):
         raise SemanticException("El tercer parametro de multiplicacionEscalar debe ser un numero")
 
     table_var1_type = getType(var1)
-    if not((table_var1_type == "natural" or table_var1_type == "decimal") and (isArray(var1)) ):
+    if not((table_var1_type == "natural" or table_var1_type == "decimal")):
         raise SemanticException("El primer parametro de multiplicacionEscalar debe ser un numero")
 
     if table_var1_type == "decimal" and n["isTrue"] :
@@ -1026,7 +1025,6 @@ def p_n_lambda(subexpressions):
 def p_param_l_var(subexpressions):
     'param_length : VAR '
     var = subexpressions[1]
-    assert(isArray(var) or getType(var) == "string")
     subexpressions[0] = {"value": var, "isArray": False}
 
 def p_param_l_fwr(subexpressions):
