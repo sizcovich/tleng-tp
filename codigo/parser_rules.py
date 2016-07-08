@@ -37,7 +37,7 @@ def isArray(name):
     return isArray
 
 def getType(name):
-	#obtiene el tipo de una variable a partir de la información de la tabla
+	#obtiene el tipo de una variable a partir de la informacion de la tabla
     type = ""
     if (table.has_key(name)!= False):
         datos =table[name]
@@ -399,7 +399,7 @@ def p_c_minequal(subexpressions):
 
 def p_condition_or(subexpressions):
     'condition : condition OR x'
-    #{COND(CONDITION2.type != "bool" || X.type != "bool"), CONDITION1.value = CONDITION2 + 'or' + X.value, CONDITION1.type = "bool"}
+    #{COND(CONDITION2.type != "bool" || X.type != "bool"), CONDITION1.value = CONDITION2 + 'or' + X.value, CONDITION1.type = "bool"}
     condition1 = subexpressions[1]
     x = subexpressions[3]
     if (condition1["type"] != "bool") or (x["type"]!="bool"):
@@ -739,7 +739,7 @@ def p_func_wr_coli(subexpressions):
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN param_length RPAREN'
-    #{FUNCTION_WITH_RETURN.value = "length(" + pl.value + ')', FUNCTION_WITH_RETURN.type = "natural", FUNCTION_WITH_RETURN.isArray = "False"}    
+    #{FUNCTION_WITH_RETURN.value = "length(" + pl.value + ')', FUNCTION_WITH_RETURN.type = "natural", FUNCTION_WITH_RETURN.isArray = "False"}
     pl = subexpressions[3]
     subexpressions[0] = {"value": "length( " + pl["value"] + " )", "type": "natural", "isArray": False}
 
