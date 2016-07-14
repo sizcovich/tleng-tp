@@ -60,41 +60,144 @@ reserved = {
 }
 
 # Regular expression rules for simple tokens
-t_PLUS	= r'\+'
-t_MINUS	= r'-'
-t_TIMES	= r'\*'
-t_DIVIDE = r'/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_MODULE = r'%'
-t_LESS = r'<'
-t_GREATER = r'>'
-t_PLUSEQUAL = r'\+='
-t_DIVEQUAL = r'/='
-t_MULEQUAL = r'\*='
-t_MINEQUAL = r'-='
-t_ASSIGN = r'='
-t_SEMICOLON = r';'
-t_UNEQUAL = r'!='
-t_EQUAL = r'=='
-t_DECREMENT = r'--'
-t_RKEY = r'\}'
-t_LKEY = r'\{'
-t_QUESTIONMARK = r'\?'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
-t_POW = r'\^'
-t_COLON = r':'
-t_COMMA = r','
-
-#regular expression rules with some action code
-#Reserved symbols:
-# Define a rule so we can track line numbers
-
 def t_INCREMENT(t):
 	r'\+\+'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
+
+def t_DECREMENT(t):
+ 	r'--'
+ 	t.value = { "line": t.lineno, "value": t.value }
+ 	return t
+
+def t_PLUS(t):
+	r'\+'
+	t.value = { "line": t.lineno, "value": t.value }
+ 	return t
+ 
+def t_MINUS(t):
+ r'-'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_TIMES(t):
+ r'\*'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_DIVIDE(t):
+ r'/'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_LPAREN(t):
+ r'\('
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_RPAREN(t):
+ r'\)'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_MODULE(t):
+ r'%'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_LESS(t):
+ r'<'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_GREATER(t):
+ r'>'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_PLUSEQUAL(t):
+ r'\+='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_DIVEQUAL(t):
+ r'/='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_MULEQUAL(t):
+ r'\*='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_MINEQUAL(t):
+ r'-='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_ASSIGN(t):
+ r'='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_SEMICOLON(t):
+ r';'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_UNEQUAL(t):
+ r'!='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_EQUAL(t):
+ r'=='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_RKEY(t):
+ r'\}'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_LKEY(t):
+ r'\{'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_QUESTIONMARK(t):
+ r'\?'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_LBRACKET(t):
+ r'\['
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_RBRACKET(t):
+ r'\]'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_POW(t):
+ r'\^'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_COLON(t):
+ r':'
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_COMMA(t):
+ r','
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+
+#regular expression rules with some action code
+#Reserved symbols:
+# Define a rule so we can track line numbers
 
 def t_ELSE(t):
 	r'else|ELSE'
