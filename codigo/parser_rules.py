@@ -201,38 +201,32 @@ def p_while(subexpressions):
     subexpressions[0] = {"value": "while(" + condition["value"] + ")" + new}
 
 def p_if_else(subexpressions):
-    'if_else : if possibleelse'
-    #{IF_ELSE.value = IF.value + POSSIBLEELSE.value}
-    if1 = subexpressions[1]
-    possibleelse = subexpressions[2]
-    subexpressions[0] = {"value": if1["value"] + possibleelse["value"]}
-
-def p_possibleelse_else(subexpressions):
-    'possibleelse : ELSE keys'
-    #{POSSIBLEELSE.value = 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
-    keys = subexpressions[2]
-    lastElementLine = subexpressions[1]["line"]
-    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
-        new = "\n"
-    new = new + keys["value"]
-    subexpressions[0] = {"value":  " else " + new}
-
-def p_possibleelse_lambda(subexpressions):
-    'possibleelse : '
-    #{POSSIBLEELSE.value = ''}
-    subexpressions[0] = {"value":  ""}
-
-def p_if(subexpressions):
-    'if : IF LPAREN expression RPAREN keys'
-    #{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
+    'if_else : IF LPAREN expression RPAREN keys possibleelse'
+    #{IF_ELSE.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value + POSSIBLEELSE.value}
     condition = subexpressions[3]
     keys = subexpressions[5]
     lastElementLine = subexpressions[4]["line"]
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "if(" + condition["value"] + ")" + new}
+    possibleelse = subexpressions[6]
+    subexpressions[0] = {"value": "if(" + condition["value"] + ")" + new + possibleelse["value"]}
 
+def p_possibleelse_else(subexpressions):
+    'possibleelse : ELSE keys'
+    #{POSSIBLEELSE.value = 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
+    keys = subexpressions[2]
+    lastElementLine = subexpressions[1]["line"]
+    new = ''
+    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    new = new + keys["value"]
+    subexpressions[0] = {"value": " else " + new}
+
+def p_possibleelse_lambda(subexpressions):
+    'possibleelse : '
+    #{POSSIBLEELSE.value = ''}
+    subexpressions[0] = {"value": ""}
 
 def p_for(subexpressions):
     'for : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
@@ -358,7 +352,7 @@ def p_advancefor_assignationorlambda(subexpressions):
     assignationorlambda = subexpressions[1]
     subexpressions[0] = {"value": assignationorlambda["value"]}
 
-def p_advance_var(subexpressions):
+def p_advance_var_c(subexpressions):
     'advance : VAR c'
     #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     var = subexpressions[1]
@@ -367,8 +361,23 @@ def p_advance_var(subexpressions):
         raise SemanticException("El tipo a avanzar no es un numero")
     subexpressions[0] = {"value":  var["value"] + c["value"]}
 
-def p_c_increment(subexpressions):
-    'c : INCREMENT'
+def p_advance_d_var(subexpressions):
+    'advance : d VAR'
+    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+    d = subexpressions[1]
+    var = subexpressions[2]
+    if (not(getType(var["value"]) == "natural" or getType(var["value"]) == "decimal" or getType(var["value"]) == "string")) :
+        raise SemanticException("El tipo a avanzar no es un numero")
+    subexpressions[0] = {"value":  d["value"] + var["value"]}
+
+def p_c_d(subexpressions):
+    'c : d'
+    d = subexpressions[1]
+    #{C.value = d.value}
+    subexpressions[0] = {"value": d["value"]}
+
+def p_d_increment(subexpressions):
+    'd : INCREMENT'
     #{C.value = '++'}
     subexpressions[0] = {"value": "++"}
 
@@ -380,8 +389,8 @@ def p_c_plus(subexpressions):
         raise SemanticException("No es un tipo valido para la operacion +=")
     subexpressions[0] = {"value": "+=" + value["value"]}
 
-def p_c_decrement(subexpressions):
-    'c : DECREMENT'
+def p_d_decrement(subexpressions):
+    'd : DECREMENT'
     #{ C.value = '--'}
     subexpressions[0] = {"value": "--"}
 
