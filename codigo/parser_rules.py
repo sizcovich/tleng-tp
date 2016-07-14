@@ -184,12 +184,6 @@ def p_comment_list_append(subexpressions):
     comment_list2 = subexpressions[2]
     subexpressions[0] = {"value": comment["value"] + "\n" + comment_list2["value"]}
 
-def p_comment_list_newline(subexpressions):
-    'comment_list :  comment_list'
-    #{COMMENT_LIST1.value = '\n' + COMMENT_LIST2}
-    comment_list2 = subexpressions[2]
-    subexpressions[0] = {"value":  "\n" + comment_list2["value"]}
-
 def p_comment_list_lambda(subexpressions):
     'comment_list : '
     #{COMMENT LIST.value = ''}
@@ -552,7 +546,6 @@ def p_expression_LESS(subexpressions):
 
 
     subexpressions[0] = {"value": term["value"] + " < " + factor["value"], "type": "bool", "isArray": False}
-
 
 
 def p_expression_GREATER(subexpressions):
