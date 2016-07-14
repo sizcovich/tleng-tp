@@ -20,13 +20,11 @@ tokens = (
 	'DIVIDE',
 	'LPAREN',
 	'ASSIGN',
-	'QUOTMARK',
 	'SEMICOLON',
 	'UNEQUAL',
 	'EQUAL',
 	'DECREMENT',
 	'INCREMENT',
-	'HASH',
 	'RKEY',
 	'LKEY',
 	'RPAREN',
@@ -43,11 +41,7 @@ tokens = (
 	'QUESTIONMARK',
 	'TRUE',
 	'FALSE',
-	'BEGIN',
-	'END',
 	'RETURN',
-	#'RES',
-	'DOT',
 	'COMMA',
 	'LBRACKET',
 	'RBRACKET',
@@ -58,15 +52,21 @@ tokens = (
 	'STRING'
 )
 
+#Reserved words
+reserved = {
+    'res' : 'RES',
+    'begin' : 'BEGIN',
+    'end' : 'END'
+}
+
 # Regular expression rules for simple tokens
 t_PLUS	= r'\+'
 t_MINUS	= r'-'
 t_TIMES	= r'\*'
-t_DIVIDE	= r'/'
-t_LPAREN	= r'\('
-t_RPAREN	= r'\)'
+t_DIVIDE = r'/'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
 t_MODULE = r'%'
-t_DOT = r'\.'
 t_LESS = r'<'
 t_GREATER = r'>'
 t_PLUSEQUAL = r'\+='
@@ -74,12 +74,10 @@ t_DIVEQUAL = r'/='
 t_MULEQUAL = r'\*='
 t_MINEQUAL = r'-='
 t_ASSIGN = r'='
-t_QUOTMARK = r'"'
 t_SEMICOLON = r';'
 t_UNEQUAL = r'!='
 t_EQUAL = r'=='
 t_DECREMENT = r'--'
-t_HASH = r'\#'
 t_RKEY = r'\}'
 t_LKEY = r'\{'
 t_QUESTIONMARK = r'\?'
@@ -112,16 +110,6 @@ def t_WHILE(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-def t_BEGIN(t):
-	r'begin|BEGIN'
-	t.value = { "line": t.lineno, "value": t.value }
-	return t
-
-def t_END(t):
-	r'end|END'
-	t.value = { "line": t.lineno, "value": t.value }
-	return t
-
 def t_FOR(t):
 	r'for|FOR'
 	t.value = { "line": t.lineno, "value": t.value }
@@ -132,18 +120,11 @@ def t_DO(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-#def t_RES(t):
-#	r'res'
-#	t.value = { "line": t.lineno, "value": t.value }
-	return t
-
 def t_RETURN(t):
 	r'return|RETURN'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 	
-
-
 def t_TRUE(t):
 	r'true|TRUE'
 	t.value = { "line": t.lineno, "value": t.value }
@@ -210,20 +191,18 @@ def t_NATURAL(t):
 	t.value = { "line": t.lineno, "value": int(t.value) }
 	return t
 
-
 def t_STRING(t):
 	r'\"([^\"]+)\"'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
-
 
 def t_COMMENT(t):
 	r'\#.*'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-# A string containing ignored characters (spaces and tabs)
-t_ignore	= '\t \n'
+# A string containing ignored characters (spaces, tabs and newlines)
+t_ignore = '\t \n'
 
 # Error handling rule
 def t_error(token):

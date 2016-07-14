@@ -399,6 +399,21 @@ def p_c_minequal(subexpressions):
         raise SemanticException("No es un tipo valido para la operacion -=")
     subexpressions[0] = {"value": "-=" + value["value"]}
 
+def p_c_mulequal(subexpressions):
+    'c : MULEQUAL value'
+    #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
+    value = subexpressions[2]
+    if value["type"] != 'natural' and value["type"] != 'decimal':
+        raise SemanticException("No es un tipo valido para la operacion *=")
+    subexpressions[0] = {"value": "*=" + value["value"]}
+
+def p_c_divequal(subexpressions):
+    'c : DIVEQUAL value'
+    #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
+    value = subexpressions[2]
+    if value["type"] != 'natural' and value["type"] != 'decimal':
+        raise SemanticException("No es un tipo valido para la operacion /=")
+    subexpressions[0] = {"value": "/=" + value["value"]}
 
 def p_value_string(subexpressions):
     'value : STRING'
