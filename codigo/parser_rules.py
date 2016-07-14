@@ -543,68 +543,42 @@ def p_expression_conditional(subexpressions):
     subexpressions[0] = {"value": condition["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"], "isArray" : False}
 
 
-def p_expression_LESS(subexpressions):
-    'expression : term LESS expression'
-
+def p_expression_term_w(subexpressions):
+    'expression : term w'
     term  = subexpressions[1]
-    factor  = subexpressions[3]
+    w  = subexpressions[2]
+    if((w[0] == '=' or w[0] == '!') and w[1] == '='):
+        if not(term["type"] == w["type"]):
+            raise SemanticException("No se puede comparar igualdad entre expresiones de distinto tipo")
+    else:
+        if not(((term["type"] == 'natural' or term["type"] == 'decimal') and (w["type"] == 'natural' or w["type"] == 'decimal')) or (w["type"] == 'string' and w["type"] == 'string')):
+            raise SemanticException("No puede utilizar la comparacion si ambos tipos no son numericos o strings")
+    subexpressions[0] = {"value": term["value"] + w["value"], "type": "bool", "isArray": False}
+
+def p_w_less(subexpressions):
+    'w : LESS expression'
+    expression = subexpressions[2]
+    subexpressions[0] = {"value": " < " + expression["value"], "type": expression["type"], "isArray": False}
+
+def p_w_greater(subexpressions):
+    'w : GREATER expression'
+    expression = subexpressions[2]
+    subexpressions[0] = {"value": " > " + expression["value"], "type": expression["type"], "isArray": False}
+
+def p_w_equal_expression(subexpressions):
+    'w : EQUAL expression'
+    expression = subexpressions[2]
+    subexpressions[0] = {"value": " == " + expression["value"], "type": expression["type"], "isArray": False}    
+
+def p_w_unequal_expression(subexpressions):
+    'w : UNEQUAL expression'
+    expression = subexpressions[2]
+    subexpressions[0] = {"value": " != " + expression["value"], "type": expression["type"], "isArray": False}    
 
 
-    if not(((term["type"] == 'natural' or term["type"] == 'decimal') and (factor["type"] == 'natural' or factor["type"] == 'decimal')) or (term["type"] == 'string' and factor["type"] == 'string')):
-        raise SemanticException("No puede utilizar el < si ambos tipos no son numericos o strings")
-
-
-    subexpressions[0] = {"value": term["value"] + " < " + factor["value"], "type": "bool", "isArray": False}
-
-
-def p_expression_GREATER(subexpressions):
-    'expression : term GREATER expression'
-
-    term  = subexpressions[1]
-    factor  = subexpressions[3]
-
-
-    if not(((term["type"] == 'natural' or term["type"] == 'decimal') and (factor["type"] == 'natural' or factor["type"] == 'decimal')) or (term["type"] == 'string' and factor["type"] == 'string')):
-        raise SemanticException("No puede utilizar el > si ambos tipos no son numericos o strings")
-
-
-    subexpressions[0] = {"value": term["value"] + " > " + factor["value"], "type": "bool", "isArray": False}
-
-
-def p_logical_condition_equal(subexpressions):
-    'expression : term  EQUAL expression'
-
-    term  = subexpressions[1]
-    factor  = subexpressions[3]
-
-    if not(term["type"] == factor["type"]):
-        raise SemanticException("No puede comparar por igual a expresiones de distinto tipo")
-
-
-    subexpressions[0] = {"value": term["value"] + " == " + factor["value"], "type": "bool", "isArray": False}
-
-
-def p_logical_condition_unequal(subexpressions):
-
-    'expression : term  UNEQUAL expression'
-    term  = subexpressions[1]
-    factor  = subexpressions[3]
-
-    if not(term["type"] == factor["type"]):
-        raise SemanticException("No puede comparar por igual a expresiones de distinto tipo")
-
-    subexpressions[0] = {"value": term["value"] + " != " + factor["value"], "type": "bool", "isArray": False}
-
-
-
-
-
-def p_expression_term_1(subexpressions):
-
+def p_expression_term(subexpressions):
     'expression : term'
     factor  = subexpressions[1]
-
-
     subexpressions[0] = {"value": factor["value"] , "type": factor["type"], "isArray": factor["isArray"]}
 
 
@@ -692,7 +666,7 @@ def p_y_module(subexpressions):
     subexpressions[0] = {"value": term["value"] + " % " + factor["value"], "type": typ, "isArray": False}
 
 
-def p_expression_term(subexpressions):
+def p_term_factor(subexpressions):
 
     'term : factor'
     term  = subexpressions[1]
