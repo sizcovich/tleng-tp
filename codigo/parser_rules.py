@@ -50,28 +50,27 @@ def p_program(subexpressions):
     list_sentencies = subexpressions[1]
     subexpressions[0] = {"value": list_sentencies["value"]}
 
-def p_list_sentencies_newline(subexpressions):
-    'list_sentencies : NEWLINE a'
-    #{LIST_SENTENCIES.value= A.value, LIST_SENTENCIES.element = 'newline'}
-    a = subexpressions[2]
-    subexpressions[0] = {"value":  a["value"], "element": "newline"}
-
 def p_list_sentencies_comment(subexpressions):
     'list_sentencies : COMMENT a'
     #{LIST_SENTENCIES.value= comment.value + '\n' + A.value, LIST_SENTENCIES.element = 'comment'}
     comment = subexpressions[1]
     a = subexpressions[2]
-    subexpressions[0] = {"value": comment + "\n" + a["value"], "element": "comment"}
+    subexpressions[0] = {"value": comment["value"] + "\n" + a["value"], "element": "comment", "line": comment["line"]}
 
 def p_list_sentencies_sentence(subexpressions):
     'list_sentencies : sentence a'
     #{LIST_SENTENCIES.value= SENTENCE.value + IF(a.element!='comment', '\n') + A.value, LIST_SENTENCIES.element = 'sentence'}
     sentence = subexpressions[1]
     a = subexpressions[2]
+    list_sentencies_value = sentence["value"] 
     if (a["element"] != "comment"):
-        list_sentencies_value = sentence["value"] + "\n" + a["value"]
+        list_sentencies_value = list_sentencies_value + "\n"
     else:
-        list_sentencies_value = sentence["value"]  + a["value"]
+        if sentence[0] == 'd' and sentence[1] == 'o' and sentence["line"] == a["line"]:
+            list_sentencies_value = list_sentencies_value 
+        else:
+            list_sentencies_value = list_sentencies_value + "\n"    
+    list_sentencies_value = list_sentencies_value + a["value"]
     subexpressions[0] = {"value": list_sentencies_value, "element": "sentence"}
 
 def p_a_list_sentencies(subexpressions):
@@ -163,36 +162,15 @@ def p_ecomparable_conditional(subexpressions):
     conditional = subexpressions[1]
     subexpressions[0] = {"value": conditional["value"], "type": conditional["type"], "isArray": False}
 
-def p_possiblecomment_comment(subexpressions):
-    'possiblecomment : COMMENT'
-    #{POSSIBLECOMMENT.value = comment.value}
-    comment = subexpressions[1]
-    subexpressions[0] = {"value": comment}
-
-def p_possiblecomment_lambda(subexpressions):
-    'possiblecomment : '
-    #{POSSIBLECOMMENT.value = ''}
-    subexpressions[0] = {"value": ""}
-
-def p_possiblenewline_newline(subexpressions):
-    'possiblenewline : NEWLINE'
-    #{POSSIBLENEWLINE.value = ''}
-    subexpressions[0] = {"value": ""}
-
-def p_possiblenewline_lambda(subexpressions):
-    'possiblenewline : '
-    #{POSSIBLENEWLINE.value = ''}
-    subexpressions[0] = {"value": ""}
-
 def p_comment_list_append(subexpressions):
     'comment_list : COMMENT comment_list'
     #{COMMENT_LIST1.value = comment.value + '\n' + COMMENT_LIST2.value}
     comment = subexpressions[1]
     comment_list2 = subexpressions[2]
-    subexpressions[0] = {"value": comment + "\n" + comment_list2["value"]}
+    subexpressions[0] = {"value": comment["value"] + "\n" + comment_list2["value"]}
 
 def p_comment_list_newline(subexpressions):
-    'comment_list : NEWLINE comment_list'
+    'comment_list :  comment_list'
     #{COMMENT_LIST1.value = '\n' + COMMENT_LIST2}
     comment_list2 = subexpressions[2]
     subexpressions[0] = {"value":  "\n" + comment_list2["value"]}
@@ -203,13 +181,15 @@ def p_comment_list_lambda(subexpressions):
     subexpressions[0] = {"value": ""}
 
 def p_while(subexpressions):
-    'while : WHILE LPAREN condition RPAREN possiblecomment possiblenewline keys'
-    #{WHILE.value = 'while (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
-    while1 = subexpressions[0]
+    'while : WHILE LPAREN condition RPAREN keys'
+    #{WHILE.value = 'while (' + CONDITION.value + ') ' + '\n' + KEYS.value}
     condition = subexpressions[3]
-    possiblecomment = subexpressions[5]
-    keys = subexpressions[7]
-    subexpressions[0] = {"value": "while(" + condition["value"] + ")" + possiblecomment["value"] + "\n" + keys["value"]}
+    keys = subexpressions[5]
+    lastElementLine = subexpressions[4]["line"]
+    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    new = new + keys["value"]
+    subexpressions[0] = {"value": "while(" + condition["value"] + ")" + new}
 
 def p_if_else(subexpressions):
     'if_else : if possibleelse'
@@ -219,11 +199,14 @@ def p_if_else(subexpressions):
     subexpressions[0] = {"value": if1["value"] + possibleelse["value"]}
 
 def p_possibleelse_else(subexpressions):
-    'possibleelse : ELSE possiblecomment possiblenewline keys'
+    'possibleelse : ELSE keys'
     #{POSSIBLEELSE.value = 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
-    possiblecomment = subexpressions[2]
-    keys = subexpressions[4]
-    subexpressions[0] = {"value":  " else " + possiblecomment["value"] + "\n" + keys["value"]}
+    keys = subexpressions[2]
+    lastElementLine = subexpressions[1]["line"]
+    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    new = new + keys["value"]
+    subexpressions[0] = {"value":  " else " + new}
 
 def p_possibleelse_lambda(subexpressions):
     'possibleelse : '
@@ -231,13 +214,15 @@ def p_possibleelse_lambda(subexpressions):
     subexpressions[0] = {"value":  ""}
 
 def p_if(subexpressions):
-    'if : IF LPAREN condition RPAREN possiblecomment possiblenewline keys'
+    'if : IF LPAREN condition RPAREN keys'
     #{IF.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
-    if1 = subexpressions[0]
     condition = subexpressions[3]
-    possiblecomment = subexpressions[5]
-    keys = subexpressions[7]
-    subexpressions[0] = {"value": "if(" + condition["value"] + ")" + possiblecomment["value"] + "\n" + keys["value"]}
+    keys = subexpressions[5]
+    lastElementLine = subexpressions[4]["line"]
+    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    new = new + keys["value"]
+    subexpressions[0] = {"value": "if(" + condition["value"] + ")" + new}
 
 def p_conditional_paren(subexpressions):
     'conditional : LPAREN condition RPAREN QUESTIONMARK ecomparable COLON expression'
@@ -256,39 +241,46 @@ def p_conditional(subexpressions):
     subexpressions[0] = {"value": condition["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"]}
 
 def p_for(subexpressions):
-    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advancefor RPAREN possiblecomment possiblenewline keys'
+    'for : FOR LPAREN assignationorlambda SEMICOLON condition SEMICOLON advancefor RPAREN keys'
     #{FOR.value ='for (' + ASSIGNATIONORLAMBDA.value + ';' + CONDITION.value + ';' + ADVANCE.value ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
     assignationorlamba = subexpressions[3]
     condition = subexpressions[5]
     advancefor = subexpressions[7]
-    possiblecomment = subexpressions[9]
-    keys = subexpressions[11]
-    subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + possiblecomment["value"] + "\n" + keys["value"]}
+    keys = subexpressions[9]
+    lastElementLine = subexpressions[8]["line"]
+    if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    new = new + keys["value"]
+    subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new}
 
 def p_do_while(subexpressions):
-    'do_while : DO keys_do WHILE LPAREN condition RPAREN SEMICOLON possiblecomment possiblenewline'
+    'do_while : DO keys_do WHILE LPAREN condition RPAREN SEMICOLON'
     #{DO_WHILE.value = 'do' + '\n' + KEYS_DO.value + ' while(' + CONDITION.value + '); ' + POSSIBLECOMMENT.value + '\n'}
     keysdo = subexpressions[2]
     condition = subexpressions[5]
-    possiblecomment2 = subexpressions[8]
-    subexpressions[0] = {"value": "do \n" + keysdo["value"] + "while(" + condition["value"] + ");" + possiblecomment2["value"] + "\n"}
+    subexpressions[0] = {"value": "do \n" + keysdo["value"] + "while(" + condition["value"] + ");", "line": subexpressions[7]["line"]}
 
 def p_keys_do_append_sentence(subexpressions):
-    'keys_do : comment_list sentence possiblenewline'
+    'keys_do : comment_list sentence'
     #{KEYS_DO.value = indent(COMMENT_LIST.value) + SENTENCE.value}
     comment_list = subexpressions[1]
     sentence = subexpressions[2]
     subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
 
 def p_keys_do_append_possiblecomment(subexpressions):
-    'keys_do : LKEY possiblenewline possiblecomment list_sentencies RKEY possiblenewline'
+    'keys_do : LKEY list_sentencies RKEY'
     #{KEYS_DO.value = '{' + POSSIBLECOMMENT.value + '\n' + LIST_SENTENCIES.value + '}'}
-    possiblecomment = subexpressions[3]
-    list_sentencies = subexpressions[4]
-    subexpressions[0] = {"value": "{ " + indent(possiblecomment["value"] +  "\n" + list_sentencies["value"]) + "} "}
+    sentence = subexpressions[2]
+    text = sentence["value"]
+    if (sentence["element"] != "comment"):
+        text = "\n" + text
+    else:
+        if sentence["line"] != subexpressions[1]["line"]:
+            text = "\n" + text
+    subexpressions[0] = {"value": "{ " + indent(text) + "} "}
 
 def p_keys_append_sentence(subexpressions):
-    'keys : comment_list sentence possiblenewline'
+    'keys : comment_list sentence'
     #{ KEYS.value = indent(COMMENT_LIST.value) + SENTENCE.value}
     keys = subexpressions[0]
     comment_list = subexpressions[1]
@@ -296,12 +288,16 @@ def p_keys_append_sentence(subexpressions):
     subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
 
 def p_keys_append_possiblecomment(subexpressions):
-    'keys : LKEY possiblenewline possiblecomment list_sentencies RKEY possiblenewline'
+    'keys : LKEY list_sentencies RKEY'
     #{KEYS.value = '{' + indent(POSSIBLECOMMENT.value) + '\n' + LIST_SENTENCIES.value + '}\n'}
-    keys = subexpressions[0]
-    possiblecomment = subexpressions[3]
-    list_sentencies = subexpressions[4]
-    subexpressions[0] = {"value": "{ " + indent(possiblecomment["value"] +  "\n" + list_sentencies["value"]) + "}\n"}
+    sentence = subexpressions[2]
+    text = sentence["value"]
+    if (sentence["element"] != "comment"):
+        text = "\n" + text
+    else:
+        if sentence["line"] != subexpressions[1]["line"]:
+            text = "\n" + text
+    subexpressions[0] = {"value": "{ " + indent(text) + "}\n"}
 
 def p_assignationorlambda_assignation(subexpressions):
     'assignationorlambda : assignation'
@@ -603,33 +599,35 @@ def p_l_lambda(subexpressions):
     #{L.value = '' }
     subexpressions[0] = {"value": ""}
 
-def p_expression_plus(subexpressions):
-    'expression : expression PLUS term'
+def p_expression_expression_w(subexpressions):
+	'expression : expression w'
+	expression = subexpressions[1]
+	w = subexpressions[2]
+	if w["operator"] == "minus":
+		if not ((expression["type"] == 'natural' or expression["type"] == 'decimal') and (w["type"] == 'natural' or w["type"] == 'decimal')):
+			raise SemanticException("No puede utilizar el - si ambos tipos no son numericos")
+	if w["operator"] == "plus":
+		if not(((expression["type"] == 'natural' or expression["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')) or (expression["type"] == 'string' and term["type"] == 'string')):
+			raise SemanticException("No puede utilizar el + si ambos tipos no son numericos o strings")
+	typ = 'string'
+	if  expression["type"] == 'decimal' or w["type"] == 'decimal':
+		typ = 'decimal'
+	else:
+		if expression["type"] == 'natural' and w["type"] == 'natural':
+			typ = 'natural'
+	subexpressions[0] = {"value": expression["value"] + w["value"], "type": typ, "isArray": False}
+
+def p_w_plus(subexpressions):
+    'w : PLUS term'
     #{EXPRESSION1.value = EXPRESSION2.value + '+' + TERM.value, EXPRESSION1.type = IF(EXPRESSION2.type == 'decimal' || TERM.type == 'decimal', 'decimal', IF(EXPRESSION2.type == 'natural' and TERM.type == 'natural', 'natural', 'string')), EXPRESSION1.isArray = "False"}
-    expression = subexpressions[1]
-    term  = subexpressions[3]
-    if not(((expression["type"] == 'natural' or expression["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')) or (expression["type"] == 'string' and term["type"] == 'string')):
-        raise SemanticException("No puede utilizar el + si ambos tipos no son numericos o strings")
+    term  = subexpressions[2]
+    subexpressions[0] = {"value": expression["value"] + " + " + term["value"], "type": term["type"], "operator": "plus", "isArray": False}
 
-    typ = 'string'
-    if  expression["type"] == 'decimal' or term["type"] == 'decimal':
-        typ = 'decimal'
-    else:
-        if expression["type"] == 'natural' and term["type"] == 'natural':
-            typ = 'natural'
-    subexpressions[0] = {"value": expression["value"] + " + " + term["value"], "type": typ, "isArray": False}
-
-def p_expression_minus(subexpressions):
-    'expression : expression MINUS term'
+def p_w_minus(subexpressions):
+    'w : MINUS term'
     #{EXPRESSION1.value = EXPRESSION2.value + '-' + TERM.value, EXPRESSION1.type = IF(EXPRESSION2.type == 'decimal' || TERM.type == 'decimal', 'decimal', EXPRESSION2.type), EXPRESSION1.isArray = "False"}
-    expression = subexpressions[1]
-    term  = subexpressions[3]
-    if not((expression["type"] == 'natural' or expression["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
-        raise SemanticException("No puede restar tipos que no son numericos")
-    typ = 'natural'
-    if  expression["type"] == 'decimal' or term["type"] == 'decimal':
-        typ = 'decimal'
-    subexpressions[0] = {"value": expression["value"] + " - " + term["value"], "type": typ, "isArray": False}
+    term  = subexpressions[2]
+    subexpressions[0] = {"value": expression["value"] + " - " + term["value"], "type": term["type"], "operator": "minus", "isArray": False}
 
 def p_expression_term(subexpressions):
     'expression : term'
@@ -637,54 +635,45 @@ def p_expression_term(subexpressions):
     term = subexpressions[1]
     subexpressions[0] = {"value": term["value"], "type": term["type"], "isArray": term["isArray"]}
 
-def p_pow_times(subexpressions):
-    'term : term POW factor'
+def p_pow_ops(subexpressions):
+	'term : term ops'
+	term = subexpressions[1]
+	value = subexpressions[2]
+	if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
+		raise SemanticException("No puede operar con tipos que no son numericos")
+	typ = 'natural'
+	if  value["type"] == 'decimal' or term["type"] == 'decimal':
+		typ = 'decimal'
+	subexpressions[0] = {"value": term["value"] + value["value"], "type": typ, "isArray": False}
+
+
+def p_ops_pow(subexpressions):
+    'ops : POW factor'
     #{TERM.value = TERM1.value +'^' + FACTOR.value, TERM.type = IF(FACTOR.type == 'decimal' || TERM1.type == 'decimal', 'decimal', TERM1.type), TERM.isArray = "False"}
     term = subexpressions[1]
-    value = subexpressions[3]
-    if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
-        raise SemanticException("No puede multiplicar tipos que no son numericos")
-    typ = 'natural'
-    if  value["type"] == 'decimal' or term["type"] == 'decimal':
-        typ = 'decimal'
-    subexpressions[0] = {"value": term["value"] + " ^ " + value["value"], "type": typ, "isArray": False}
+    value = subexpressions[2]
+    subexpressions[0] = {"value": " ^ " + value["value"], "type": value["type"], "isArray": False}
 
-def p_term_times(subexpressions):
-    'term : term TIMES factor'
+def p_ops_times(subexpressions):
+    'ops : TIMES factor'
     #{TERM.value = TERM1.value +'*'+ FACTOR.value, TERM.type = IF(FACTOR.type == 'decimal' || TERM1.type == 'decimal', 'decimal', TERM1.type), TERM.isArray = "False"}
     term = subexpressions[1]
-    value = subexpressions[3]
-    if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
-        raise SemanticException("No puede multiplicar tipos que no son numericos")
-    typ = 'natural'
-    if  value["type"] == 'decimal' or term["type"] == 'decimal':
-        typ = 'decimal'
-    subexpressions[0] = {"value": term["value"] + " * " + value["value"], "type": typ, "isArray": False}
+    value = subexpressions[2]
+    subexpressions[0] = {"value": " * " + value["value"], "type": value["type"], "isArray": False}
 
-def p_term_divide(subexpressions):
-    'term : term DIVIDE factor'
+def p_ops_divide(subexpressions):
+    'ops : DIVIDE factor'
     #{COND(FACTOR.value != 0), COND(TERM1.type != 'string' && FACTOR.type != 'string'), TERM.value = TERM1.value + '/' + FACTOR.value, TERM.type = 'decimal', TERM.isArray = "False"}
     term = subexpressions[1]
-    value = subexpressions[3]
-    if(value["value"] == 0):
-        raise SemanticException("No puede dividir por cero")
-    if not((value["type"] == 'natural' or value["type"] == 'decimal') and (term["type"] == 'natural' or term["type"] == 'decimal')):
-        raise SemanticException("No puede dividir tipos que no son numericos")
-    typ = 'decimal'
-    subexpressions[0] = {"value": term["value"] + " / " + value["value"], "type": typ, "isArray": False}
+    value = subexpressions[2]
+    subexpressions[0] = {"value": " / " + value["value"], "type": value["type"], "isArray": False}
 
-def p_term_module(subexpressions):
-    'term : term MODULE factor'
+def p_ops_module(subexpressions):
+    'ops : MODULE factor'
     #{COND(TERM1.type != 'string' && FACTOR.type != 'string'), TERM.value = TERM1.value + '%' + FACTOR.value, TERM.type = IF(TERM1.type == 'decimal', 'decimal', 'natural'), TERM.isArray = "False"}
     term = subexpressions[1]
-    value = subexpressions[3]
-    #el value debe ser natural y el termino un numero
-    if not(value["type"] == 'natural' and (term["type"] == 'natural' or term["type"] == 'decimal')):
-        raise SemanticException("No puede hacer operaciones con tipos que no son numericos")
-    typ = 'natural'
-    if term["type"] == 'decimal':
-        typ = 'decimal'
-    subexpressions[0] = {"value": term["value"] + " % " + value["value"], "type": typ, "isArray": False}
+    value = subexpressions[2]
+    subexpressions[0] = {"value": " % " + value["value"], "type": value["type"], "isArray": False}
 
 def p_factor_paren(subexpressions):
     'factor : LPAREN expression RPAREN'

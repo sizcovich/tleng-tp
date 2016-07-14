@@ -54,4 +54,4 @@ if __name__ == "__main__":
     except parser_rules.SemanticException as exception:
         print "Semantic error: " + str(exception)
     else:
-        print "Syntax is valid."
+        print ast["value"]

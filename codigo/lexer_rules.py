@@ -2,70 +2,69 @@ import lex
 
 # List of token names.
 tokens = (
-   'NATURAL',
-   'DECIMAL',
-   'MODULE',
-   'LESS',
-   'GREATER',
-   'AND',
-   'OR',
-   'NOT',
-   'PLUSEQUAL',
-   'DIVEQUAL',
-   'MULEQUAL',
-   'MINEQUAL',
-   'PLUS',
-   'MINUS',
-   'TIMES',
-   'DIVIDE',
-   'LPAREN',
-   'ASSIGN',
-   'QUOTMARK',
-   'SEMICOLON',
-   'UNEQUAL',
-   'EQUAL',
-   'DECREMENT',
-   'INCREMENT',
-   'HASH',
-   'RKEY',
-   'LKEY',
-   'RPAREN',
-   'IF',
-   'ELSE',
-   'WHILE',
-   'FOR',
-   'DO',
-   'LENGTH',
-   'PRINT',
-   'MULTIPLICACIONESCALAR',
-   'CAPITALIZAR',
-   'COLINEALES',
-   'QUESTIONMARK',
-   'TRUE',
-   'FALSE',
-   'BEGIN',
-   'END',
-   'RETURN',
-   #'RES',
-   'DOT',
-   'COMMA',
-   'LBRACKET',
-   'RBRACKET',
-   'POW',
-   'COLON',
-   'VAR',
-   'COMMENT',
-   'STRING',
-   'NEWLINE'
+	'NATURAL',
+	'DECIMAL',
+	'MODULE',
+	'LESS',
+	'GREATER',
+	'AND',
+	'OR',
+	'NOT',
+	'PLUSEQUAL',
+	'DIVEQUAL',
+	'MULEQUAL',
+	'MINEQUAL',
+	'PLUS',
+	'MINUS',
+	'TIMES',
+	'DIVIDE',
+	'LPAREN',
+	'ASSIGN',
+	'QUOTMARK',
+	'SEMICOLON',
+	'UNEQUAL',
+	'EQUAL',
+	'DECREMENT',
+	'INCREMENT',
+	'HASH',
+	'RKEY',
+	'LKEY',
+	'RPAREN',
+	'IF',
+	'ELSE',
+	'WHILE',
+	'FOR',
+	'DO',
+	'LENGTH',
+	'PRINT',
+	'MULTIPLICACIONESCALAR',
+	'CAPITALIZAR',
+	'COLINEALES',
+	'QUESTIONMARK',
+	'TRUE',
+	'FALSE',
+	'BEGIN',
+	'END',
+	'RETURN',
+	#'RES',
+	'DOT',
+	'COMMA',
+	'LBRACKET',
+	'RBRACKET',
+	'POW',
+	'COLON',
+	'VAR',
+	'COMMENT',
+	'STRING'
 )
 
 # Regular expression rules for simple tokens
-t_PLUS    = r'\+'
-t_MINUS   = r'-'
-t_TIMES   = r'\*'
-t_DIVIDE  = r'/'
-t_LPAREN  = r'\('
-t_RPAREN  = r'\)'
+t_PLUS	= r'\+'
+t_MINUS	= r'-'
+t_TIMES	= r'\*'
+t_DIVIDE	= r'/'
+t_LPAREN	= r'\('
+t_RPAREN	= r'\)'
 t_MODULE = r'%'
 t_DOT = r'\.'
 t_LESS = r'<'
@@ -94,129 +93,146 @@ t_COMMA = r','
 #Reserved symbols:
 # Define a rule so we can track line numbers
 
-def t_NEWLINE(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
-    t.value = 'newline'
-    return t
-
 def t_INCREMENT(t):
-    r'\+\+'
-    return t
+	r'\+\+'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_ELSE(t):
-  r'else|ELSE'
-  return t
+	r'else|ELSE'
+	t.value = { "line": t.lineno, "value": t }
 
 def t_IF(t):
-  r'if|IF'
-  return t
+	r'if|IF'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_WHILE(t):
-  r'while|WHILE'
-  return t
+	r'while|WHILE'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_BEGIN(t):
-  r'begin|BEGIN'
-  return t
+	r'begin|BEGIN'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_END(t):
-  r'end|END'
-  return t
+	r'end|END'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_FOR(t):
-  r'for|FOR'
-  return t
+	r'for|FOR'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_DO(t):
-  r'do|DO'
-  return t
+	r'do|DO'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 #def t_RES(t):
-#  r'res'
-#  return t
+#	r'res'
+#	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_RETURN(t):
-  r'return|RETURN'
-  return t
+	r'return|RETURN'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
+	
+
 
 def t_TRUE(t):
-  r'true|TRUE'
-  return t
+	r'true|TRUE'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_FALSE(t):
-  r'false|FALSE'
-  return t
+	r'false|FALSE'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_AND(t):
-  r'and|AND'
-  return t
+	r'and|AND'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_OR(t):
-  r'or|OR'
-  return t
+	r'or|OR'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_NOT(t):
-  r'not|NOT'
-  return t
+	r'not|NOT'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_PRINT(t):
-  r'print|PRINT'
-  return t
+	r'print|PRINT'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_MULTIPLICACIONESCALAR(t):
-  r'multiplicacionEscalar|MULTIPLICACIONESCALAR'
-  return t
+	r'multiplicacionEscalar|MULTIPLICACIONESCALAR'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_CAPITALIZAR(t):
-  r'capitalizar|CAPITALIZAR'
-  return t
+	r'capitalizar|CAPITALIZAR'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_COLINEALES(t):
-  r'colineales|COLINEALES'
-  return t
+	r'colineales|COLINEALES'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_LENGTH(t):
-  r'length|LENGTH'
-  return t
+	r'length|LENGTH'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 #end Reserved symbols
 def t_VAR(t):
-    r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
-    return t
+	r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 def t_DECIMAL(t):
-    r'\d+\.\d+'
-    t.value = float(t.value)
-    return t
+	r'\d+\.\d+'
+	t.value = { "line": t.lineno, "value": float(t.value) }
+	return t
 
 def t_NATURAL(t):
-    r'\d+'
-    t.value = int(t.value)
-    return t
+	r'\d+'
+	t.value = { "line": t.lineno, "value": int(t.value) }
+	return t
 
 
 def t_STRING(t):
-    r'\"([^\"]+)\"'
-    return t
-
+	r'\"([^\"]+)\"'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 
 def t_COMMENT(t):
-    r'\#.*'
-    return t
+	r'\#.*'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
 
 # A string containing ignored characters (spaces and tabs)
-t_ignore  = ' \t'
+t_ignore	= '\t \n'
 
 # Error handling rule
 def t_error(token):
-    message = "Token desconocido:"
-    message += "\ntype:" + token.type
-    message += "\nvalue:" + str(token.value)
-    message += "\nline:" + str(token.lineno)
-    message += "\nposition:" + str(token.lexpos)
-    raise Exception(message)
+	message = "Token desconocido:"
+	message += "\ntype:" + token["value"].type
+	message += "\nvalue:" + str(token["value"].value)
+	message += "\nline:" + str(token["value"].lineno)
+	message += "\nposition:" + str(token["value"].lexpos)
+	raise Exception(message)
 
 # Build the lexer
 lexer = lex.lex()
