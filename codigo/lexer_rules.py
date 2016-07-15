@@ -70,11 +70,26 @@ def t_DECREMENT(t):
  	t.value = { "line": t.lineno, "value": t.value }
  	return t
 
-def t_PLUS(t):
-	r'\+'
-	t.value = { "line": t.lineno, "value": t.value }
- 	return t
+def t_PLUSEQUAL(t):
+ r'\+='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
  
+def t_DIVEQUAL(t):
+ r'/='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+ 
+def t_MULEQUAL(t):
+ r'\*='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+
+def t_MINEQUAL(t):
+ r'-='
+ t.value = { "line": t.lineno, "value": t.value }
+ return t
+
 def t_MINUS(t):
  r'-'
  t.value = { "line": t.lineno, "value": t.value }
@@ -105,6 +120,11 @@ def t_MODULE(t):
  t.value = { "line": t.lineno, "value": t.value }
  return t
  
+def t_PLUS(t):
+	r'\+'
+	t.value = { "line": t.lineno, "value": t.value }
+ 	return t
+
 def t_LESS(t):
  r'<'
  t.value = { "line": t.lineno, "value": t.value }
@@ -114,27 +134,12 @@ def t_GREATER(t):
  r'>'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
-def t_PLUSEQUAL(t):
- r'\+='
+
+def t_EQUAL(t):
+ r'=='
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
-def t_DIVEQUAL(t):
- r'/='
- t.value = { "line": t.lineno, "value": t.value }
- return t
- 
-def t_MULEQUAL(t):
- r'\*='
- t.value = { "line": t.lineno, "value": t.value }
- return t
- 
-def t_MINEQUAL(t):
- r'-='
- t.value = { "line": t.lineno, "value": t.value }
- return t
- 
+
 def t_ASSIGN(t):
  r'='
  t.value = { "line": t.lineno, "value": t.value }
@@ -147,11 +152,6 @@ def t_SEMICOLON(t):
  
 def t_UNEQUAL(t):
  r'!='
- t.value = { "line": t.lineno, "value": t.value }
- return t
- 
-def t_EQUAL(t):
- r'=='
  t.value = { "line": t.lineno, "value": t.value }
  return t
  
