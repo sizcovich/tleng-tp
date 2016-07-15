@@ -675,8 +675,8 @@ def p_h_r(subexpressions):
     left = subexpressions[1]
     subexpressions[0] = {"value": left["value"], "type": left["type"], "isArray": False}
 
-def p_r_not_expression(subexpressions):
-    'r : NOT expression'
+def p_r_not_value(subexpressions):
+    'r : NOT value'
     left = subexpressions[2]
     if left["type"] != "bool":
         raise SemanticException("Solo se pueden negar booleanos")
