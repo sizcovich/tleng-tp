@@ -507,23 +507,34 @@ def p_l_lambda(subexpressions):
     subexpressions[0] = {"value": ""}
 
 def p_expression_conditional(subexpressions):
-    'expression : expression QUESTIONMARK expression COLON expression'
+    'expression : termOrTerm p'
     #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + ECOMPARABLE.value + ':' + EXPRESSION2.value, CONDITIONAL.type = ECOMPARABLE.type}
     condition = subexpressions[1]
-    expression1 = subexpressions[3]
-    expression2 = subexpressions[5]
-    #if not(getType(expression1["value"]) == getType(expression2["value"]):
-    #    raise SemanticException("El condicional debe devolver expresiones del mismo tipo")
-    subexpressions[0] = {"value": condition["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"], "isArray" : False}
+    p = subexpressions[2]
+    typ = condition["type"]
+    if p["isCond"]:
+        typ = p["type"]
+    subexpressions[0] = {"value": condition["value"] + p["value"], "type": typ, "isArray" : False}
 
-def p_expression_term_or_expression(subexpressions):
-    'expression : term OR expression'
+def p_expression_termOrTerm(subexpressions):
+    'p : '
+    subexpressions[0] = {"value": '', "isArray": False, "isCond": False}
+
+def p_p_questionmark(subexpressions):
+    'p : QUESTIONMARK expression COLON expression'
+    expression1 = subexpressions[2]
+    expression2 = subexpressions[4]
+    subexpressions[0] = {"value": "?" + expression1["value"] + ":" + expression2["value"], "type": term["value"], "isArray": False, "isCond": True}
+
+
+def p_termOrTerm_term_or_expression(subexpressions):
+    'termOrTerm : term OR expression'
     term  = subexpressions[1]
     expression = subexpressions[3]
     subexpressions[0] = {"value": term["value"] + " or " + expression["value"], "type": "bool", "isArray": False}
 
-def p_expression_term(subexpressions):
-    'expression : term'
+def p_termOrTerm_term(subexpressions):
+    'termOrTerm : term'
     term  = subexpressions[1]
     subexpressions[0] = {"value": term["value"], "type": term["value"], "isArray": False}
 
@@ -555,13 +566,13 @@ def p_factor_x(subexpressions):
     left = subexpressions[1]
     subexpressions[0] = {"value": left["value"], "type": left["type"], "isArray": False}
 
-def p_x_y_x(subexpressions):
+def p_x_y_equal_x(subexpressions):
     'x : y EQUAL x'
     left = subexpressions[1]
     right = subexpressions[3]
     subexpressions[0] = {"value": left["value"] + " == " + right["value"], "type": "bool", "isArray": False}
 
-def p_x_y_x(subexpressions):
+def p_x_y_unequal_x(subexpressions):
     'x : y UNEQUAL x'
     left = subexpressions[1]
     right = subexpressions[3]
