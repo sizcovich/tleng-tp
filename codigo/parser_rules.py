@@ -506,7 +506,7 @@ def p_l_lambda(subexpressions):
     #{L.value = '' }
     subexpressions[0] = {"value": ""}
 
-def p_expression_conditional(subexpressions):
+def p_expression_termOrTerm_p(subexpressions):
     'expression : termOrTerm p'
     #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + ECOMPARABLE.value + ':' + EXPRESSION2.value, CONDITIONAL.type = ECOMPARABLE.type}
     condition = subexpressions[1]
@@ -524,11 +524,11 @@ def p_p_questionmark(subexpressions):
     'p : QUESTIONMARK expression COLON expression'
     expression1 = subexpressions[2]
     expression2 = subexpressions[4]
-    subexpressions[0] = {"value": "?" + expression1["value"] + ":" + expression2["value"], "type": term["value"], "isArray": False, "isCond": True}
+    subexpressions[0] = {"value": "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["value"], "isArray": False, "isCond": True}
 
 
-def p_termOrTerm_term_or_expression(subexpressions):
-    'termOrTerm : term OR expression'
+def p_termOrTerm_term_or_termOrTerm(subexpressions):
+    'termOrTerm : term OR termOrTerm'
     term  = subexpressions[1]
     expression = subexpressions[3]
     subexpressions[0] = {"value": term["value"] + " or " + expression["value"], "type": "bool", "isArray": False}
