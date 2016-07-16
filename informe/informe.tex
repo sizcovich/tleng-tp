@@ -187,7 +187,9 @@ Para el resguardo de las variables con sus atributos utilizamos un diccionario \
 
 \section{Compilación y ejecución}
 Para compilar nuestro trabajo práctico y ejecutarlo, alcanza con correr en la consola el siguiente comando:
-\textbf{python parser.py archivoEntrada archivoSalida}
+\textbf{./SLSparser.py -o archivoSalida -c archivoEntrada} 
+Los parámetros son opcionales. Por default, la entrada y salida son la consola en el caso en el que no se especifique alguno de los archivos.
+Al pasar un programa por stdin, la finalización del mismo se indica a través del comando \textit{ctrl+d}
 
 \section{Casos de prueba}
 Los casos de prueba utilizados fueron los del enunciado, con los que nos aseguramos que se devolviera un error en cuanto la sintáxis no era correcta. Dadas algunas decisiones mencionadas anteriormente, no todos los tests de la cátedra son aceptados por nuestra gramática. En particular, agregamos la carpeta \textbf{test} con los casos de tests subidos por la cátedra con algunas modificaciones para los casos que excluímos.

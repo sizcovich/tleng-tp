@@ -69,4 +69,4 @@ if __name__ == "__main__":
         ast = parser.parse(infile, lexer)
         print(ast["value"],file = args.o)
     else:
-        print("The program should be called as ./SLSParser [-o EXIT] [-c ENTRY | SOURCE]")
+        print("The program should be called as ./SLSParser [-o EXIT] [-c ENTRY | SOURCE]", file=sys.stderr)
