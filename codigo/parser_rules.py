@@ -9,7 +9,7 @@ table = {}
 def isBoolean(expresion, isTerminal):
 
     if isTerminal:
-        name = expresion
+        name = expresion["value"]
     else:
         name = expresion["value"]
         tipo = expresion["type"]
@@ -29,7 +29,7 @@ def isBoolean(expresion, isTerminal):
 def isString(expresion, isTerminal):
 
     if isTerminal:
-        name = expresion
+        name = expresion["value"]
     else:
         name = expresion["value"]
         tipo = expresion["type"]
@@ -51,7 +51,7 @@ def isNumerical(expresion, isTerminal):
     #chequea que el tipo de la expresion sea un numero
 
     if isTerminal:
-        name = expresion
+        name = expresion["value"]
     else:
         name = expresion["value"]
         tipo = expresion["type"]
@@ -708,7 +708,7 @@ def p_z_h(subexpressions):
 def p_h_times(subexpressions):
     'h : h TIMES r'
     left = subexpressions[1]
-    right = subexpressions[2]
+    right = subexpressions[3]
 
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
@@ -724,7 +724,7 @@ def p_h_times(subexpressions):
 def p_h_divide(subexpressions):
     'h : h DIVIDE r'
     left = subexpressions[1]
-    right = subexpressions[2]
+    right = subexpressions[3]
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a dividir deben ser numericos")
@@ -736,7 +736,7 @@ def p_h_divide(subexpressions):
 def p_h_modulo(subexpressions):
     'h : h MODULE r'
     left = subexpressions[1]
-    right = subexpressions[2]
+    right = subexpressions[3]
 
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
