@@ -3,8 +3,7 @@ campo = [{campo:"1"},{campo:"2"},{campo:"3"}][1]; campo= {e:2,eda:["a"][2+4],A:8
           a={nombre:"Jose",edad:length("hola")}; b = 10; j = ""; g = 6; c = 1.1;dos=2>2;
 print({ca:["1","2","4"][5]}.ca); algo = true; no = false; amarillo = [true,true][2];
 
-if ([false][{m:2}.m]=
-=(b>10))
+if ([false][{m:2}.m]==(b>10))
 
 
              while(5>10)
@@ -18,5 +17,4 @@ if (algo) if(no)print(2);else while(amarillo) do #NADA
 
 
 #NADA
-z = [a.edad + length("doce"+capitalizar("2")) / 2, 1.0 + (siete ? ((aa OR bb AND (2!=length(""))?1:2)):
-g*12 %3) , NOT aa ? b / -5 : c]; while(dos);
+z = [a.edad + length("doce"+capitalizar("2")) / 2, 1.0 + (siete ? ((aa OR bb AND (2!=length(""))?1:2)): g*12 %3) , NOT aa ? b / -5 : c]; while(dos);

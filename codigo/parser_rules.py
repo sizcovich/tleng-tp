@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from lexer_rules import tokens
-import pdb;
+import sys
 
 class SemanticException(Exception):
     pass
@@ -493,7 +495,7 @@ def p_c_plus(subexpressions):
     #{C.value = '+=' + value.value}
     expression = subexpressions[2]
 
-    print table
+    print(table)
 
     isTerminal = False
     if not isNumerical(expression, isTerminal) and not isString(expression, isTerminal):
@@ -1103,5 +1105,7 @@ def p_bool_false(subexpressions):
     subexpressions[0] = {"value": false["value"], "type":"bool"}
 
 def p_error(subexpressions):
-    print subexpressions
-    raise Exception("Syntax error.")
+    if subexpressions not in tokens:
+        raise Exception("The value", subexpressions.value["value"], "generates a problem in the grammar.", "Line:", subexpressions.value["line"])
+    else:
+        raise Exception("The tokens are recognized but not correctly used.")
