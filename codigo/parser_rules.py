@@ -516,17 +516,23 @@ def p_j_lambda(subexpressions):
     subexpressions[0] = {"value": "", "isArray": False}
 
 def p_list_registers(subexpressions):
-    'list_registers : assignation l'
-    #{LIST_REGISTERS.value = ASSIGNATION.value + L.value}
-    assignation = subexpressions[1]
-    l = subexpressions[2]
-    subexpressions[0] = {"value": assignation["value"] + l["value"]}
+    'list_registers : VAR COLON expression l'
+    var = subexpressions[1]
+    exp = subexpressions[3]
+    l = subexpressions[4]
+    newdict = l["dict"].update({ var["value"] : exp["type"]})
+    subexpressions[0] = {"value": var["value"] + " : " + exp["value"] + l["value"], "dict": newdict}
 
 def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
     #{L.value = ',' + LIST REGISTERS.value}
     list_registers = subexpressions[2]
-    subexpressions[0] = {"value": ", " + list_registers["value"]}
+    subexpressions[0] = {"value": ", " + list_registers["value"], "dict": list_registers["dict"] }
+
+def p_l_lambda(subexpressions):
+    'l : '
+    # {L.value = '' }
+    subexpressions[0] = {"value": "", "dict": {}}
 
 def p_list_values_comma(subexpressions):
     'list_values : COMMA expression list_values'
@@ -553,10 +559,6 @@ def p_list_values_lambda(subexpressions):
     #{LIST_VALUES.value = ''}
     subexpressions[0] = {"value": ""}
 
-def p_l_lambda(subexpressions):
-    'l : '
-    #{L.value = '' }
-    subexpressions[0] = {"value": ""}
 
 def p_expression_conditional(subexpressions):
     'expression : t QUESTIONMARK expression COLON expression'
