@@ -75,12 +75,12 @@ def t_PLUSEQUAL(t):
  r'\+='
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_DIVEQUAL(t):
  r'/='
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_MULEQUAL(t):
  r'\*='
  t.value = { "line": t.lineno, "value": t.value }
@@ -91,36 +91,41 @@ def t_MINEQUAL(t):
  t.value = { "line": t.lineno, "value": t.value }
  return t
 
+def t_NEGATIVO(t):
+ 	r'-\d+'
+ 	t.value = { "line": t.lineno, "value": int(t.value), "type": "negativo"  }
+ 	return t
+
 def t_MINUS(t):
  r'-'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_TIMES(t):
  r'\*'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_DIVIDE(t):
  r'/'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_LPAREN(t):
  r'\('
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_RPAREN(t):
  r'\)'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_MODULE(t):
  r'%'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_PLUS(t):
 	r'\+'
 	t.value = { "line": t.lineno, "value": t.value }
@@ -130,7 +135,7 @@ def t_LESS(t):
  r'<'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_GREATER(t):
  r'>'
  t.value = { "line": t.lineno, "value": t.value }
@@ -145,52 +150,52 @@ def t_ASSIGN(t):
  r'='
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_SEMICOLON(t):
  r';'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_UNEQUAL(t):
  r'!='
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_RKEY(t):
  r'\}'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_LKEY(t):
  r'\{'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_QUESTIONMARK(t):
  r'\?'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_LBRACKET(t):
  r'\['
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_RBRACKET(t):
  r'\]'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_POW(t):
  r'\^'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_COLON(t):
  r':'
  t.value = { "line": t.lineno, "value": t.value }
  return t
- 
+
 def t_COMMA(t):
  r','
  t.value = { "line": t.lineno, "value": t.value }
@@ -203,6 +208,7 @@ def t_COMMA(t):
 def t_ELSE(t):
 	r'else|ELSE'
 	t.value = { "line": t.lineno, "value": t }
+	return t
 
 def t_IF(t):
 	r'if|IF'
@@ -228,7 +234,7 @@ def t_RETURN(t):
 	r'return|RETURN'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
-	
+
 def t_TRUE(t):
 	r'true|TRUE'
 	t.value = { "line": t.lineno, "value": t.value }
@@ -258,6 +264,7 @@ def t_PRINT(t):
 	r'print|PRINT'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
+
 
 def t_MULTIPLICACIONESCALAR(t):
 	r'multiplicacionEscalar|MULTIPLICACIONESCALAR'
@@ -291,14 +298,11 @@ def t_DECIMAL(t):
 	return t
 
 def t_NATURAL(t):
-	r'\d+'
+	r'\d+|-\d+'
 	t.value = { "line": t.lineno, "value": int(t.value), "type": "natural" }
 	return t
 
-def t_NEGATIVO(t):
-	r'-\d+'
-	t.value = { "line": t.lineno, "value": int(t.value), "type": "negativo"  }
-	return t
+
 
 def t_STRING(t):
 	r'\"([^\"]+)\"'
