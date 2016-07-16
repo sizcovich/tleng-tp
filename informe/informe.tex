@@ -147,7 +147,7 @@ Dada la limitación de \textit{PLY} para manejar atributos heredados, todos nues
 Los atributos con los que contamos son:
 \begin{itemize}
 \item \textbf{NoTerminal.value}: Consiste en el valor asociado
-\item \textbf{NoTerminal.type}: \textit{tipo}. Representa el tipo asociado. El tipo puede ser ``natural'', ``decimal'' o ``string''.
+\item \textbf{NoTerminal.type}: \textit{tipo}. Representa el tipo asociado. El tipo puede ser ``natural'', ``negativo'', ``decimal'' o ``string''.
 \item \textbf{NoTerminal.isTrue}: \textit{bool}. Almacena la información del booleano dado por parámetro en multiplicacionEscalar.
 \item \textbf{NoTerminal.isArray}: \textit{bool}. Guarda la información de si el no terminal deriva en un arreglo o no.
 \end{itemize}
@@ -162,48 +162,26 @@ Los atributos con los que contamos son:
 
 En el diagrama anterior, se pueden observar las derivaciones de una parte del programa presentado a modo de ejemplo.
 
-\section{Conflictos}
-Los conflictos shift/reduce fueron resueltos priorizando los shifts por sobre los reduce. En el caso de conflictos generados por el fin de un comentario, éstos fueron siempre resueltos reduciendo $comment\_list$.
+\section{Conflicto}
+Nuestro conflicto se presenta en el \textbf{ELSE} en el siguiente caso:
+
 \begin{verbatim}
-    LKEY            shift and go to state 48
-    COMMENT         shift and go to state 52
-    NEWLINE         shift and go to state 51
-    RETURN          reduce using rule 26 (comment_list -> .)
-    WHILE           reduce using rule 26 (comment_list -> .)
-    FOR             reduce using rule 26 (comment_list -> .)
-    DO              reduce using rule 26 (comment_list -> .)
-    PRINT           reduce using rule 26 (comment_list -> .)
-    VAR             reduce using rule 26 (comment_list -> .)
-    IF              reduce using rule 26 (comment_list -> .)
-    MULTIPLICACIONESCALAR reduce using rule 26 (comment_list -> .)
-    CAPITALIZAR     reduce using rule 26 (comment_list -> .)
-    COLINEALES      reduce using rule 26 (comment_list -> .)
-    LENGTH          reduce using rule 26 (comment_list -> .)
-    LPAREN          reduce using rule 26 (comment_list -> .)
-    NOT             reduce using rule 26 (comment_list -> .)
-    STRING          reduce using rule 26 (comment_list -> .)
-    LBRACKET        reduce using rule 26 (comment_list -> .)
-    TRUE            reduce using rule 26 (comment_list -> .)
-    FALSE           reduce using rule 26 (comment_list -> .)
-    DECIMAL         reduce using rule 26 (comment_list -> .)
-    NATURAL         reduce using rule 26 (comment_list -> .)
+sentence -> IF LPAREN expression RPAREN keys . possibleelse
+possibleelse -> . ELSE keys
+possibleelse -> .
 \end{verbatim}
+
+Consiste en un conflicto de tipo shift/reduce dado que el parser no sabe si debe seguir avanzando por el else o reducir lo anterior. Para resolverlo, habría que reescribir todas las reglas para el else.
+
 \section{Descripción}
 
 Dadas las decisiones tomadas al momento de formular la gramática, consideramos los siguientes casos como incorrectos:
 
 \begin{itemize}
 \item Los operadores ternarios no son considerados expresiones, por lo que no permitimos la realización de operaciones aritméticas ni entre strings.
-\item No aceptamos *= ni /= , pero sí != y la multiplicación estándar.
-\item No aceptamos --f pues no aparecía en el enunciado, pero sí aceptamos f--. Tampoco aceptamos ++ o -- para algo que no sea una variable. 
 \item Asumimos que los Registers toman únicamente literales de tipos básicos.
-\item x.valor + y.valor representa la concatenación
-
-\item Dado que en los ejemplos no hay enteros negativos decidimos no contemplar ese caso. 
 \item No permitimos sentencias separadas en diferentes renglones. Por ejemplo, hacer ``i newline ++'' no lo consideramos válido.
 \end{itemize}
-
-Nuestras decisiones fueron tomadas antes de la publicación de los tests dado que el enunciado no especifica explícitamente qué efectuar en esos casos.
 
 Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: \textbf{nombre, tipo, isArray, isTrue} para las variables que así lo requieran para la ejecución de funciones que las utilizan.
 
