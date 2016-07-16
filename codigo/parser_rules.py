@@ -385,78 +385,159 @@ def p_advancefor_assignationorlambda(subexpressions):
     assignationorlambda = subexpressions[1]
     subexpressions[0] = {"value": assignationorlambda["value"]}
 
+
+#ojo aca podriamos hacer += String no?
+def p_advance_var_array_c(subexpressions):
+    'advance : VAR LBRACKET expression RBRACKET c'
+    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+    var = subexpressions[1]
+    expression = subexpressions[3]
+    c = subexpressions[5]
+
+    isTerminal = True
+    if c["isPlusEqual"] :
+        if  not isNumerical(var, isTerminal) and not isString(var, isTerminal):
+            raise SemanticException("El tipo para += debe ser un numero o un string")
+    else:
+        if not isNumerical(var, isTerminal):
+            raise SemanticException("El tipo a avanzar no es un numero")
+        else:
+            if getType(var, True) != getType(c, False):
+                raise SemanticException("Los tipos deben coincidir")
+
+    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  c["value"]}
+
+
+def p_advance_var_array_d(subexpressions):
+    'advance : VAR LBRACKET expression RBRACKET d'
+    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+    var = subexpressions[1]
+    expression = subexpressions[3]
+    d = subexpressions[5]
+
+
+    isTerminal = True
+    if not isNumerical(var, isTerminal):
+        raise SemanticException("El tipo a avanzar no es un numero")
+
+    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  d["value"]}
+
+
+
 def p_advance_var_c(subexpressions):
     'advance : VAR c'
     #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     var = subexpressions[1]
     c = subexpressions[2]
+
     isTerminal = True
 
-    if not isNumerical(var, isTerminal) :
-        raise SemanticException("El tipo a avanzar no es un numero")
+    if c["isPlusEqual"] :
+        if  not isNumerical(var, isTerminal) and not isString(var, isTerminal):
+            raise SemanticException("El tipo para += debe ser un numero o un string")
+    else:
+        if not isNumerical(var, isTerminal):
+            raise SemanticException("El tipo a avanzar no es un numero")
+        else:
+            if getType(var, True) != getType(c, False):
+                raise SemanticException("Los tipos deben coincidir")
 
     subexpressions[0] = {"value":  var["value"] + c["value"]}
+
+
+def p_advance_var_d(subexpressions):
+    'advance : VAR d'
+    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+    var = subexpressions[1]
+    d = subexpressions[2]
+
+    isTerminal = True
+    if not isNumerical(var, isTerminal):
+        raise SemanticException("El tipo a avanzar no es un numero")
+
+    subexpressions[0] = {"value":  var["value"] + d["value"]}
 
 def p_advance_d_var(subexpressions):
     'advance : d VAR'
     #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     d = subexpressions[1]
     var = subexpressions[2]
+
     isTerminal = True
-    if (not(getType(var, isTerminal) == "natural" or getType(var, isTerminal) == "decimal" or getType(var, isTerminal) == "string")) :
+    if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
+
     subexpressions[0] = {"value":  d["value"] + var["value"]}
 
-def p_c_d(subexpressions):
-    'c : d'
+def p_advance_d_array(subexpressions):
+    'advance : d VAR LBRACKET expression RBRACKET'
+    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     d = subexpressions[1]
-    #{C.value = d.value}
-    subexpressions[0] = {"value": d["value"]}
+    var = subexpressions[2]
+
+    isTerminal = True
+    if not isNumerical(var, isTerminal):
+        raise SemanticException("El tipo a avanzar no es un numero")
+
+    subexpressions[0] = {"value":  d["value"] + var["value"] + "[" + expression["value"] + "]"}
+
+
 
 def p_d_increment(subexpressions):
     'd : INCREMENT'
     #{C.value = '++'}
-    subexpressions[0] = {"value": "++"}
+    subexpressions[0] = {"value": "++", "type": "", "isArray" : False}
 
 def p_c_plus(subexpressions):
     'c : PLUSEQUAL expression'
     #{C.value = '+=' + value.value}
     expression = subexpressions[2]
 
+    print table
+
     isTerminal = False
     if not isNumerical(expression, isTerminal) and not isString(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion +=")
 
-    subexpressions[0] = {"value": "+=" + expression["value"]}
+    subexpressions[0] = {"value": "+=" + expression["value"], "type": expression["type"], "isArray": expression["isArray"], "isPlusEqual" :True}
 
 def p_d_decrement(subexpressions):
     'd : DECREMENT'
     #{ C.value = '--'}
-    subexpressions[0] = {"value": "--"}
+    subexpressions[0] = {"value": "--", "type": "", "isArray" : False}
 
 def p_c_minequal(subexpressions):
     'c : MINEQUAL expression'
     #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '-=' + VALUE.value}
-    value = subexpressions[2]
-    if value["type"] != 'natural' and value["type"] != 'decimal' and value["type"] != 'string':
+    expression = subexpressions[2]
+
+    if not isNumerical(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion -=")
-    subexpressions[0] = {"value": "-=" + value["value"]}
+
+    subexpressions[0] = {"value": "-=" + expression["value"], "type": expression["type"], "isArray": expression["isArray"], "isPlusEqual" :False}
 
 def p_c_mulequal(subexpressions):
     'c : MULEQUAL expression'
     #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
-    value = subexpressions[2]
-    if value["type"] != 'natural' and value["type"] != 'decimal':
+    expression = subexpressions[2]
+
+    isTerminal = False
+    if not isNumerical(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion *=")
-    subexpressions[0] = {"value": "*=" + value["value"]}
+
+    subexpressions[0] = {"value": "*=" + expression["value"], "type": expression["type"], "isArray": expression["isArray"], "isPlusEqual" :False}
 
 def p_c_divequal(subexpressions):
     'c : DIVEQUAL expression'
     #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
-    value = subexpressions[2]
-    if value["type"] != 'natural' and value["type"] != 'decimal':
+    expression = subexpressions[2]
+
+    isTerminal = False
+    if not isNumerical(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion /=")
-    subexpressions[0] = {"value": "/=" + value["value"]}
+
+
+    subexpressions[0] = {"value": "/=" + expression["value"], "type": expression["type"], "isArray": expression["isArray"], "isPlusEqual" :False}
 
 
 
