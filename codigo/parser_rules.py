@@ -758,7 +758,7 @@ def p_h_divide(subexpressions):
 
 
 
-def p_h_times(subexpressions):
+def p_h_modulo(subexpressions):
     'h : h MODULE r'
     left = subexpressions[1]
     right = subexpressions[2]
