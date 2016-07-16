@@ -26,8 +26,6 @@ def isBoolean(expresion, isTerminal):
 
     return res
 
-
-
 def isString(expresion, isTerminal):
 
     if isTerminal:
@@ -107,15 +105,6 @@ def isArray(expresion, isTerminal):
         esArray = datos[1]
 
     return esArray
-
-    #isArray = False
-
-    #if (table.get(name)!= None):
-    #    datos =table[name]
-    #    isArray = datos[1]
-
-    #return isArray
-
 
 def getType(expresion, isTerminal):
     #obtiene el tipo de una variable: si esta definida en la tabla devuelve esos datos, sino devuelve los datos que vienen por parametro
@@ -544,10 +533,7 @@ def p_list_values_comma(subexpressions):
     #{LIST_VALUES1.value = ',' + EXPRESSION.value + LIST_VALUES2.value, LIST_VALUES1.type = IF(LIST_VALUES2.value == "", EXPRESSION.type, IF(LIST_VALUES2.type == 'decimal' && EXPRESSION.type == 'natural','decimal',IF(LIST_VALUES2.type == 'natural' && EXPRESSION.type == 'decimal', 'decimal', EXPRESSION.value))), COND(LIST_VALUES2.value != "" && LIST_VALUES2.type != EXPRESSION.type)}
     value = subexpressions[2]
     list_values2 = subexpressions[3]
-
     isTerminal = False
-
-
     if list_values2["value"] == "":
         value1 = getType(value,isTerminal)
     elif (getType(value,isTerminal) == "natural" and list_values2["type"] == "decimal"):
@@ -556,9 +542,6 @@ def p_list_values_comma(subexpressions):
         value1 = "decimal"
     else:
         value1 = getType(value,isTerminal)
-
-
-
     isTerminal = False
     if (list_values2["value"] != "" and  getType(list_values2, isTerminal)!= getType(value,isTerminal)) :
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
@@ -587,20 +570,17 @@ def p_expression_conditional(subexpressions):
         raise SemanticException("Los tipos de las expresiones del condicional deben ser iguales")
     if not isBoolean(m, isTerminal):
         raise SemanticException("La condicion del condicional debe ser booleana")
-
     subexpressions[0] = {"value": m["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"], "isArray" : expression1["isArray"]}
 
 def p_expression_t(subexpressions):
     'expression : t'
     m  = subexpressions[1]
-
     subexpressions[0] = {"value": m["value"] , "type": m["type"], "isArray": m["isArray"]}
 
 def p_t_or(subexpressions):
     't : term OR t'
     left  = subexpressions[1]
     right = subexpressions[3]
-
     isTerminal = False
     if (not isBoolean(left, isTerminal) or not isBoolean(right, isTerminal)):
         raise SemanticException("Los tipos para operar con OR deben ser booleanos")
@@ -616,7 +596,6 @@ def p_term_factor_and_term(subexpressions):
     'term : factor AND term'
     left = subexpressions[1]
     right = subexpressions[3]
-
     isTerminal = False
     if (not isBoolean(left, isTerminal) or not isBoolean(right, isTerminal)):
         raise SemanticException("Los tipos para operar con AND deben ser booleanos")
@@ -739,7 +718,6 @@ def p_h_times(subexpressions):
         typ = 'decimal'
     else:
         typ = 'natural'
-
     subexpressions[0] = {"value": left["value"] + " * " + right["value"], "type": typ, "isArray": False}
 
 
@@ -747,18 +725,15 @@ def p_h_divide(subexpressions):
     'h : h DIVIDE r'
     left = subexpressions[1]
     right = subexpressions[2]
-
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a dividir deben ser numericos")
-
     typ = 'decimal'
-
     subexpressions[0] = {"value": left["value"] + " / " +  right["value"], "type": typ, "isArray": False}
 
 
 
-def p_h_times(subexpressions):
+def p_h_modulo(subexpressions):
     'h : h MODULE r'
     left = subexpressions[1]
     right = subexpressions[2]
@@ -835,27 +810,19 @@ def p_func_wr_coli(subexpressions):
     isTerminal = False
     type_expression1 = getType(expression1 ,isTerminal)
     isArray_expression1 = isArray(expression1, isTerminal)
-
     type_expression2 = getType(expression2 ,isTerminal)
     isArray_expression2 = isArray(expression2, isTerminal)
-
-
     if not( ( (type_expression1 == "natural" or type_expression1 == "decimal") and isArray_expression1 == True) and ((type_expression2 == "natural" or type_expression2 == "decimal") and isArray_expression2 == True)):
         raise SemanticException("colineales solo puede recibir arrays de numeros")
-
-
     subexpressions[0] = {"value": "colineales( " + expression1["value"] + ", " + expression2["value"] + " )", "type": "bool", "isArray": False}
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN expression RPAREN'
     #{FUNCTION_WITH_RETURN.value = "length(" + pl.value + ')', FUNCTION_WITH_RETURN.type = "natural", FUNCTION_WITH_RETURN.isArray = "False"}
     expression = subexpressions[3]
-
     isTerminal = False
     type_expression = getType(expression ,isTerminal)
     isArray_expression = isArray(expression, isTerminal)
-
-
     if not(type_expression == "string" or isArray_expression):
         raise SemanticException("length solo puede recibir un string o un array")
 
@@ -887,18 +854,14 @@ def p_n_bool(subexpressions):
     'n : COMMA expression'
     #{N.value = string.value, PARAM_LENGTH.type = 'string', PARAM_LENGTH.isArray = "False"}
     expression = subexpressions[2]
-
     if not(expression["type"] == "bool"):
         raise SemanticException("El tercer parametro de multiplicacionEscalar debe ser un booleano")
-
     subexpressions[0] = {"value": ", " + expression["value"], "isTrue": expression["value"] == True}
-
 
 def p_n_lambda(subexpressions):
     'n : '
     #{N.value = "", N.isArray = "False"}
     subexpressions[0] = {"value": "", "isTrue": False}
-
 
 def p_num_decimal(subexpressions):
     'num : DECIMAL '
@@ -910,7 +873,6 @@ def p_num_natural(subexpressions):
     'num : NATURAL'
     #{NUM.value = natural.value, NUM.type = 'natural'}
     nat = subexpressions[1]
-
     subexpressions[0] = {"value": str(nat["value"]), "type": nat["type"]}
 
 def p_num_ngeativo(subexpressions):
@@ -918,7 +880,6 @@ def p_num_ngeativo(subexpressions):
     #{NUM.value = natural.value, NUM.type = 'natural'}
     neg = subexpressions[1]
     subexpressions[0] = {"value": str(nat["value"]), "type": neg["type"]}
-
 
 def p_bool_true(subexpressions):
     'bool : TRUE '
