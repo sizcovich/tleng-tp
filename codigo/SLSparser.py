@@ -4,7 +4,7 @@
 """Similar to C++ parser made in Python"""
 from __future__ import print_function
 import argparse
-import sys
+import sys, traceback
 import lexer_rules
 import parser_rules
 from sys import argv, exit
@@ -19,7 +19,9 @@ def parseInput() :
     parser.add_argument('-o', type=argparse.FileType('w'), nargs='?',  default=sys.stdout, help='outputFilename')
     parser.add_argument('-c', type=argparse.FileType('r'), nargs='?', default=sys.stdin, help='inputFilename')
     args = parser.parse_args()
-    return parser,args;
+    if not parser.parse_args(['-o', '-c']):
+        print("The program should be called as ./SLSParser [-o EXIT] [-c ENTRY | SOURCE]", file=sys.stderr)
+    return args
 
 def dump_ast(ast, output_file):
     output_file.write("digraph {\n")
@@ -44,29 +46,13 @@ def dump_ast(ast, output_file):
 
 
 if __name__ == "__main__":
-    parser,args = parseInput()
-    if parser.parse_args(['-o', '-c']):
-        text = (args.c).read()
+    try:
+        args = parseInput()
+        text = args.c.read()
         lexer = lex.lex(module=lexer_rules)
         parser = yacc.yacc(module=parser_rules)
         ast = parser.parse(text, lexer)
         print(ast["value"],file = args.o)
-    elif parser.parse_args([]):
-        lexer = lex.lex(module=lexer_rules)
-        parser = yacc.yacc(module=parser_rules)
-        ast = parser.parse(infile, lexer)
-        print(ast["value"])
-    elif parser.parse_args(['-c']):
-        text = (args.c).read()
-        input_file.close()
-        lexer = lex.lex(module=lexer_rules)
-        parser = yacc.yacc(module=parser_rules)
-        ast = parser.parse(text, lexer)
-        print(ast["value"])
-    elif parser.parse_args(['-o']):
-        lexer = lex.lex(module=lexer_rules)
-        parser = yacc.yacc(module=parser_rules)
-        ast = parser.parse(infile, lexer)
-        print(ast["value"],file = args.o)
-    else:
-        print("The program should be called as ./SLSParser [-o EXIT] [-c ENTRY | SOURCE]", file=sys.stderr)
+    except:
+        sys.exit(1)
+        raise Exception("The syntax is not valid.")

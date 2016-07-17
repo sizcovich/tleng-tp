@@ -1105,7 +1105,5 @@ def p_bool_false(subexpressions):
     subexpressions[0] = {"value": false["value"], "type":"bool"}
 
 def p_error(subexpressions):
-    if subexpressions not in tokens:
-        raise Exception("The value", subexpressions.value["value"], "generates a problem in the grammar.", "Line:", subexpressions.value["line"])
-    else:
-        raise Exception("The tokens are recognized but not correctly used.")
+    print("The element '", subexpressions.value["value"], "' wasn't expected.", "Line:", subexpressions.value["line"])
+    raise Exception
