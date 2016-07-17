@@ -129,7 +129,7 @@ def t_MODULE(t):
 def t_PLUS(t):
 	r'\+'
 	t.value = { "line": t.lineno, "value": t.value }
- 	return t
+	return t
 
 def t_LESS(t):
  r'<'
