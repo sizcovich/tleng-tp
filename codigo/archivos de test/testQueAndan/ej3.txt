@@ -1,3 +1,4 @@
+a = 5;
 do{
 	a += 2;
-}while(true)
+}while(true);

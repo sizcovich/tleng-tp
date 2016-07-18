@@ -1,5 +1,5 @@
 # Este programa funciona bien
-
+b= 1;
 a=100;
 for (i=1; i<a;i++) b = b+10*i;
 

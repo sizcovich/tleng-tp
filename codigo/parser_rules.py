@@ -23,7 +23,7 @@ def TienenMismoTipoInterno(tipo1, tipo2):
     if (tipo1 == None and tipo2 != None) or (tipo1 != None and tipo2 == None):
         return False
     else:
-        return TienenElMismoTipo( tipo1["tipoInterno"], tipo1["tipoInterno"] )
+        return TienenElMismoTipo( tipo1, tipo2 )
 
 def SonElMismoRegistro(tipoInt1, tipoInt2):
     for k1 in tipoInt1:
@@ -43,14 +43,14 @@ def isBoolean(expresion, isTerminal):
         name = expresion["value"]
     else:
         name = expresion["value"]
-        tipo = expresion["type"]
+        tipo = expresion["type"]["tipo"]
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos[0]
+        tipo = datos["tipo"]
 
     res = False
-    if (tipo["tipo"] == 'bool'):
+    if (tipo == 'bool'):
         res = True
 
     return res
@@ -61,14 +61,14 @@ def isString(expresion, isTerminal):
         name = expresion["value"]
     else:
         name = expresion["value"]
-        tipo = expresion["type"]
+        tipo = expresion["type"]["tipo"]
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos[0]
+        tipo = datos["tipo"]
 
     res = False
-    if (tipo["tipo"] == 'string'):
+    if (tipo == 'string'):
         res = True
 
     return res
@@ -81,13 +81,11 @@ def isNegativo(expresion, isTerminal):
         name = expresion["value"]
     else:
         name = expresion["value"]
-        tipo = expresion["type"]
-        esArray =  expresion["isArray"]
+        tipo = expresion["type"]["tipo"]
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos[0]
-        esArray =  datos[1]
+        tipo = datos["tipo"]
 
     return (tipo == 'negativo')
 
@@ -98,13 +96,11 @@ def isNatural(expresion, isTerminal):
         name = expresion["value"]
     else:
         name = expresion["value"]
-        tipo = expresion["type"]
-        esArray =  expresion["isArray"]
+        tipo = expresion["type"]["tipo"]
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos[0]
-        esArray =  datos[1]
+        tipo = datos["tipo"]
 
     return (tipo == 'natural')
 
@@ -116,13 +112,11 @@ def isDecimal(expresion, isTerminal):
         name = expresion["value"]
     else:
         name = expresion["value"]
-        tipo = expresion["type"]
-        esArray =  expresion["isArray"]
+        tipo = expresion["type"]["tipo"]
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos[0]
-        esArray =  datos[1]
+        tipo = datos["tipo"]
 
     return (tipo == 'decimal')
 
@@ -173,7 +167,7 @@ def isArray(expresion, isTerminal):
 
     if (table.get(name) != None):
         datos =table[name]
-        esArray = datos[0]["tipo"] == "array"
+        esArray = datos["tipo"] == "array"
 
     return esArray
 
@@ -192,7 +186,7 @@ def getType(expresion, isTerminal):
 
     if (table.get(name) != None):
         datos =table[name]
-        tipo = datos["tipo"]
+        tipo = datos
 
     return tipo
 
@@ -404,21 +398,19 @@ def p_assignation(subexpressions):
     'assignation : VAR b'
     #{ASSIGNATION.value = var.value + B.value, IF(B.isArray, COND(table(var.value) != None && table.getType(var.value) == B.type && B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value,B.type, B.isArray)}
 
-    isTerminal = True
     b = subexpressions[2]
     var = subexpressions[1]
-
-    isTerminal = False
+    varIsTerminal = True
+    bIsTerminal = False
     if var["value"] in table:
-        #b["type"]["tipo"]== "array"
-        if isArray(b, isTerminal) and isArray(var, isTerminal):
-            if not TienenElMismoTipo( getType(var, isTerminal), b["type"]):
+        if isArray(b, bIsTerminal) and isArray(var, varIsTerminal):
+            if not TienenElMismoTipo( getType(var, varIsTerminal), getType(b, bIsTerminal)):
                 raise SemanticException("No puede agregarle a un array un elemento de tipo distinto al tipo del array")
 
 
-    insertOrUpdate(var["value"],getType(b, isTerminal), isArray(b, isTerminal))
+    insertOrUpdate(var["value"],getType(b, bIsTerminal), isArray(b, bIsTerminal))
 
-    subexpressions[0] = {"value": var["value"] + b["value"], "type": b["type"]}
+    subexpressions[0] = {"value": var["value"] + b["value"], "type": getType(b, bIsTerminal)}
 
 def p_b_array(subexpressions):
     'b : LBRACKET expression RBRACKET ASSIGN expression'
@@ -427,7 +419,7 @@ def p_b_array(subexpressions):
     expression2 =  subexpressions[5]
     isTerminal = False
 
-    if isNatural(expression1, isTerminal):
+    if not isNatural(expression1, isTerminal):
         raise SemanticException("El valor para acceder a un array debe ser natural")
 
     b_type = getType(expression2, isTerminal)
@@ -762,19 +754,16 @@ def p_value_list_values(subexpressions):
     isTerminal = False
     value1 = ''
     if list_values2["value"] == "":
-        value1 = value["type"]
+        value1 = getType( expression, isTerminal  )
     elif (isNatural(expression, isTerminal) and isDecimal(list_values2, isTerminal)) or (isDecimal(expression, isTerminal) and isNatural(list_values2, isTerminal)) or (isNegativo(expression, isTerminal) and isNatural(list_values2, isTerminal)) or (isNatural(expression, isTerminal) and isNegativo(list_values2, isTerminal)) or (isNegativo(expression, isTerminal) and isDecimal(list_values2, isTerminal)) or (isDecimal(expression, isTerminal) and isNegativo(list_values2, isTerminal)):
         value1 = {"tipo":"decimal", "tipoInterno": None}
     else:
-        value1 = value2["type"]
+        value1 = getType(expression, isTerminal)
 
-    if value1 != '':
-        tipo = { "tipo": "array", "tipoInterno": value1  }
-
-    if (list_values2["value"] != "" and not TienenElMismoTipo(list_values2["type"],value["type"])) :
+    if (list_values2["value"] != "" and not TienenElMismoTipo(list_values2["type"],expression["type"])) :
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
-    subexpressions[0] = {"value": "[" + value2["value"] + list_values["value"] + "]", "type": tipo}
+    subexpressions[0] = {"value": "[" + expression["value"] + list_values2["value"] + "]", "type": {"tipo":"array", "tipoInterno": value1 }}
 
 
 def p_list_registers(subexpressions):
@@ -803,24 +792,18 @@ def p_list_values_comma(subexpressions):
     #{LIST_VALUES1.value = ',' + EXPRESSION.value + LIST_VALUES2.value, LIST_VALUES1.type = IF(LIST_VALUES2.value == "", EXPRESSION.type, IF(LIST_VALUES2.type == 'decimal' && EXPRESSION.type == 'natural','decimal',IF(LIST_VALUES2.type == 'natural' && EXPRESSION.type == 'decimal', 'decimal', EXPRESSION.value))), COND(LIST_VALUES2.value != "" && LIST_VALUES2.type != EXPRESSION.type)}
     expression = subexpressions[2]
     list_values2 = subexpressions[3]
-
     isTerminal = False
-    value1 = ''
+    tipoRes = {}
     if list_values2["value"] == "":
-        value1 = value["type"]
+        tipoRes = getType(expression,isTerminal)
     elif (isNatural(expression, isTerminal) and isDecimal(list_values2, isTerminal)) or (isDecimal(expression, isTerminal) and isNatural(list_values2, isTerminal)) or (isNegativo(expression, isTerminal) and isNatural(list_values2, isTerminal)) or (isNatural(expression, isTerminal) and isNegativo(list_values2, isTerminal)) or (isNegativo(expression, isTerminal) and isDecimal(list_values2, isTerminal)) or (isDecimal(expression, isTerminal) and isNegativo(list_values2, isTerminal)):
-        value1 = {"tipo":"decimal", "tipoInterno": None}
+        tipoRes = {"tipo":"decimal", "tipoInterno": None}
     else:
-        value1 = {"tipo": "array", "tipoInterno": getType(expression, isTerminal)}
-
-    if value1 != '':
-        value1 = {"tipo": "array", "tipoInterno": getType(expression, isTerminal)}
-
-    if (list_values2["value"] != "" and not TienenElMismoTipo(list_values2["type"],value["type"])) :
+        tipoRes =  getType(expression,isTerminal)
+    if (list_values2["value"] != "" and not TienenElMismoTipo(list_values2["type"], expression["type"])):
         raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
-
-    subexpressions[0] = {"value": "," + expression["value"] + list_values2["value"], "type": value1}
+    subexpressions[0] = {"value": "," + expression["value"] + list_values2["value"], "type": tipoRes}
 
 
 
@@ -828,7 +811,7 @@ def p_list_values_lambda(subexpressions):
     'list_values : '
     #{LIST_VALUES.value = ''}
     values = []
-    subexpressions[0] = {"value": "", "values" : values}
+    subexpressions[0] = {"value": ""}
 
 
 
@@ -996,6 +979,8 @@ def p_z_h(subexpressions):
 
 def p_h_times(subexpressions):
     'h : h TIMES r'
+    left = subexpressions[1]
+    right = subexpressions[3]
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a multiplicar deben ser numericos")
@@ -1133,7 +1118,7 @@ def p_func_wr_length(subexpressions):
     expression = subexpressions[3]
     isTerminal = False
 
-    if not(isBoolean(expression, isTermianl) or isArray(expression, isTerminal)):
+    if not(isString(expression, isTerminal) or isArray(expression, isTerminal)):
         raise SemanticException("length solo puede recibir un string o un array")
 
 
@@ -1154,7 +1139,7 @@ def p_param_me_var(subexpressions):
     if not isNumerical(expression1, isTerminal) :
         raise SemanticException("El primer parametro de multiplicacionEscalar debe ser un numero")
 
-    typ = getType(expression1, isTermianl)
+    typ = getType(expression1, isTerminal)
 
     if typ == "decimal" and n["isTrue"] :
         typ = typ = {"tipo":"decimal", "tipoInterno":None}
