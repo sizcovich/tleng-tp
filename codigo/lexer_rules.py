@@ -91,10 +91,21 @@ def t_MINEQUAL(t):
  t.value = { "line": t.lineno, "value": t.value }
  return t
 
+def t_DECIMAL(t):
+	r'\d+\.\d+|-\d+\.\d+'
+	t.value = { "line": t.lineno, "value": float(t.value), "type": "decimal"  }
+	return t
+
 def t_NEGATIVO(t):
  	r'-\d+'
  	t.value = { "line": t.lineno, "value": int(t.value), "type": "negativo"  }
  	return t
+
+
+def t_NATURAL(t):
+	r'\d+'
+	t.value = { "line": t.lineno, "value": int(t.value), "type": "natural" }
+	return t
 
 def t_MINUS(t):
  r'-'
@@ -292,15 +303,8 @@ def t_VAR(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-def t_DECIMAL(t):
-	r'-?\d+\.\d+|-\d+\.\d+'
-	t.value = { "line": t.lineno, "value": float(t.value), "type": "decimal"  }
-	return t
 
-def t_NATURAL(t):
-	r'\d+|-\d+'
-	t.value = { "line": t.lineno, "value": int(t.value), "type": "natural" }
-	return t
+
 
 
 def t_STRING(t):
@@ -319,10 +323,12 @@ t_ignore = '\t \n'
 # Error handling rule
 def t_error(token):
 	message = "Token desconocido:"
-	message += "\ntype:" + token["value"].type
-	message += "\nvalue:" + str(token["value"].value)
-	message += "\nline:" + str(token["value"].lineno)
-	message += "\nposition:" + str(token["value"].lexpos)
+	print("TOKEN")
+	print(token)
+	message += "\ntype:" + token.type
+	message += "\nvalue:" + str(token.value)
+	message += "\nline:" + str(token.lineno)
+	message += "\nposition:" + str(token.lexpos)
 	raise Exception(message)
 
 # Build the lexer
