@@ -8,10 +8,7 @@ class SemanticException(Exception):
 
 table = {}
 
-
 def TienenElMismoTipo(tipo1, tipo2):
-
-
     if tipo1["tipo"] != tipo2["tipo"]:
         return False
     if (tipo1["tipo"] == "register" and tipo2["tipo"] == "register"):
@@ -20,8 +17,6 @@ def TienenElMismoTipo(tipo1, tipo2):
         return TienenMismoTipoInterno(tipo1["tipoInterno"], tipo2["tipoInterno"])
 
 def TienenMismoTipoInterno(tipo1, tipo2):
-
-
     if tipo1 == None and tipo2 == None:
         return True
     if (tipo1 == None and tipo2 != None) or (tipo1 != None and tipo2 == None):
@@ -95,7 +90,6 @@ def isNegativo(expresion, isTerminal):
 
 def isArrayNumerical(expresion, isTerminal):
     #chequea que el tipo de la expresion sea un numero
-
     if isTerminal:
         name = expresion["value"]
     else:
@@ -110,7 +104,6 @@ def isArrayNumerical(expresion, isTerminal):
         if (tipo =="array"):
             tipoInterno = datos["tipoInterno"]["tipo"]
     return (tipoInterno == 'natural' or tipoInterno == 'negativo' or tipoInterno == 'decimal')
-
 
 def isArrayNatural(expresion, isTerminal):
     #chequea que el tipo de la expresion sea un numero
@@ -151,7 +144,6 @@ def isNatural(expresion, isTerminal):
         tipo = datos["tipo"]
 
     return (tipo == 'natural')
-
 
 
 def isDecimal(expresion, isTerminal):
@@ -223,9 +215,6 @@ def isArray(expresion, isTerminal):
 def getType(expresion, isTerminal):
     #obtiene el tipo de una variable: si esta definida en la tabla devuelve esos datos, sino devuelve los datos que vienen por parametro
     #es necesario que sepa si expression es terminal o no
-
-    #print expresion
-
     tipo = ""
     if isTerminal:
         name = expresion["value"]
@@ -295,6 +284,8 @@ def p_sentence_while(subexpressions):
     new = ''
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
         new = "\n"
+    if keys["value"][0] != '{':
+        new = "\n"
     new = new + keys["value"]
     subexpressions[0] = {"value": "while(" + condition["value"] + ")" + new}
 
@@ -307,13 +298,11 @@ def p_sentence_if_else(subexpressions):
     newline = ''
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
         newline = "\n"
+    if keys["value"][0] != '{':
+        newline = "\n"
     new = newline + keys["value"]
     possibleelse = subexpressions[6]
     subexpressions[0] = {"value": "if(" + condition["value"] + ")" + new + possibleelse["value"]}
-
-
-
-
 
 def p_sentence_for(subexpressions):
     'sentence : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
@@ -326,6 +315,8 @@ def p_sentence_for(subexpressions):
     lastElementLine = lastElement["line"]
     new = ''
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
     subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new}
@@ -356,6 +347,8 @@ def p_possibleelse_else(subexpressions):
     lastElementLine = subexpressions[1]["line"]
     new = ''
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
+        new = "\n"
+    if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
     subexpressions[0] = {"value": " else " + new}
@@ -446,19 +439,14 @@ def p_assignationorlambda_lambda(subexpressions):
 def p_assignation(subexpressions):
     'assignation : VAR b'
     #{ASSIGNATION.value = var.value + B.value, IF(B.isArray, COND(table(var.value) != None && table.getType(var.value) == B.type && B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value,B.type, B.isArray)}
-
     b = subexpressions[2]
     var = subexpressions[1]
     varIsTerminal = True
     bIsTerminal = False
-
-
     if var["value"] in table:
         if isArray(b, bIsTerminal) and isArray(var, varIsTerminal):
             if not TienenElMismoTipo( getType(var, varIsTerminal), getType(b, bIsTerminal)):
                 raise SemanticException("No puede agregarle a un array un elemento de tipo distinto al tipo del array")
-
-
     insertOrUpdate(var["value"],getType(b, bIsTerminal), isArray(b, bIsTerminal))
 
     subexpressions[0] = {"value": var["value"] + b["value"], "type": getType(b, bIsTerminal)}
@@ -482,7 +470,7 @@ def p_b_expression(subexpressions):
     #{B.value = '=' + ECOMPARABLE.value, B.type = ECOMPARABLE.type, B.isArray = ECOMPARABLE.isArray}
     expression =  subexpressions[2]
 
-    subexpressions[0] = {"value": "= " + expression["value"] , "type": expression["type"]}
+    subexpressions[0] = {"value": " = " + expression["value"] , "type": expression["type"]}
 
 def p_b_registers(subexpressions):
     'b : COLON expression'
@@ -502,15 +490,11 @@ def p_advancefor_assignationorlambda(subexpressions):
     assignationorlambda = subexpressions[1]
     subexpressions[0] = {"value": assignationorlambda["value"]}
 
-
-#ojo aca podriamos hacer += String no?
 def p_advance_var_array_c(subexpressions):
     'advance : VAR LBRACKET expression RBRACKET c'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     var = subexpressions[1]
     expression = subexpressions[3]
     c = subexpressions[5]
-
     isTerminal = True
     if c["isPlusEqual"] :
         if  not isNumerical(var, isTerminal) and not isString(var, isTerminal):
@@ -521,9 +505,7 @@ def p_advance_var_array_c(subexpressions):
         else:
             if not TienenElMismoTipo(getType(var, True), getType(c, False)):
                 raise SemanticException("Los tipos deben coincidir")
-
     subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  c["value"]}
-
 
 def p_advance_var_array_d(subexpressions):
     'advance : VAR LBRACKET expression RBRACKET d'
@@ -531,15 +513,10 @@ def p_advance_var_array_d(subexpressions):
     var = subexpressions[1]
     expression = subexpressions[3]
     d = subexpressions[5]
-
-
     isTerminal = True
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
-
     subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  d["value"]}
-
-
 
 def p_advance_var_c(subexpressions):
     'advance : VAR c'
@@ -591,14 +568,10 @@ def p_advance_d_array(subexpressions):
     #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
     d = subexpressions[1]
     var = subexpressions[2]
-
     isTerminal = True
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
-
     subexpressions[0] = {"value":  d["value"] + var["value"] + "[" + expression["value"] + "]"}
-
-
 
 def p_d_increment(subexpressions):
     'd : INCREMENT'
@@ -609,12 +582,9 @@ def p_c_plus(subexpressions):
     'c : PLUSEQUAL expression'
     #{C.value = '+=' + value.value}
     expression = subexpressions[2]
-
-
     isTerminal = False
     if not isNumerical(expression, isTerminal) and not isString(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion +=")
-
     subexpressions[0] = {"value": "+=" + expression["value"], "type": expression["type"],"isPlusEqual" :True}
 
 def p_d_decrement(subexpressions):
@@ -652,11 +622,7 @@ def p_c_divequal(subexpressions):
     if not isNumerical(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion /=")
 
-
     subexpressions[0] = {"value": "/=" + expression["value"], "type": expression["type"], "isPlusEqual" :False}
-
-
-
 
 def p_value_minus_paren_num(subexpressions):
     'value : MINUS LPAREN num RPAREN'
@@ -780,9 +746,7 @@ def p_value_var_array(subexpressions):
     typ = getType(var, isTerminal)
     if not isArray(var, isTerminal):
         raise SemanticException("la variable debe ser un array")
-
     subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]", "type": typ["tipoInterno"]}
-
 
 def p_value_var(subexpressions):
     'value : VAR'
@@ -794,16 +758,11 @@ def p_value_var(subexpressions):
 
     subexpressions[0] = {"value":  var["value"] , "type": typ}
 
-
-
 def p_value_list_values(subexpressions):
     'value : LBRACKET expression list_values RBRACKET'
     #{VALUE.value = '[ ' + EXPRESSION.value + LIST_VALUES.value + ']', VALUE.type = IF(LIST_VALUES.value == "", EXPRESSION.type, IF(LIST_VALUES.type == 'decimal' && EXPRESSION.type == 'natural','decimal',IF(LIST_VALUES.type == 'natural' && EXPRESSION.type == 'decimal', 'decimal', EXPRESSION.value))), VALUE.isArray = "True"}
     expression = subexpressions[2]
     list_values2 = subexpressions[3]
-
-
-
     isTerminal = False
     value1 = ''
     if list_values2["value"] == "":
@@ -861,10 +820,7 @@ def p_list_values_comma(subexpressions):
         if(not isNumerical(expression, isTerminal) or not isNumerical(list_values2, isTerminal)):
             if (not TienenElMismoTipo(list_values2["type"], expression["type"])):
                 raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
-
     subexpressions[0] = {"value": "," + expression["value"] + list_values2["value"], "type": tipoRes}
-
-
 
 def p_list_values_lambda(subexpressions):
     'list_values : '
@@ -872,16 +828,11 @@ def p_list_values_lambda(subexpressions):
     values = []
     subexpressions[0] = {"value": ""}
 
-
-
 def p_value_list_registers(subexpressions):
     'value : LKEY list_registers RKEY'
     #{VALUE.value = '{' + LIST_REGISTERS.value + '}', VALUE.type = 'register', VALUE.isArray = "True"}
     list_registers = subexpressions[2]
-
     subexpressions[0] = {"value": "{" + list_registers["value"] + "}", "type": {"tipo": "register", "tipoInterno": list_registers["dict"] }}
-
-
 
 def p_expression_conditional(subexpressions):
     'expression : t QUESTIONMARK expression COLON expression'
@@ -889,15 +840,11 @@ def p_expression_conditional(subexpressions):
     m = subexpressions[1]
     expression1 = subexpressions[3]
     expression2 = subexpressions[5]
-
     isTerminal = False
-
-
     if not TienenElMismoTipo(getType(expression1, isTerminal), getType(expression2, isTerminal)):
         raise SemanticException("Los tipos de las expresiones del condicional deben ser iguales")
     if not isBoolean(m, isTerminal):
         raise SemanticException("La condicion del condicional debe ser booleana")
-
     subexpressions[0] = {"value": m["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": expression1["type"]}
 
 def p_expression_t(subexpressions):
@@ -945,7 +892,6 @@ def p_term_factor_pow_x(subexpressions):
         raise SemanticException("Los tipos para operar con POW deben ser numericos")
 
     typ = {"tipo":"natural", "tipoInterno":None}
-
     subexpressions[0] = {"value": left["value"] + " ^ " + right["value"], "type": typ}
 
 def p_factor_x(subexpressions):
@@ -957,15 +903,12 @@ def p_x_y_equal_x(subexpressions):
     'x : y EQUAL x'
     left = subexpressions[1]
     right = subexpressions[3]
-
-
     subexpressions[0] = {"value": left["value"] + " == " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_x_y_unequal_x(subexpressions):
     'x : y UNEQUAL x'
     left = subexpressions[1]
     right = subexpressions[3]
-
     subexpressions[0] = {"value": left["value"] + " != " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_x_y(subexpressions):
@@ -1020,8 +963,6 @@ def p_z_zminus(subexpressions):
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a restar deben ser numericos")
-
-
     if (isDecimal(left, isTerminal) and isNatural(right, isTerminal)) or (isNatural(left, isTerminal) and isDecimal(right, isTerminal)) or (isDecimal(left, isTerminal) and isNegativo(right, isTerminal)) or (isNegativo(left, isTerminal) and isDecimal(right, isTerminal)):
         typ = 'decimal'
     elif (isNegativo(left, isTerminal) and isNatural(right, isTerminal)):
@@ -1045,35 +986,25 @@ def p_h_times(subexpressions):
     isTerminal = False
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a multiplicar deben ser numericos")
-
     if (isNegativo(left, isTerminal) and isNatural(right, isTerminal)) or (isNegativo(right, isTerminal) and isNatural(left, isTerminal)):
         typ = 'negativo'
     elif isDecimal(left, isTerminal) and isDecimal(right, isTerminal) :
         typ = 'decimal'
     else:
         typ = 'natural'
-
     tipoRes = {"tipo": typ, "tipoInterno": None}
-
     subexpressions[0] = {"value": left["value"] + " * " + right["value"], "type": tipoRes}
-
 
 def p_h_divide(subexpressions):
     'h : h DIVIDE r'
     left = subexpressions[1]
     right = subexpressions[3]
     isTerminal = False
-
     if (not isNumerical(left, isTerminal) or not isNumerical(right, isTerminal)):
         raise SemanticException("Los elementos a dividir deben ser numericos")
-
     typ = 'natural'
-
     tipoRes = {"tipo": typ, "tipoInterno": None}
-
     subexpressions[0] = {"value": left["value"] + " / " +  right["value"], "type": tipoRes}
-
-
 
 def p_h_modulo(subexpressions):
     'h : h MODULE r'
@@ -1117,7 +1048,6 @@ def p_r_not_expression(subexpressions):
 
     subexpressions[0] = {"value": "not (" + expression["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}}
 
-
 def p_r_value(subexpressions):
     'r : value'
     value = subexpressions[1]
@@ -1152,7 +1082,6 @@ def p_func_wr_mult(subexpressions):
 def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN expression RPAREN'
     #{COND(ECOMPARABLE.type == 'string'), FUNCTION_WITH_RETURN.value = "capitalizar(" + ECOMPARABLE.value + ')', FUNCTION_WITH_RETURN.type = "string", FUNCTION_WITH_RETURN.isArray = "False"}
-
     expression = subexpressions[3]
 
     isTerminal = False
@@ -1166,13 +1095,9 @@ def p_func_wr_coli(subexpressions):
     #{FUNCTION_WITH_RETURN.value = "colineales(" + var.value + "," + var2.value + ')', FUNCTION_WITH_RETURN.type = "bool", FUNCTION_WITH_RETURN.isArray = "False"}
     expression1 = subexpressions[3]
     expression2 = subexpressions[5]
-
     isTerminal = False
-
-
     if not(isArrayNumerical(expression1, isTerminal) or isArrayNumerical(expression2, isTerminal) ):
         raise SemanticException("colineales solo puede recibir arrays de numeros")
-
     subexpressions[0] = {"value": "colineales( " + expression1["value"] + ", " + expression2["value"] + " )", "type": {"tipo": "bool", "tipoInterno": None}}
 
 def p_func_wr_length(subexpressions):
@@ -1180,11 +1105,8 @@ def p_func_wr_length(subexpressions):
     #{FUNCTION_WITH_RETURN.value = "length(" + pl.value + ')', FUNCTION_WITH_RETURN.type = "natural", FUNCTION_WITH_RETURN.isArray = "False"}
     expression = subexpressions[3]
     isTerminal = False
-
     if not(isString(expression, isTerminal) or isArray(expression, isTerminal)):
         raise SemanticException("length solo puede recibir un string o un array")
-
-
     subexpressions[0] = {"value": "length( " + expression["value"] + " )", "type": {"tipo": "natural", "tipoInterno": None}}
 
 def p_param_me_var(subexpressions):
@@ -1194,15 +1116,12 @@ def p_param_me_var(subexpressions):
     comma = subexpressions[2]
     expression2 = subexpressions[3]
     n = subexpressions[4]
-
-
     isTerminal = False
     if not isNumerical(expression2, isTerminal) :
         raise SemanticException("El segundo parametro de multiplicacionEscalar debe ser un numero")
 
     if not isArrayNumerical(expression1, isTerminal) :
         raise SemanticException("El primer parametro de multiplicacionEscalar debe ser un array de numeros")
-
     typ = getType(expression1, isTerminal)
 
     if typ == "decimal" and n["isTrue"] :
@@ -1217,8 +1136,6 @@ def p_n_bool(subexpressions):
     isTerminal = False
     if not(isBoolean(expression, isTerminal)):
         raise SemanticException("El tercer parametro de multiplicacionEscalar debe ser un booleano")
-
-
     subexpressions[0] = {"value": ", " + expression["value"], "isTrue": expression["value"] == True}
 
 def p_n_lambda(subexpressions):
