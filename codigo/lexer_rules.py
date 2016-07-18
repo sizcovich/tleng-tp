@@ -55,9 +55,12 @@ tokens = (
 
 #Reserved words
 reserved = {
-    'res' : 'RES',
-    'begin' : 'BEGIN',
-    'end' : 'END'
+    'RES' : 'RES',
+    'res' : 'res',
+    'begin' : 'begin',
+    'BEGIN' : 'BEGIN',
+    'end' : 'end',
+    'END' : 'END'
 }
 
 # Regular expression rules for simple tokens
@@ -276,7 +279,6 @@ def t_PRINT(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-
 def t_MULTIPLICACIONESCALAR(t):
 	r'multiplicacionEscalar|MULTIPLICACIONESCALAR'
 	t.value = { "line": t.lineno, "value": t.value }
@@ -300,15 +302,15 @@ def t_LENGTH(t):
 #end Reserved symbols
 def t_VAR(t):
 	r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
+	if t.value in reserved:
+		raise Exception ("Token reservado")
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-
-
-
-
 def t_STRING(t):
 	r'\"([^\"]+)\"'
+	if t.value in reserved:
+		raise Exception ("Token reservado")
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
