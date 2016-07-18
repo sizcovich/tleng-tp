@@ -109,8 +109,6 @@ def isArrayNumerical(expresion, isTerminal):
         tipo = datos["tipo"]
         if (tipo =="array"):
             tipoInterno = datos["tipoInterno"]["tipo"]
-
-
     return (tipoInterno == 'natural' or tipoInterno == 'negativo' or tipoInterno == 'decimal')
 
 

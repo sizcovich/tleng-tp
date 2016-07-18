@@ -60,7 +60,23 @@ reserved = {
     'begin' : 'begin',
     'BEGIN' : 'BEGIN',
     'end' : 'end',
-    'END' : 'END'
+    'END' : 'END',
+    'while' : 'while',
+    'for' : 'for',
+    'multiplicacionEscalar' : 'multiplicacionEscalar',
+    'length' : 'length',
+    'and' : 'and',
+    'return' : 'return',
+    'capitalizar' : 'capitalizar',
+    'colineales' : 'colineales',
+    'print' : 'print',
+    'or' : 'or',
+    'false' : 'false',
+    'true' : 'true',
+    'do' : 'do',
+    'not' : 'not',
+    'if' : 'if',
+    'else' : 'else'
 }
 
 # Regular expression rules for simple tokens
@@ -302,15 +318,17 @@ def t_LENGTH(t):
 #end Reserved symbols
 def t_VAR(t):
 	r'[a-zA-Z]{1}[a-zA-Z0-9_]*((\.[a-zA-Z]{1})?[a-zA-Z0-9_])*'
-	if t.value in reserved:
-		raise Exception ("Token reservado")
+	if t.value.lower() in reserved:
+		msg = "Token reservado: " + t.value
+		raise Exception (msg)
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
 def t_STRING(t):
 	r'\"([^\"]+)\"'
-	if t.value in reserved:
-		raise Exception ("Token reservado")
+	if t.value.lower() in reserved:
+		msg = "Token reservado: " + t.value
+		raise Exception (msg)
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
