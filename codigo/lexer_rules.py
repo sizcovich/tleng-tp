@@ -293,7 +293,7 @@ def t_VAR(t):
 	return t
 
 def t_DECIMAL(t):
-	r'\d+\.\d+|-\d+\.\d+'
+	r'-?\d+\.\d+|-\d+\.\d+'
 	t.value = { "line": t.lineno, "value": float(t.value), "type": "decimal"  }
 	return t
 
@@ -301,7 +301,6 @@ def t_NATURAL(t):
 	r'\d+|-\d+'
 	t.value = { "line": t.lineno, "value": int(t.value), "type": "natural" }
 	return t
-
 
 
 def t_STRING(t):
