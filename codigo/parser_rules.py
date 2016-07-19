@@ -8,6 +8,24 @@ class SemanticException(Exception):
 
 table = {}
 
+
+def laVarEsUnRegistro(value):
+    return len(value.split(".")) > 1
+
+def accederAlRegistroYObtenerTipoDeValue(value):
+    arrayvar = value.split(".")
+    typ = {}
+    if len(arrayvar) > 1:
+        typ = getType({"value": arrayvar[0], "type": ""}, False)
+        if typ["tipo"] != "register":
+            raise SemanticException("la variable no es un register")
+        for x in range(1, len(arrayvar)):
+            if typ["tipo"] != "register":
+                raise SemanticException("la variable no es un register")
+            typ = typ["tipoInterno"][arrayvar[x]]
+    return typ
+
+
 def EsSubtipo(tipo1, tipo2):
     if tipo1["tipo"] == "decimal":
         return EsSubtipoTipoInterno(tipo1["tipoInterno"], tipo2["tipoInterno"])
@@ -224,6 +242,9 @@ def isArray(expresion, isTerminal):
     esArray  = False
     if isTerminal:
         name = expresion["value"]
+        if laVarEsUnRegistro(name):
+            tipo = accederAlRegistroYObtenerTipoDeValue(name)
+            esArray = tipo["tipo"] == "array"
     else:
         name = expresion["value"]
         tipo = expresion["type"]
@@ -242,6 +263,8 @@ def getType(expresion, isTerminal):
     tipo = ""
     if isTerminal:
         name = expresion["value"]
+        if laVarEsUnRegistro(name):
+            tipo = accederAlRegistroYObtenerTipoDeValue(name)
     else:
         name = expresion["value"]
         tipo = expresion["type"]
@@ -845,8 +868,9 @@ def p_list_registers(subexpressions):
     var = subexpressions[1]
     exp = subexpressions[3]
     l = subexpressions[4]
-    newdict = l["dict"].update({ var["value"] : exp["type"]})
-    subexpressions[0] = {"value": var["value"] + " : " + exp["value"] + l["value"], "dict": newdict}
+    dict = l["dict"]
+    dict.update({ var["value"] : getType(exp,False ) })
+    subexpressions[0] = {"value": var["value"] + " : " + exp["value"] + l["value"], "dict": dict}
 
 def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
