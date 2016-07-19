@@ -178,8 +178,8 @@ Consiste en un conflicto de tipo shift/reduce dado que el parser no sabe si debe
 Dadas las decisiones tomadas al momento de formular la gramática, consideramos los siguientes casos como incorrectos:
 
 \begin{itemize}
-\item Asumimos que los Registers toman únicamente literales de tipos básicos.
-\item En el caso de la operación potencia, nos basamos en la documentación de C++ para definir el tipo asignado. Dado que en todos los casos el resultado es de tipo punto flotante\footnote{http://en.cppreference.com/w/cpp/numeric/math/pow}, decidimos mantenerlo, por lo que la indexación con una potencia genera un error de tipos. Por ejemplo, g[b ^ b] falla.
+\item Asumimos que los Registers toman únicamente literales de tipos básicos. Luego, no permitimos registro[valor].
+\item No permitimos listas de listas, sino listas de tipos básicos únicamente.
 \end{itemize}
 
 Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: \textbf{nombre, tipo, isArray, isTrue} para las variables que así lo requieran para la ejecución de funciones que las utilizan.
