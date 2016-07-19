@@ -46,13 +46,12 @@ def dump_ast(ast, output_file):
 
 
 if __name__ == "__main__":
-    try:
+    # try:
         args = parseInput()
         text = args.c.read()
         lexer = lex.lex(module=lexer_rules)
         parser = yacc.yacc(module=parser_rules)
         ast = parser.parse(text, lexer)
         print(ast["value"],file = args.o)
-    except:
-        sys.exit(1)
-        raise Exception("The syntax is not valid.")
+    # except Exception:
+    #     sys.exit(1)

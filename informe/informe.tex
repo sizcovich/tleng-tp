@@ -178,9 +178,8 @@ Consiste en un conflicto de tipo shift/reduce dado que el parser no sabe si debe
 Dadas las decisiones tomadas al momento de formular la gramática, consideramos los siguientes casos como incorrectos:
 
 \begin{itemize}
-\item Los operadores ternarios no son considerados expresiones, por lo que no permitimos la realización de operaciones aritméticas ni entre strings.
 \item Asumimos que los Registers toman únicamente literales de tipos básicos.
-\item No permitimos sentencias separadas en diferentes renglones. Por ejemplo, hacer ``i newline ++'' no lo consideramos válido.
+\item En el caso de la operación potencia, nos basamos en la documentación de C++ para definir el tipo asignado. Dado que en todos los casos el resultado es de tipo punto flotante\footnote{http://en.cppreference.com/w/cpp/numeric/math/pow}, decidimos mantenerlo, por lo que la indexación con una potencia genera un error de tipos. Por ejemplo, g[b ^ b] falla.
 \end{itemize}
 
 Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: \textbf{nombre, tipo, isArray, isTrue} para las variables que así lo requieran para la ejecución de funciones que las utilizan.
