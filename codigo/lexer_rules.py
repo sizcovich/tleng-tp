@@ -255,13 +255,8 @@ def t_FOR(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
-def t_DO(t):
-	r'do|DO'
-	t.value = { "line": t.lineno, "value": t.value }
-	return t
-
 def t_RETURN(t):
-	r'return|RETURN'
+	r'return\s|RETURN\s'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
@@ -276,17 +271,17 @@ def t_FALSE(t):
 	return t
 
 def t_AND(t):
-	r'and|AND'
+	r'and\s|AND\s'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
 def t_OR(t):
-	r'or|OR'
+	r'or\s|OR\s'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
 def t_NOT(t):
-	r'not|NOT'
+	r'not\s|NOT\s'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
@@ -312,6 +307,11 @@ def t_COLINEALES(t):
 
 def t_LENGTH(t):
 	r'length|LENGTH'
+	t.value = { "line": t.lineno, "value": t.value }
+	return t
+
+def t_DO(t):
+	r'do\s|DO\s'
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
