@@ -147,9 +147,12 @@ Dada la limitación de \textit{PLY} para manejar atributos heredados, todos nues
 Los atributos con los que contamos son:
 \begin{itemize}
 \item \textbf{NoTerminal.value}: Consiste en el valor asociado
-\item \textbf{NoTerminal.type}: \textit{tipo}. Representa el tipo asociado. El tipo puede ser ``natural'', ``negativo'', ``decimal'' o ``string''.
+\item \textbf{NoTerminal.type}: \textit{tipo}. Representa el tipo asociado. Para ver los tipos posibles ver sección 4.2
 \item \textbf{NoTerminal.isTrue}: \textit{bool}. Almacena la información del booleano dado por parámetro en multiplicacionEscalar.
-\item \textbf{NoTerminal.isArray}: \textit{bool}. Guarda la información de si el no terminal deriva en un arreglo o no.
+\item \textbf{NoTerminal.stringInterno}: \textit{string}. Sirve para obtener al tipo correspondiente cuando se requiere el tipo de un elemento que se encuentra en una posicion de un array o el tipo de un atributo de un registro.
+\item \textbf{NoTerminal.isPlusEqual}: \textit{bool}. Posee la información de si el operador aplicado es +=
+\item \textbf{NoTerminal.line}: \textit{int}. Posee la información de la linea donde ocurre la sentencia en el texto original.
+\item \textbf{NoTerminal.dict}: \textit{dict}. ???
 \end{itemize}
 
 \section{Ejemplo de la Gramática de Atributos}
@@ -169,21 +172,92 @@ Nuestro conflicto se presenta en el \textbf{ELSE} en el siguiente caso:
 sentence -> IF LPAREN expression RPAREN keys . possibleelse
 possibleelse -> . ELSE keys
 possibleelse -> .
+
+
+! shift/reduce conflict for ELSE resolved as shift
+
 \end{verbatim}
 
-Consiste en un conflicto de tipo shift/reduce dado que el parser no sabe si debe seguir avanzando por el else o reducir lo anterior. Para resolverlo, habría que replicar todas las reglas para el else.
+
+Consiste en un conflicto de tipo shift/reduce introducido por la ambiguedad que presenta la gramatica para ese caso.
+Llega un momento donde el parser no sabe si debe shiftear o reducir. Sin embargo toma la decisión correcta, es decir, si en la entrada tiene un ELSE shiftea, de lo contrario reduce.
+
+Es posible desambiguar la gramática (puede verse en 4.3.2 Eliminación de la ambigüedad en el libro Aho, Sethi, Ullman: Compilers: Principles, Techniques, and Tools, Addison Wesley), sin embargo, por ser un conflicto permitido por la cátedra, usamos la forma ambigua.
 
 \section{Descripción}
 
-Dadas las decisiones tomadas al momento de formular la gramática, consideramos los siguientes casos como incorrectos:
+\subsection{Operaciones no permitidas}
 
-\begin{itemize}
-\item Asumimos que los Registers toman únicamente literales de tipos básicos. Luego, no permitimos registro[valor].
-\item No permitimos listas de listas, sino listas de tipos básicos únicamente.
-\end{itemize}
 
-Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: \textbf{nombre, tipo, isArray, isTrue} para las variables que así lo requieran para la ejecución de funciones que las utilizan.
+Si tenemos un registro dentro de algun arreglo, no son validas las expresiones del tipo
+array[i].atributo
 
+Por ejemplo, si tenemos
+
+\begin{verbatim}
+usuarios = [{nombre:"Mr.X", edad:10}, {nombre:"Al", edad:50}];
+edad = usuarios[i].edad;
+\end{verbatim}
+
+no permitimos la operación usuarios[i].edad
+
+Realizar esa operación, requiere un cambio en la gramática a la hora de "generar" variables. La cual no contemplamos desde un principio debido a que decidimos utilizar tipos básicos.
+Sin embargo realizar esta modificación, considerando que ya tenemos todas las estructuras de tipos armadas, no requeriría un gran esfuerzo.
+
+ 
+Debido a esta decisión, los tests regs.i y all.i no funcionan enteros. 
+
+
+\subsection{Estructura de tipos}
+
+Para el resguardo de las variables con sus atributos utilizamos un diccionario \textit{table} donde se almacena la información: 
+
+\begin{verbatim}
+
+Registros:
+nombreVariable: { "tipo": "register", "dict": unDicc}
+
+Arreglos
+nombreVariable: { "tipo": "array", "dict": unDicc}
+
+Tipos basicos (booleanos, strings, naturales, negativos, decimales)
+nombreVariable: { "tipo": "tipoBasico", "dict": None}
+
+
+Ejemplos: 
+
+1)
+
+numeros = [[1, 2], [3]]
+
+
+Datos en la tabla de tipos:
+
+{"numeros": { "tipo": "array", "tipoInterno": 
+							     {"tipo": "array","tipoInterno":
+												     {"tipo": "natural", "tipoInterno":None}
+								 }
+			}
+}
+2)
+
+persona = { nombre : "juan", edad : 25 , padres: { mama: "maria", papa: "luis"}}
+
+Datos en la tabla de tipos:
+
+{"persona": 
+	{"tipo" : "register",
+  	 "tipoInterno":{"nombre":{"tipo":"string","tipoInterno": None},
+                  	"edad":  {"tipo":"natural","tipoInterno": None},
+                  	"padres":{"tipo":"register","tipoInterno":
+                                              {"mama": {"tipo":"string", "tipoInterno": None},
+                                               "papa": {"tipo":"string", "tipoInterno": None}  												  }
+                   }
+     }
+ }
+
+
+\end{verbatim}
 \section{Compilación y ejecución}
 Para compilar nuestro trabajo práctico y ejecutarlo, alcanza con correr en la consola el siguiente comando:
 \textbf{./SLSparser.py -o archivoSalida -c archivoEntrada} 
