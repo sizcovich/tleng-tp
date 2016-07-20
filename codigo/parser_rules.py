@@ -9,6 +9,33 @@ class SemanticException(Exception):
 table = {}
 
 
+def getTypeRecursivo(stringInterno):
+
+    variables = stringInterno.split(".")
+
+    if len(variables) == 1:
+        typ = table[variables[0]]
+    else:
+        if variables[0] == "[]":
+            raise SemanticException("Una variable no puede comenzar con []")
+        else:
+            typ = table[variables[0]]
+
+            for i in range(1, len(variables)):
+
+
+                if variables[i] == "[]":
+                    if typ["tipo"] == "array":
+                        typ = typ["tipoInterno"]
+                    else:
+                        raise SemanticException("La estructura de la variable no se corresponde con la variable requerida")
+                else:
+                    typ = typ["tipoInterno"][variables[i]]
+                    if typ == None:
+                        raise SemanticException("La estructura de la variable no se corresponde con la variable requerida")
+
+    return typ
+
 def laVarEsUnRegistro(value):
     return len(value.split(".")) > 1
 
@@ -278,20 +305,20 @@ def getType(expresion, isTerminal):
 
 def p_program(subexpressions):
     'program : list_sentencies'
-    #{PROGRAM.value = LIST_SENTENCIES.value, print(LIST_SENTENCIES.value)}
+
     list_sentencies = subexpressions[1]
     subexpressions[0] = {"value": list_sentencies["value"]}
 
 def p_list_sentencies_comment(subexpressions):
     'list_sentencies : COMMENT a'
-    #{LIST_SENTENCIES.value= comment.value + '\n' + A.value, LIST_SENTENCIES.element = 'comment'}
+
     comment = subexpressions[1]
     a = subexpressions[2]
     subexpressions[0] = {"value": comment["value"] + "\n" + a["value"], "element": "comment", "line": comment["line"]}
 
 def p_list_sentencies_sentence(subexpressions):
     'list_sentencies : sentence a'
-    #{LIST_SENTENCIES.value= SENTENCE.value + IF(a.element!='comment', '\n') + A.value, LIST_SENTENCIES.element = 'sentence'}
+
     sentence = subexpressions[1]
     a = subexpressions[2]
     list_sentencies_value = sentence["value"]
@@ -303,28 +330,29 @@ def p_list_sentencies_sentence(subexpressions):
         else:
             list_sentencies_value = list_sentencies_value + "\n"
     list_sentencies_value = list_sentencies_value + a["value"]
+
     subexpressions[0] = {"value": list_sentencies_value, "element": "sentence"}
 
 def p_a_list_sentencies(subexpressions):
     'a : list_sentencies'
-    #{A.value = LIST_SENTENCIES.value, A.element = LIST_SENTENCIES.element}
+
     list_sentencies = subexpressions[1]
     subexpressions[0] = {"value": list_sentencies["value"], "element":list_sentencies["element"]}
 
 def p_a_lambda(subexpressions):
     'a : '
-    #{A.value = '', A.element=''}
+
     subexpressions[0] = {"value": "", "element":""}
 
 def p_sentence_semicolon(subexpressions):
     'sentence : e SEMICOLON'
-    #{SENTENCE.value = E.value + ';'}
+
     e = subexpressions[1]
     subexpressions[0] = {"value": e["value"] + "; "}
 
 def p_sentence_while(subexpressions):
     'sentence : WHILE LPAREN expression RPAREN keys'
-    #{SENTENCE.value = WHILE.value}
+
     condition = subexpressions[3]
     keys = subexpressions[5]
     lastElementLine = subexpressions[4]["line"]
@@ -338,7 +366,7 @@ def p_sentence_while(subexpressions):
 
 def p_sentence_if_else(subexpressions):
     'sentence : IF LPAREN expression RPAREN keys possibleelse'
-    #{SENTENCE.value = 'if (' + CONDITION.value + ') ' + POSSIBLECOMMENT.value + '\n' + KEYS.value + POSSIBLEELSE.value}
+
     condition = subexpressions[3]
     keys = subexpressions[5]
     lastElementLine = subexpressions[4]["line"]
@@ -353,7 +381,7 @@ def p_sentence_if_else(subexpressions):
 
 def p_sentence_for(subexpressions):
     'sentence : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
-    #{SENTENCE.value = FOR.value}
+
     assignationorlamba = subexpressions[3]
     condition = subexpressions[5]
     advancefor = subexpressions[7]
@@ -371,7 +399,7 @@ def p_sentence_for(subexpressions):
 
 def p_sentence_do_while(subexpressions):
     'sentence : DO keys_do WHILE LPAREN expression RPAREN SEMICOLON'
-    #{SENTENCE.value = DO_WHILE.value}
+
     keysdo = subexpressions[2]
     condition = subexpressions[5]
 
@@ -388,19 +416,19 @@ def p_sentence_do_while(subexpressions):
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
-    #{SENTENCE.value = FUNCTION.value + ';'}
+
     function = subexpressions[1]
     subexpressions[0] = {"value": function["value"] + ";"}
 
 def p_sentence_return(subexpressions):
     'sentence : RETURN expression'
-    #{SENTENCE.value = 'return' + E.value + ';'}
+
     exp = subexpressions[2]
     subexpressions[0] = {"value": "return " + exp["value"] + ";"}
 
 def p_possibleelse_else(subexpressions):
     'possibleelse : ELSE keys'
-    #{POSSIBLEELSE.value = 'else' + POSSIBLECOMMENT.value + '\n' + KEYS.value}
+
     keys = subexpressions[2]
     lastElementLine = subexpressions[1]["line"]
     new = ''
@@ -413,43 +441,43 @@ def p_possibleelse_else(subexpressions):
 
 def p_possibleelse_lambda(subexpressions):
     'possibleelse : '
-    #{POSSIBLEELSE.value = ''}
+
     subexpressions[0] = {"value": ""}
 
 def p_e_advance(subexpressions):
     'e : advance'
-    #{E.value = ADVANCE.value}
+
     advance = subexpressions[1]
     subexpressions[0] = {"value": advance["value"]}
 
 def p_e_assignation(subexpressions):
     'e : assignation'
-    #{E.value = ASSIGNATION.value}
+
     assignation = subexpressions[1]
     subexpressions[0] = {"value": assignation["value"]}
 
 def p_comment_list_append(subexpressions):
     'comment_list : COMMENT comment_list'
-    #{COMMENT_LIST1.value = comment.value + '\n' + COMMENT_LIST2.value}
+
     comment = subexpressions[1]
     comment_list2 = subexpressions[2]
     subexpressions[0] = {"value": comment["value"] + "\n" + comment_list2["value"]}
 
 def p_comment_list_lambda(subexpressions):
     'comment_list : '
-    #{COMMENT LIST.value = ''}
+
     subexpressions[0] = {"value": ""}
 
 def p_keys_do_append_sentence(subexpressions):
     'keys_do : comment_list sentence'
-    #{KEYS_DO.value = indent(COMMENT_LIST.value) + SENTENCE.value}
+
     comment_list = subexpressions[1]
     sentence = subexpressions[2]
     subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
 
 def p_keys_do_append_possiblecomment(subexpressions):
     'keys_do : LKEY list_sentencies RKEY'
-    #{KEYS_DO.value = '{' + POSSIBLECOMMENT.value + '\n' + LIST_SENTENCIES.value + '}'}
+
     sentence = subexpressions[2]
     text = sentence["value"]
     if (sentence["element"] != "comment"):
@@ -461,7 +489,6 @@ def p_keys_do_append_possiblecomment(subexpressions):
 
 def p_keys_append_sentence(subexpressions):
     'keys : comment_list sentence'
-    #{ KEYS.value = indent(COMMENT_LIST.value) + SENTENCE.value}
 
     keys = subexpressions[0]
     comment_list = subexpressions[1]
@@ -470,7 +497,6 @@ def p_keys_append_sentence(subexpressions):
 
 def p_keys_append_possiblecomment(subexpressions):
     'keys : LKEY list_sentencies RKEY'
-    #{KEYS.value = '{' + indent(POSSIBLECOMMENT.value) + '\n' + LIST_SENTENCIES.value + '}\n'}
 
     sentence = subexpressions[2]
     text = sentence["value"]
@@ -485,18 +511,18 @@ def p_keys_append_possiblecomment(subexpressions):
 
 def p_assignationorlambda_assignation(subexpressions):
     'assignationorlambda : assignation'
-    #{ASSIGNATIONORLAMBDA.value = ASSIGNATION.value}
+
     assignation = subexpressions[1]
     subexpressions[0] = {"value": assignation["value"]}
 
 def p_assignationorlambda_lambda(subexpressions):
     'assignationorlambda : '
-    #{ASSIGNATIONORLAMBDA.value = ''}
+
     subexpressions[0] = {"value": ""}
 
 def p_assignation(subexpressions):
     'assignation : VAR b'
-    #{ASSIGNATION.value = var.value + B.value, IF(B.isArray, COND(table(var.value) != None && table.getType(var.value) == B.type && B.isArray==table.isArray(var.value)), table.insertOrUpdate(var.value,B.type, B.isArray)}
+
     b = subexpressions[2]
     var = subexpressions[1]
     varIsTerminal = True
@@ -510,12 +536,11 @@ def p_assignation(subexpressions):
 
     insertOrUpdate(var["value"],getType(b, bIsTerminal), isArray(b, bIsTerminal))
 
-
     subexpressions[0] = {"value": var["value"] + b["value"], "type": getType(b, bIsTerminal)}
 
 def p_b_array(subexpressions):
     'b : LBRACKET expression RBRACKET ASSIGN expression'
-    #{B.value = '[' + natural.value + '] = ' + EXPRESSION.value, B.type = IF(EXPRESSION.type == 'natural', 'decimal', EXPRESSION.type), B.isArray = true}
+
     expression1 = subexpressions[2]
     expression2 =  subexpressions[5]
     isTerminal = False
@@ -529,31 +554,32 @@ def p_b_array(subexpressions):
 
 def p_b_expression(subexpressions):
     'b : ASSIGN expression'
-    #{B.value = '=' + ECOMPARABLE.value, B.type = ECOMPARABLE.type, B.isArray = ECOMPARABLE.isArray}
+
     expression =  subexpressions[2]
 
     subexpressions[0] = {"value": " = " + expression["value"] , "type": expression["type"]}
 
 def p_b_registers(subexpressions):
     'b : COLON expression'
-    #{B.value = '=' + ECOMPARABLE.value, B.type = ECOMPARABLE.type, B.isArray = ECOMPARABLE.isArray}
+
     ecomparable =  subexpressions[2]
     subexpressions[0] = {"value": ": " + ecomparable["value"] , "type": ecomparable["type"]}
 
 def p_advancefor_advance(subexpressions):
     'advancefor : advance'
-    #{ADVANCEFOR.value = ADVANCE.value}
+
     advance = subexpressions[1]
     subexpressions[0] = {"value":  advance["value"]}
 
 def p_advancefor_assignationorlambda(subexpressions):
     'advancefor : assignationorlambda'
-	#{ADVANCEFOR.value = ASSIGNATIONORLAMBDA.value}
+
     assignationorlambda = subexpressions[1]
     subexpressions[0] = {"value": assignationorlambda["value"]}
 
 def p_advance_var_array_c(subexpressions):
     'advance : VAR LBRACKET expression RBRACKET c'
+
     var = subexpressions[1]
     expression = subexpressions[3]
     c = subexpressions[5]
@@ -574,7 +600,7 @@ def p_advance_var_array_c(subexpressions):
 
 def p_advance_var_array_d(subexpressions):
     'advance : VAR LBRACKET expression RBRACKET d'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+
     var = subexpressions[1]
     expression = subexpressions[3]
     d = subexpressions[5]
@@ -590,7 +616,7 @@ def p_advance_var_array_d(subexpressions):
 
 def p_advance_var_c(subexpressions):
     'advance : VAR c'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+
     var = subexpressions[1]
     c = subexpressions[2]
 
@@ -611,7 +637,7 @@ def p_advance_var_c(subexpressions):
 
 def p_advance_var_d(subexpressions):
     'advance : VAR d'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+
     var = subexpressions[1]
     d = subexpressions[2]
 
@@ -623,7 +649,7 @@ def p_advance_var_d(subexpressions):
 
 def p_advance_d_var(subexpressions):
     'advance : d VAR'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+
     d = subexpressions[1]
     var = subexpressions[2]
 
@@ -635,7 +661,7 @@ def p_advance_d_var(subexpressions):
 
 def p_advance_d_array(subexpressions):
     'advance : d VAR LBRACKET expression RBRACKET'
-    #{COND(table.getType(var.value) == 'natural' || table.getType(var.value)  == 'decimal' || table.getType(var.value)  == 'string'), ADVANCE.value = var.value + C.value}
+
     d = subexpressions[1]
     var = subexpressions[2]
     isTerminal = True
@@ -650,12 +676,12 @@ def p_advance_d_array(subexpressions):
 
 def p_d_increment(subexpressions):
     'd : INCREMENT'
-    #{C.value = '++'}
+
     subexpressions[0] = {"value": "++", "type": ""}
 
 def p_c_plus(subexpressions):
     'c : PLUSEQUAL expression'
-    #{C.value = '+=' + value.value}
+
     expression = subexpressions[2]
     isTerminal = False
 
@@ -666,12 +692,12 @@ def p_c_plus(subexpressions):
 
 def p_d_decrement(subexpressions):
     'd : DECREMENT'
-    #{ C.value = '--'}
+
     subexpressions[0] = {"value": "--", "type": ""}
 
 def p_c_minequal(subexpressions):
     'c : MINEQUAL expression'
-    #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '-=' + VALUE.value}
+
     expression = subexpressions[2]
     isTerminal = False
     if not isNumerical(expression, isTerminal):
@@ -681,7 +707,7 @@ def p_c_minequal(subexpressions):
 
 def p_c_mulequal(subexpressions):
     'c : MULEQUAL expression'
-    #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
+
     expression = subexpressions[2]
 
     isTerminal = False
@@ -692,7 +718,7 @@ def p_c_mulequal(subexpressions):
 
 def p_c_divequal(subexpressions):
     'c : DIVEQUAL expression'
-    #{COND(VALUE.type != "natural" && VALUE.type != "decimal" && VALUE.type != "string"), C.value = '*=' + VALUE.value}
+
     expression = subexpressions[2]
 
     isTerminal = False
@@ -703,9 +729,8 @@ def p_c_divequal(subexpressions):
 
 def p_value_minus_paren_num(subexpressions):
     'value : MINUS LPAREN num RPAREN'
-    #{VALUE.value = NUM.value , VALUE.type = NUM.type, VALUE.isArray = "False"}
-    num = subexpressions[3]
 
+    num = subexpressions[3]
 
     subexpressions[0] = {"value": "-("+ num["value"]+ ")", "type": num["type"]}
 
@@ -713,7 +738,7 @@ def p_value_minus_paren_num(subexpressions):
 
 def p_value_minus_paren_function_with_return(subexpressions):
     'value : MINUS LPAREN function_with_return RPAREN'
-    #{VALUE.value = FUNCTION_WITH_RETURN.value, VALUE.type = FUNCTION_WITH_RETURN.type, VALUE.isArray = FUNCTION_WITH_RETURN.isArray}
+
     function_with_return = subexpressions[3]
 
     isTerminal = False
@@ -723,37 +748,25 @@ def p_value_minus_paren_function_with_return(subexpressions):
 
     subexpressions[0] = {"value": "-("+ function_with_return["value"] + ")", "type": function_with_return["type"]}
 
-def p_value_minus_paren_var(subexpressions):
-    'value :  MINUS LPAREN VAR RPAREN'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
-    var = subexpressions[3]
-    isTerminal = True
-    typ = getType(var, isTerminal)
 
-
-    subexpressions[0] = {"value":  "-(" + var["value"] + ")", "type": typ}
 
 def p_value_minus_paren_array(subexpressions):
-    'value :  MINUS LPAREN VAR LBRACKET expression RBRACKET RPAREN'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
-    expression = subexpressions[5]
+    'value :  MINUS LPAREN VAR s RPAREN'
+
+    s = subexpressions[4]
     var = subexpressions[3]
     isTerminal = True
 
-    if not isNatural(expression, False):
-        raise SemanticException("El valor para acceder a un array debe ser natural")
+    isTerminal = True
+    typ = getTypeRecursivo(var["value"] + s["stringInterno"])
 
-
-    typ = getType(var, isTerminal)
-    if not isArray(var, isTerminal):
-        raise SemanticException("var no es un arreglo")
-    subexpressions[0] = {"value":  "-(" + var["value"] + "[" +expression["value"] + "])", "type": typ["tipoInterno"]}
+    subexpressions[0] = {"value":  "-(" + var["value"] + s["value"] + ")", "type": typ}
 
 
 
 def p_value_minus_function_with_return(subexpressions):
     'value : MINUS function_with_return'
-    #{VALUE.value = FUNCTION_WITH_RETURN.value, VALUE.type = FUNCTION_WITH_RETURN.type, VALUE.isArray = FUNCTION_WITH_RETURN.isArray}
+
     function_with_return = subexpressions[2]
 
     isTerminal = False
@@ -766,33 +779,21 @@ def p_value_minus_function_with_return(subexpressions):
     subexpressions[0] = {"value": "-"+ function_with_return["value"] , "type": function_with_return["type"]}
 
 def p_value_minus_array(subexpressions):
-    'value :  MINUS VAR LBRACKET expression RBRACKET'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
-    expression = subexpressions[4]
+    'value :  MINUS VAR s'
+
+    s = subexpressions[3]
     var = subexpressions[2]
     isTerminal = True
 
-    if not isNatural(expression, False):
-        raise SemanticException("El valor para acceder a un array debe ser natural")
-
-    typ = getType(var, isTerminal)
-    if not isArray(var, isTerminal):
-        raise SemanticException("la variable debe ser arreglo")
-
-    subexpressions[0] = {"value":  "-(" + var["value"] + "["+expression["value"] + "]" + ")", "type": typ["tipoInterno"]}
-
-def p_value_minus_var(subexpressions):
-    'value :  MINUS VAR'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
-    var = subexpressions[2]
     isTerminal = True
-    typ = getType(var, isTerminal)
+    typ = getTypeRecursivo(var["value"] + s["stringInterno"])
 
-    subexpressions[0] = {"value":  "-(" + var["value"] + ")", "type": typ}
+
+    subexpressions[0] = {"value":  "-(" + var["value"] + s["value"] + ")", "type": typ}
 
 def p_value_string(subexpressions):
     'value : STRING'
-    #{VALUE.value = string.value, VALUE.type = 'string', VALUE.isArray = "False"}
+
     string = subexpressions[1]
 
     subexpressions[0] = {"value": string["value"], "type": {"tipo": "string", "tipoInterno": None}}
@@ -800,14 +801,14 @@ def p_value_string(subexpressions):
 
 def p_value_bool(subexpressions):
     'value : bool'
-    #{VALUE.value = bool.value, VALUE.type = "bool", VALUE.isArray = "False"}
+
     bool1 = subexpressions[1]
 
     subexpressions[0] = {"value":  bool1["value"], "type": {"tipo": "bool", "tipoInterno": None}}
 
 def p_value_num(subexpressions):
     'value : num'
-    #{VALUE.value = NUM.value , VALUE.type = NUM.type, VALUE.isArray = "False"}
+
     num = subexpressions[1]
 
     subexpressions[0] = {"value": num["value"], "type": num["type"]}
@@ -815,48 +816,51 @@ def p_value_num(subexpressions):
 
 def p_value_function_with_return(subexpressions):
     'value : function_with_return'
-    #{VALUE.value = FUNCTION_WITH_RETURN.value, VALUE.type = FUNCTION_WITH_RETURN.type, VALUE.isArray = FUNCTION_WITH_RETURN.isArray}
+
     function_with_return = subexpressions[1]
     subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"]}
 
 
+def p_s_array(subexpressions):
+    's : LBRACKET expression RBRACKET s'
 
-
-def p_value_var_array(subexpressions):
-    'value : VAR LBRACKET expression RBRACKET'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
-    expression = subexpressions[3]
-    var = subexpressions[1]
+    expression = subexpressions[2]
+    s = subexpressions[4]
 
     isTerminal = False
     if not isNatural(expression, isTerminal):
         raise SemanticException("El valor para acceder a un array debe ser natural")
 
-    isTerminal = True
-    typ = getType(var, isTerminal)
-    if not isArray(var, isTerminal):
-        raise SemanticException("la variable debe ser un array")
-    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]", "type": typ["tipoInterno"]}
+    stringInterno  =  ".[]" + s["stringInterno"]
+    subexpressions[0] = {"value":  "[" + expression["value"] + "]" + s["value"], "type": {"tipo": "",  "tipoInterno": None}, "stringInterno" : stringInterno}
 
-def p_value_var(subexpressions):
-    'value : VAR'
-    #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
+def p_s_lambda(subexpressions):
+    's : '
+
+    typ =  {"tipo": "",  "tipoInterno": None}
+    subexpressions[0] = {"value":  "", "type": typ, "stringInterno" : ""}
+
+
+
+def p_value_var_array(subexpressions):
+    'value : VAR s'
+
+    s = subexpressions[2]
     var = subexpressions[1]
+
     isTerminal = True
+    typ = getTypeRecursivo(var["value"] + s["stringInterno"])
 
-    typ = getType(var, isTerminal)
+    subexpressions[0] = {"value":  var["value"]  + s["value"] , "type": typ}
 
-    subexpressions[0] = {"value":  var["value"] , "type": typ}
 
 def p_value_list_values(subexpressions):
     'value : LBRACKET expression list_values RBRACKET'
-    #{VALUE.value = '[ ' + EXPRESSION.value + LIST_VALUES.value + ']', VALUE.type = IF(LIST_VALUES.value == "", EXPRESSION.type, IF(LIST_VALUES.type == 'decimal' && EXPRESSION.type == 'natural','decimal',IF(LIST_VALUES.type == 'natural' && EXPRESSION.type == 'decimal', 'decimal', EXPRESSION.value))), VALUE.isArray = "True"}
+
     expression = subexpressions[2]
     list_values2 = subexpressions[3]
     isTerminal = False
     value1 = ''
-
-
 
     if list_values2["value"] == "":
         typ = getType(expression, isTerminal)
@@ -893,6 +897,7 @@ def p_value_list_values(subexpressions):
 
 def p_list_registers(subexpressions):
     'list_registers : VAR COLON expression l'
+
     var = subexpressions[1]
     exp = subexpressions[3]
     l = subexpressions[4]
@@ -902,20 +907,19 @@ def p_list_registers(subexpressions):
 
 def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
-    #{L.value = ',' + LIST REGISTERS.value}
+
     list_registers = subexpressions[2]
     subexpressions[0] = {"value": ", " + list_registers["value"], "dict": list_registers["dict"] }
 
 def p_l_lambda(subexpressions):
     'l : '
-    # {L.value = '' }
+
     subexpressions[0] = {"value": "", "dict": {}}
 
 
 def p_list_values_comma(subexpressions):
-
     'list_values : COMMA expression list_values'
-    #{LIST_VALUES1.value = ',' + EXPRESSION.value + LIST_VALUES2.value, LIST_VALUES1.type = IF(LIST_VALUES2.value == "", EXPRESSION.type, IF(LIST_VALUES2.type == 'decimal' && EXPRESSION.type == 'natural','decimal',IF(LIST_VALUES2.type == 'natural' && EXPRESSION.type == 'decimal', 'decimal', EXPRESSION.value))), COND(LIST_VALUES2.value != "" && LIST_VALUES2.type != EXPRESSION.type)}
+
     expression = subexpressions[2]
     list_values2 = subexpressions[3]
     isTerminal = False
@@ -955,19 +959,19 @@ def p_list_values_comma(subexpressions):
 
 def p_list_values_lambda(subexpressions):
     'list_values : '
-    #{LIST_VALUES.value = ''}
+
     values = []
     subexpressions[0] = {"value": ""}
 
 def p_value_list_registers(subexpressions):
     'value : LKEY list_registers RKEY'
-    #{VALUE.value = '{' + LIST_REGISTERS.value + '}', VALUE.type = 'register', VALUE.isArray = "True"}
+
     list_registers = subexpressions[2]
     subexpressions[0] = {"value": "{" + list_registers["value"] + "}", "type": {"tipo": "register", "tipoInterno": list_registers["dict"] }}
 
 def p_expression_conditional(subexpressions):
     'expression : t QUESTIONMARK expression COLON expression'
-    #{CONDITIONAL.value = '(' + CONDITION.value + ')?' + ECOMPARABLE.value + ':' + EXPRESSION2.value, CONDITIONAL.type = ECOMPARABLE.type}
+
     m = subexpressions[1]
     expression1 = subexpressions[3]
     expression2 = subexpressions[5]
@@ -991,11 +995,13 @@ def p_expression_conditional(subexpressions):
 
 def p_expression_t(subexpressions):
     'expression : t'
+
     m  = subexpressions[1]
     subexpressions[0] = {"value": m["value"] , "type": m["type"]}
 
 def p_t_or(subexpressions):
     't : term OR t'
+
     left  = subexpressions[1]
     right = subexpressions[3]
     isTerminal = False
@@ -1006,11 +1012,13 @@ def p_t_or(subexpressions):
 
 def p_t_term(subexpressions):
     't : term'
+
     term  = subexpressions[1]
     subexpressions[0] = {"value": term["value"], "type": term["type"]}
 
 def p_term_factor_and_term(subexpressions):
     'term : factor AND term'
+
     left = subexpressions[1]
     right = subexpressions[3]
     isTerminal = False
@@ -1022,11 +1030,13 @@ def p_term_factor_and_term(subexpressions):
 
 def p_term_factor(subexpressions):
     'term : factor'
+
     factor = subexpressions[1]
     subexpressions[0] = {"value": factor["value"], "type": factor["type"]}
 
 def p_term_factor_pow_x(subexpressions):
     'factor : factor POW x'
+
     left = subexpressions[1]
     right = subexpressions[3]
 
@@ -1046,45 +1056,53 @@ def p_term_factor_pow_x(subexpressions):
 
 def p_factor_x(subexpressions):
     'factor : x'
+
     x = subexpressions[1]
     subexpressions[0] = {"value": x["value"], "type": x["type"]}
 
 def p_x_y_equal_x(subexpressions):
     'x : y EQUAL x'
+
     left = subexpressions[1]
     right = subexpressions[3]
     subexpressions[0] = {"value": left["value"] + " == " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_x_y_unequal_x(subexpressions):
     'x : y UNEQUAL x'
+
     left = subexpressions[1]
     right = subexpressions[3]
     subexpressions[0] = {"value": left["value"] + " != " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_x_y(subexpressions):
     'x : y'
+
     y = subexpressions[1]
     subexpressions[0] = {"value": y["value"], "type": y["type"]}
 
 def p_y_z_greater_y(subexpressions):
     'y : z GREATER y'
+
     left = subexpressions[1]
     right = subexpressions[3]
     subexpressions[0] = {"value": left["value"] + " > " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_y_z_less_y(subexpressions):
     'y : z LESS y'
+
     left = subexpressions[1]
     right = subexpressions[3]
     subexpressions[0] = {"value": left["value"] + " < " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_y_z(subexpressions):
     'y : z'
+
     z = subexpressions[1]
     subexpressions[0] = {"value": z["value"], "type": z["type"]}
 
 def p_z_z_plus_h(subexpressions):
     'z : z PLUS h'
+
     left = subexpressions[1]
     right = subexpressions[3]
 
@@ -1106,6 +1124,7 @@ def p_z_z_plus_h(subexpressions):
 
 def p_z_zminus(subexpressions):
     'z : z MINUS h'
+
     left = subexpressions[1]
     right = subexpressions[3]
 
@@ -1125,11 +1144,13 @@ def p_z_zminus(subexpressions):
 
 def p_z_h(subexpressions):
     'z : h'
+
     h = subexpressions[1]
     subexpressions[0] = {"value": h["value"], "type": h["type"]}
 
 def p_h_times(subexpressions):
     'h : h TIMES r'
+
     left = subexpressions[1]
     right = subexpressions[3]
     isTerminal = False
@@ -1149,6 +1170,7 @@ def p_h_times(subexpressions):
 
 def p_h_divide(subexpressions):
     'h : h DIVIDE r'
+
     left = subexpressions[1]
     right = subexpressions[3]
 
@@ -1163,9 +1185,9 @@ def p_h_divide(subexpressions):
 
 def p_h_modulo(subexpressions):
     'h : h MODULE r'
+
     left = subexpressions[1]
     right = subexpressions[3]
-
 
     isTerminal = False
 
@@ -1174,18 +1196,19 @@ def p_h_modulo(subexpressions):
 
     typ = "natural"
 
-
     tipoRes = {"tipo": typ, "tipoInterno": None}
 
     subexpressions[0] = {"value": left["value"] + " % " + right["value"], "type": tipoRes}
 
 def p_h_r(subexpressions):
     'h : r'
+
     r = subexpressions[1]
     subexpressions[0] = {"value": r["value"], "type": r["type"]}
 
 def p_r_not_value(subexpressions):
     'r : NOT value'
+
     value = subexpressions[2]
 
     isTerminal = False
@@ -1196,6 +1219,7 @@ def p_r_not_value(subexpressions):
 
 def p_r_not_expression(subexpressions):
     'r : NOT LPAREN expression RPAREN'
+
     expression = subexpressions[3]
 
     isTerminal = False
@@ -1206,30 +1230,32 @@ def p_r_not_expression(subexpressions):
 
 def p_r_value(subexpressions):
     'r : value'
+
     value = subexpressions[1]
     subexpressions[0] = {"value": value["value"], "type": value["type"]}
 
 def p_r_lparen_expression_rparen(subexpressions):
     'r : LPAREN expression RPAREN'
+
     expression = subexpressions[2]
 
     subexpressions[0] = {"value": "(" + expression["value"] + ")", "type": expression["type"]}
 
 def p_func_func_wr(subexpressions):
     'function : function_with_return'
-    #{FUNCTION.value = FUNCTION_WITH_RETURN.value, FUNCTION.type = FUNCTION_WITH_RETURN.type}
+
     function_with_return = subexpressions[1]
     subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"]}
 
 def p_func_print(subexpressions):
     'function : PRINT LPAREN expression RPAREN'
-    #{FUNCTION.value = '(' + ECOMPARABLE.value + ')'}
+
     expression = subexpressions[3]
     subexpressions[0] = {"value": "print (" + expression["value"] + ")"}
 
 def p_func_wr_mult(subexpressions):
     'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
-    #{FUNCTION_WITH_RETURN.value = "multiplicacionEscalar(" + PARAM_ME.value + ')', FUNCTION_WITH_RETURN.type = PARAM_ME.type, FUNCTION_WITH_RETURN.isArray = "False"}
+
     param_me = subexpressions[3]
     tipoRes = {"tipo": "array", "tipoInterno": param_me["type"]}
 
@@ -1237,7 +1263,7 @@ def p_func_wr_mult(subexpressions):
 
 def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN expression RPAREN'
-    #{COND(ECOMPARABLE.type == 'string'), FUNCTION_WITH_RETURN.value = "capitalizar(" + ECOMPARABLE.value + ')', FUNCTION_WITH_RETURN.type = "string", FUNCTION_WITH_RETURN.isArray = "False"}
+
     expression = subexpressions[3]
 
     isTerminal = False
@@ -1248,7 +1274,7 @@ def p_func_wr_capi(subexpressions):
 
 def p_func_wr_coli(subexpressions):
     'function_with_return : COLINEALES LPAREN expression COMMA expression  RPAREN'
-    #{FUNCTION_WITH_RETURN.value = "colineales(" + var.value + "," + var2.value + ')', FUNCTION_WITH_RETURN.type = "bool", FUNCTION_WITH_RETURN.isArray = "False"}
+
     expression1 = subexpressions[3]
     expression2 = subexpressions[5]
     isTerminal = False
@@ -1258,7 +1284,7 @@ def p_func_wr_coli(subexpressions):
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN expression RPAREN'
-    #{FUNCTION_WITH_RETURN.value = "length(" + pl.value + ')', FUNCTION_WITH_RETURN.type = "natural", FUNCTION_WITH_RETURN.isArray = "False"}
+
     expression = subexpressions[3]
     isTerminal = False
     if not(isString(expression, isTerminal) or isArray(expression, isTerminal)):
@@ -1267,7 +1293,7 @@ def p_func_wr_length(subexpressions):
 
 def p_param_me_var(subexpressions):
     'param_me : expression COMMA expression n'
-    #{COND(VALUE.type == 'natural' || VALUE.type == 'decimal'), COND(var.type == 'natural' || var.type == 'decimal'), PARAM_ME.value = var.value + "," + VALUE.value + N.value, PARAM_ME.type = IF(var.type == 'decimal' && N.isTrue, 'decimal', 'var1.type')}
+
     expression1 = subexpressions[1]
     comma = subexpressions[2]
     expression2 = subexpressions[3]
@@ -1287,7 +1313,7 @@ def p_param_me_var(subexpressions):
 
 def p_n_bool(subexpressions):
     'n : COMMA expression'
-    #{N.value = string.value, PARAM_LENGTH.type = 'string', PARAM_LENGTH.isArray = "False"}
+
     expression = subexpressions[2]
     isTerminal = False
     if not(isBoolean(expression, isTerminal)):
@@ -1296,36 +1322,36 @@ def p_n_bool(subexpressions):
 
 def p_n_lambda(subexpressions):
     'n : '
-    #{N.value = "", N.isArray = "False"}
+
     subexpressions[0] = {"value": "", "isTrue": False}
 
 def p_num_decimal(subexpressions):
     'num : DECIMAL '
-    #{NUM.value = decimal.value, NUM.type = 'decimal'}
+
     dec = subexpressions[1]
     subexpressions[0] = {"value": str(dec["value"]), "type":   {"tipo":dec["type"],"tipoInterno":None}}
 
 def p_num_natural(subexpressions):
     'num : NATURAL'
-    #{NUM.value = natural.value, NUM.type = 'natural'}
+
     nat = subexpressions[1]
     subexpressions[0] = {"value": str(nat["value"]), "type": {"tipo":nat["type"],"tipoInterno":None}}
 
 def p_num_ngeativo(subexpressions):
     'num : NEGATIVO'
-    #{NUM.value = natural.value, NUM.type = 'natural'}
+
     neg = subexpressions[1]
     subexpressions[0] = {"value": str(neg["value"]), "type": {"tipo":neg["type"],"tipoInterno":None}}
 
 def p_bool_true(subexpressions):
     'bool : TRUE '
-    #{BOOL.value = "True", BOOL.type = 'bool'}
+
     true = subexpressions[1]
     subexpressions[0] = {"value": true["value"], "type":{"tipo":"bool","tipoInterno":None}}
 
 def p_bool_false(subexpressions):
     'bool : FALSE '
-   	#{BOOL.value = "False", BOOL.type = 'bool'}
+
     false = subexpressions[1]
     subexpressions[0] = {"value": false["value"], "type":{"tipo":"bool","tipoInterno":None}}
 
