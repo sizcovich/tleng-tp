@@ -1008,7 +1008,7 @@ def p_t_or(subexpressions):
     if (not isBoolean(left, isTerminal) or not isBoolean(right, isTerminal)):
         raise SemanticException("Los tipos para operar con OR deben ser booleanos")
 
-    subexpressions[0] = {"value": left["value"] + " or " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
+    subexpressions[0] = {"value": left["value"] + " OR " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_t_term(subexpressions):
     't : term'
@@ -1026,7 +1026,7 @@ def p_term_factor_and_term(subexpressions):
     if (not isBoolean(left, isTerminal) or not isBoolean(right, isTerminal)):
         raise SemanticException("Los tipos para operar con AND deben ser booleanos")
 
-    subexpressions[0] = {"value": left["value"] + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
+    subexpressions[0] = {"value": left["value"] + " AND " + right["value"], "type": {"tipo":"bool", "tipoInterno":None}}
 
 def p_term_factor(subexpressions):
     'term : factor'
@@ -1215,7 +1215,7 @@ def p_r_not_value(subexpressions):
     if not isBoolean(value, isTerminal):
         raise SemanticException("Solo se pueden negar booleanos")
 
-    subexpressions[0] = {"value": "not " + value["value"], "type": {"tipo": "bool", "tipoInterno": None}}
+    subexpressions[0] = {"value": "NOT " + value["value"], "type": {"tipo": "bool", "tipoInterno": None}}
 
 def p_r_not_expression(subexpressions):
     'r : NOT LPAREN expression RPAREN'
@@ -1226,7 +1226,7 @@ def p_r_not_expression(subexpressions):
     if not isBoolean(expression, isTerminal):
         raise SemanticException("Solo se pueden negar booleanos")
 
-    subexpressions[0] = {"value": "not (" + expression["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}}
+    subexpressions[0] = {"value": "NOT (" + expression["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}}
 
 def p_r_value(subexpressions):
     'r : value'
@@ -1333,7 +1333,6 @@ def p_num_decimal(subexpressions):
 
 def p_num_natural(subexpressions):
     'num : NATURAL'
-
     nat = subexpressions[1]
     subexpressions[0] = {"value": str(nat["value"]), "type": {"tipo":nat["type"],"tipoInterno":None}}
 
