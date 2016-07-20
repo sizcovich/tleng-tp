@@ -316,6 +316,12 @@ def p_list_sentencies_comment(subexpressions):
     comment = subexpressions[1]
     a = subexpressions[2]
 
+    # print("SENTENCE")
+    # print(sentence)
+    # print("A")
+    # print(a)
+
+
 
     new = ""
     if a["line"] != "":
@@ -332,6 +338,13 @@ def p_list_sentencies_sentence(subexpressions):
     
     sentence = subexpressions[1]
     a = subexpressions[2]
+
+
+    # print("SENTENCE")
+    # print(sentence)
+    # print("A")
+    # print(a)
+
     list_sentencies_value = sentence["value"]
     if(a["element"] != "" and (a["element"] == "comment" and a["line"] != sentence["line"])):
         list_sentencies_value = list_sentencies_value + "\n"
@@ -355,7 +368,7 @@ def p_a_list_sentencies(subexpressions):
 def p_a_lambda(subexpressions):
     'a : '
 
-    subexpressions[0] = {"value": "", "element":"", "line" : "" }
+    subexpressions[0] = {"value": "\n", "element":"", "line" : "" }
 
 def p_sentence_semicolon(subexpressions):
     'sentence : e SEMICOLON'
