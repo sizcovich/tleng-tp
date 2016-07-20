@@ -362,7 +362,7 @@ def p_sentence_while(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "while(" + condition["value"] + ")" + new}
+    subexpressions[0] = {"value": "while (" + condition["value"] + ")" + new}
 
 def p_sentence_if_else(subexpressions):
     'sentence : IF LPAREN expression RPAREN keys possibleelse'
@@ -377,7 +377,7 @@ def p_sentence_if_else(subexpressions):
         newline = "\n"
     new = newline + keys["value"]
     possibleelse = subexpressions[6]
-    subexpressions[0] = {"value": "if(" + condition["value"] + ")" + new + possibleelse["value"]}
+    subexpressions[0] = {"value": "if (" + condition["value"] + ")" + new + possibleelse["value"]}
 
 def p_sentence_for(subexpressions):
     'sentence : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
@@ -395,7 +395,7 @@ def p_sentence_for(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "for(" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new}
+    subexpressions[0] = {"value": "for (" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new}
 
 def p_sentence_do_while(subexpressions):
     'sentence : DO keys_do WHILE LPAREN expression RPAREN SEMICOLON'
@@ -409,10 +409,10 @@ def p_sentence_do_while(subexpressions):
         newline = "\n"
     if keysdo["value"][0] != '{':
         newline = "\n"
-    new = newline + keysdo["value"]
+    new = newline + keysdo["value"] + "\n"
 
 
-    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");", "line": subexpressions[7]["line"]}
+    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");\n", "line": subexpressions[7]["line"]}
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
@@ -434,9 +434,9 @@ def p_possibleelse_else(subexpressions):
     new = ''
     if keys["value"][0] == '#' and lastElementLine == keys["line"]:
         new = "\n"
-    if keys["value"][0] != '{':
-        new = "\n"
     new = new + keys["value"]
+    if keys["value"][0] != '{':
+        new = "\n" + keys["value"] + "\n"
     subexpressions[0] = {"value": " else " + new}
 
 def p_possibleelse_lambda(subexpressions):
@@ -563,7 +563,7 @@ def p_b_registers(subexpressions):
     'b : COLON expression'
 
     ecomparable =  subexpressions[2]
-    subexpressions[0] = {"value": ": " + ecomparable["value"] , "type": ecomparable["type"]}
+    subexpressions[0] = {"value": ":" + ecomparable["value"] , "type": ecomparable["type"]}
 
 def p_advancefor_advance(subexpressions):
     'advancefor : advance'
@@ -991,7 +991,7 @@ def p_expression_conditional(subexpressions):
 
     if not isBoolean(m, isTerminal):
         raise SemanticException("La condicion del condicional debe ser booleana")
-    subexpressions[0] = {"value": m["value"] + "?" + expression1["value"] + ":" + expression2["value"], "type": typ}
+    subexpressions[0] = {"value": m["value"] + " ? " + expression1["value"] + " : " + expression2["value"], "type": typ}
 
 def p_expression_t(subexpressions):
     'expression : t'
@@ -1251,7 +1251,7 @@ def p_func_print(subexpressions):
     'function : PRINT LPAREN expression RPAREN'
 
     expression = subexpressions[3]
-    subexpressions[0] = {"value": "print (" + expression["value"] + ")"}
+    subexpressions[0] = {"value": "print(" + expression["value"] + ")"}
 
 def p_func_wr_mult(subexpressions):
     'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
@@ -1270,7 +1270,7 @@ def p_func_wr_capi(subexpressions):
     if not(isString(expression, isTerminal)):
         raise SemanticException("Capitalizar recibe solo strings")
 
-    subexpressions[0] = {"value": "capitalizar( " + expression["value"] + " )", "type": {"tipo": "string", "tipoInterno": None}}
+    subexpressions[0] = {"value": "capitalizar(" + expression["value"] + ")", "type": {"tipo": "string", "tipoInterno": None}}
 
 def p_func_wr_coli(subexpressions):
     'function_with_return : COLINEALES LPAREN expression COMMA expression  RPAREN'
@@ -1280,7 +1280,7 @@ def p_func_wr_coli(subexpressions):
     isTerminal = False
     if not isArrayNumerical(expression1, isTerminal) or not isArrayNumerical(expression2, isTerminal):
         raise SemanticException("colineales solo puede recibir arrays de numeros")
-    subexpressions[0] = {"value": "colineales( " + expression1["value"] + ", " + expression2["value"] + " )", "type": {"tipo": "bool", "tipoInterno": None}}
+    subexpressions[0] = {"value": "colineales(" + expression1["value"] + ", " + expression2["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}}
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN expression RPAREN'
@@ -1289,7 +1289,7 @@ def p_func_wr_length(subexpressions):
     isTerminal = False
     if not(isString(expression, isTerminal) or isArray(expression, isTerminal)):
         raise SemanticException("length solo puede recibir un string o un array")
-    subexpressions[0] = {"value": "length( " + expression["value"] + " )", "type": {"tipo": "natural", "tipoInterno": None}}
+    subexpressions[0] = {"value": "length(" + expression["value"] + ")", "type": {"tipo": "natural", "tipoInterno": None}}
 
 def p_param_me_var(subexpressions):
     'param_me : expression COMMA expression n'
