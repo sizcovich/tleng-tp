@@ -330,7 +330,7 @@ def p_list_sentencies_sentence(subexpressions):
     sentence = subexpressions[1]
     a = subexpressions[2]
     list_sentencies_value = sentence["value"]
-    if(a["element"] != "" and a["line"] != sentence["line"]):
+    if(a["element"] != "" or (a["element"] == "comment" and a["line"] != sentence["line"])):
         list_sentencies_value = list_sentencies_value + "\n"
     else:
         if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O' and sentence["line"] == a["line"]:
@@ -358,7 +358,6 @@ def p_sentence_semicolon(subexpressions):
     'sentence : e SEMICOLON'
 
     e = subexpressions[1]
-
 
     subexpressions[0] = {"value": e["value"] + ";", "line" : e["line"]}
 
