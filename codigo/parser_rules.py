@@ -316,12 +316,6 @@ def p_list_sentencies_comment(subexpressions):
     comment = subexpressions[1]
     a = subexpressions[2]
 
-    # print("SENTENCE")
-    # print(sentence)
-    # print("A")
-    # print(a)
-
-
 
     new = ""
     if a["line"] != "":
@@ -340,13 +334,8 @@ def p_list_sentencies_sentence(subexpressions):
     a = subexpressions[2]
 
 
-    # print("SENTENCE")
-    # print(sentence)
-    # print("A")
-    # print(a)
-
     list_sentencies_value = sentence["value"]
-    if(a["element"] != "" and (a["element"] == "comment" and a["line"] != sentence["line"])):
+    if(a["element"] != "" and a["line"] != sentence["line"]):
         list_sentencies_value = list_sentencies_value + "\n"
     else:
         if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O' and sentence["line"] == a["line"]:
