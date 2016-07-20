@@ -312,43 +312,58 @@ def p_program(subexpressions):
 def p_list_sentencies_comment(subexpressions):
     'list_sentencies : COMMENT a'
 
+ 
     comment = subexpressions[1]
     a = subexpressions[2]
-    subexpressions[0] = {"value": comment["value"] + "\n" + a["value"], "element": "comment", "line": comment["line"]}
+
+
+    new = ""
+    if a["line"] != "":
+        if comment["line"] != a["line"]:
+            new = "\n"
+
+    subexpressions[0] = {"value": comment["value"] + new + a["value"], "element": "comment", "line": comment["line"]}
 
 def p_list_sentencies_sentence(subexpressions):
     'list_sentencies : sentence a'
 
+def p_list_sentencies_sentence(subexpressions):
+    'list_sentencies : sentence a'
+    
     sentence = subexpressions[1]
     a = subexpressions[2]
     list_sentencies_value = sentence["value"]
-    if (a["element"] != ""):
+    if(a["element"] != "" and (a["element"] == "comment" and a["line"] != sentence["line"])):
         list_sentencies_value = list_sentencies_value + "\n"
     else:
-        if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O':
+        if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O' and sentence["line"] == a["line"]:
             list_sentencies_value = list_sentencies_value
         else:
             list_sentencies_value = list_sentencies_value
+
     list_sentencies_value = list_sentencies_value + a["value"]
 
-    subexpressions[0] = {"value": list_sentencies_value, "element": "sentence"}
+    subexpressions[0] = {"value": list_sentencies_value, "element": "sentence", "line" : sentence["line"]}
+
 
 def p_a_list_sentencies(subexpressions):
     'a : list_sentencies'
 
     list_sentencies = subexpressions[1]
-    subexpressions[0] = {"value": list_sentencies["value"], "element":list_sentencies["element"]}
+    subexpressions[0] = {"value": list_sentencies["value"], "element":list_sentencies["element"], "line" : list_sentencies["line"]}
 
 def p_a_lambda(subexpressions):
     'a : '
 
-    subexpressions[0] = {"value": "", "element":""}
+    subexpressions[0] = {"value": "", "element":"", "line" : "" }
 
 def p_sentence_semicolon(subexpressions):
     'sentence : e SEMICOLON'
 
     e = subexpressions[1]
-    subexpressions[0] = {"value": e["value"] + ";"}
+
+
+    subexpressions[0] = {"value": e["value"] + ";", "line" : e["line"]}
 
 def p_sentence_while(subexpressions):
     'sentence : WHILE LPAREN expression RPAREN keys'
@@ -362,7 +377,7 @@ def p_sentence_while(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "while (" + condition["value"] + ")" + new}
+    subexpressions[0] = {"value": "while (" + condition["value"] + ")" + new, "line": subexpressions[1]["line"]}
 
 def p_sentence_if_else(subexpressions):
     'sentence : IF LPAREN expression RPAREN keys possibleelse'
@@ -377,7 +392,7 @@ def p_sentence_if_else(subexpressions):
         newline = "\n"
     new = newline + keys["value"]
     possibleelse = subexpressions[6]
-    subexpressions[0] = {"value": "if (" + condition["value"] + ")" + new + possibleelse["value"]}
+    subexpressions[0] = {"value": "if (" + condition["value"] + ")" + new + possibleelse["value"], "line": subexpressions[1]["line"]}
 
 def p_sentence_for(subexpressions):
     'sentence : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
@@ -395,7 +410,7 @@ def p_sentence_for(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "for (" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new}
+    subexpressions[0] = {"value": "for (" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new, "line": subexpressions[1]["line"]}
 
 def p_sentence_do_while(subexpressions):
     'sentence : DO keys_do WHILE LPAREN expression RPAREN SEMICOLON'
@@ -411,20 +426,20 @@ def p_sentence_do_while(subexpressions):
         newline = "\n"
     new = newline + keysdo["value"] + "\n"
 
-
-    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");\n", "line": subexpressions[7]["line"]}
+    #ojo aca cambio en line 7 por 1
+    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");\n", "line": subexpressions[1]["line"]}
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
 
     function = subexpressions[1]
-    subexpressions[0] = {"value": function["value"] + ";"}
+    subexpressions[0] = {"value": function["value"] + ";", "line": subexpressions[1]["line"]}
 
 def p_sentence_return(subexpressions):
     'sentence : RETURN expression'
 
     exp = subexpressions[2]
-    subexpressions[0] = {"value": "return " + exp["value"] + ";"}
+    subexpressions[0] = {"value": "return " + exp["value"] + ";", "line": subexpressions[1]["line"]}
 
 def p_possibleelse_else(subexpressions):
     'possibleelse : ELSE keys'
@@ -448,13 +463,15 @@ def p_e_advance(subexpressions):
     'e : advance'
 
     advance = subexpressions[1]
-    subexpressions[0] = {"value": advance["value"]}
+    subexpressions[0] = {"value": advance["value"], "line" : advance["line"]}
 
 def p_e_assignation(subexpressions):
     'e : assignation'
 
     assignation = subexpressions[1]
-    subexpressions[0] = {"value": assignation["value"]}
+
+
+    subexpressions[0] = {"value": assignation["value"], "line" : assignation["line"]}
 
 def p_comment_list_append(subexpressions):
     'comment_list : COMMENT comment_list'
@@ -536,7 +553,8 @@ def p_assignation(subexpressions):
 
     insertOrUpdate(var["value"],getType(b, bIsTerminal), isArray(b, bIsTerminal))
 
-    subexpressions[0] = {"value": var["value"] + b["value"], "type": getType(b, bIsTerminal)}
+
+    subexpressions[0] = {"value": var["value"] + b["value"], "type": getType(b, bIsTerminal), "line": var["line"]}
 
 def p_b_array(subexpressions):
     'b : LBRACKET expression RBRACKET ASSIGN expression'
@@ -596,7 +614,7 @@ def p_advance_var_array_c(subexpressions):
         if not isNumerical(var, isTerminal) and not isArrayNumerical(var, isTerminal):
             raise SemanticException("El tipo a avanzar no es un numero")
 
-    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  c["value"]}
+    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  c["value"], "line": var["line"]}
 
 def p_advance_var_array_d(subexpressions):
     'advance : VAR LBRACKET expression RBRACKET d'
@@ -612,7 +630,7 @@ def p_advance_var_array_d(subexpressions):
     isTerminal = True
     if not isNumerical(var, isTerminal)  and not isArrayNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
-    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  d["value"]}
+    subexpressions[0] = {"value":  var["value"] + "[" + expression["value"] + "]" +  d["value"], "line": var["line"]}
 
 def p_advance_var_c(subexpressions):
     'advance : VAR c'
@@ -632,7 +650,7 @@ def p_advance_var_c(subexpressions):
             if not TienenElMismoTipo(getType(var, True), getType(c, False)):
                 raise SemanticException("Los tipos deben coincidir")
 
-    subexpressions[0] = {"value":  var["value"] + c["value"]}
+    subexpressions[0] = {"value":  var["value"] + c["value"], "line": var["line"]}
 
 
 def p_advance_var_d(subexpressions):
@@ -645,7 +663,7 @@ def p_advance_var_d(subexpressions):
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
 
-    subexpressions[0] = {"value":  var["value"] + d["value"]}
+    subexpressions[0] = {"value":  var["value"] + d["value"], "line": var["line"]}
 
 def p_advance_d_var(subexpressions):
     'advance : d VAR'
@@ -657,7 +675,7 @@ def p_advance_d_var(subexpressions):
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
 
-    subexpressions[0] = {"value":  d["value"] + var["value"]}
+    subexpressions[0] = {"value":  d["value"] + var["value"], "line": var["line"]}
 
 def p_advance_d_array(subexpressions):
     'advance : d VAR LBRACKET expression RBRACKET'
@@ -672,12 +690,12 @@ def p_advance_d_array(subexpressions):
 
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
-    subexpressions[0] = {"value":  d["value"] + var["value"] + "[" + expression["value"] + "]"}
+    subexpressions[0] = {"value":  d["value"] + var["value"] + "[" + expression["value"] + "]", "line": var["line"]}
 
 def p_d_increment(subexpressions):
     'd : INCREMENT'
 
-    subexpressions[0] = {"value": "++", "type": ""}
+    subexpressions[0] = {"value": "++", "type": "", "line": subexpressions[1]["line"]}
 
 def p_c_plus(subexpressions):
     'c : PLUSEQUAL expression'
@@ -693,7 +711,7 @@ def p_c_plus(subexpressions):
 def p_d_decrement(subexpressions):
     'd : DECREMENT'
 
-    subexpressions[0] = {"value": "--", "type": ""}
+    subexpressions[0] = {"value": "--", "type": "", "line": subexpressions[1]["line"]}
 
 def p_c_minequal(subexpressions):
     'c : MINEQUAL expression'
@@ -1245,13 +1263,13 @@ def p_func_func_wr(subexpressions):
     'function : function_with_return'
 
     function_with_return = subexpressions[1]
-    subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"]}
+    subexpressions[0] = {"value": function_with_return["value"], "type": function_with_return["type"], "line": subexpressions[1]["line"]}
 
 def p_func_print(subexpressions):
     'function : PRINT LPAREN expression RPAREN'
 
     expression = subexpressions[3]
-    subexpressions[0] = {"value": "print(" + expression["value"] + ")"}
+    subexpressions[0] = {"value": "print(" + expression["value"] + ")", "line": subexpressions[1]["line"]}
 
 def p_func_wr_mult(subexpressions):
     'function_with_return : MULTIPLICACIONESCALAR LPAREN param_me RPAREN'
@@ -1259,7 +1277,7 @@ def p_func_wr_mult(subexpressions):
     param_me = subexpressions[3]
     tipoRes = {"tipo": "array", "tipoInterno": param_me["type"]}
 
-    subexpressions[0] = {"value":"multiplicacionEscalar("+ param_me["value"] + ")", "type": tipoRes }
+    subexpressions[0] = {"value":"multiplicacionEscalar("+ param_me["value"] + ")", "type": tipoRes , "line": subexpressions[1]["line"]}
 
 def p_func_wr_capi(subexpressions):
     'function_with_return : CAPITALIZAR LPAREN expression RPAREN'
@@ -1270,7 +1288,7 @@ def p_func_wr_capi(subexpressions):
     if not(isString(expression, isTerminal)):
         raise SemanticException("Capitalizar recibe solo strings")
 
-    subexpressions[0] = {"value": "capitalizar(" + expression["value"] + ")", "type": {"tipo": "string", "tipoInterno": None}}
+    subexpressions[0] = {"value": "capitalizar(" + expression["value"] + ")", "type": {"tipo": "string", "tipoInterno": None}, "line": subexpressions[1]["line"]}
 
 def p_func_wr_coli(subexpressions):
     'function_with_return : COLINEALES LPAREN expression COMMA expression  RPAREN'
@@ -1280,7 +1298,7 @@ def p_func_wr_coli(subexpressions):
     isTerminal = False
     if not isArrayNumerical(expression1, isTerminal) or not isArrayNumerical(expression2, isTerminal):
         raise SemanticException("colineales solo puede recibir arrays de numeros")
-    subexpressions[0] = {"value": "colineales(" + expression1["value"] + ", " + expression2["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}}
+    subexpressions[0] = {"value": "colineales(" + expression1["value"] + ", " + expression2["value"] + ")", "type": {"tipo": "bool", "tipoInterno": None}, "line": subexpressions[1]["line"]}
 
 def p_func_wr_length(subexpressions):
     'function_with_return : LENGTH LPAREN expression RPAREN'
@@ -1289,7 +1307,7 @@ def p_func_wr_length(subexpressions):
     isTerminal = False
     if not(isString(expression, isTerminal) or isArray(expression, isTerminal)):
         raise SemanticException("length solo puede recibir un string o un array")
-    subexpressions[0] = {"value": "length(" + expression["value"] + ")", "type": {"tipo": "natural", "tipoInterno": None}}
+    subexpressions[0] = {"value": "length(" + expression["value"] + ")", "type": {"tipo": "natural", "tipoInterno": None}, "line": subexpressions[1]["line"]}
 
 def p_param_me_var(subexpressions):
     'param_me : expression COMMA expression n'
