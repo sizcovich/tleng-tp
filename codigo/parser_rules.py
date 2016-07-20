@@ -322,13 +322,13 @@ def p_list_sentencies_sentence(subexpressions):
     sentence = subexpressions[1]
     a = subexpressions[2]
     list_sentencies_value = sentence["value"]
-    if (a["element"] != "comment"):
+    if (a["element"] != ""):
         list_sentencies_value = list_sentencies_value + "\n"
     else:
-        if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O' and sentence["line"] == a["line"]:
+        if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O':
             list_sentencies_value = list_sentencies_value
         else:
-            list_sentencies_value = list_sentencies_value + "\n"
+            list_sentencies_value = list_sentencies_value
     list_sentencies_value = list_sentencies_value + a["value"]
 
     subexpressions[0] = {"value": list_sentencies_value, "element": "sentence"}
@@ -348,7 +348,7 @@ def p_sentence_semicolon(subexpressions):
     'sentence : e SEMICOLON'
 
     e = subexpressions[1]
-    subexpressions[0] = {"value": e["value"] + "; "}
+    subexpressions[0] = {"value": e["value"] + ";"}
 
 def p_sentence_while(subexpressions):
     'sentence : WHILE LPAREN expression RPAREN keys'
@@ -485,7 +485,7 @@ def p_keys_do_append_possiblecomment(subexpressions):
     else:
         if sentence["line"] != subexpressions[1]["line"]:
             text = "\n" + text
-    subexpressions[0] = {"value": "{ " + indent(text) + "} "}
+    subexpressions[0] = {"value": " { " + indent(text) + "} "}
 
 def p_keys_append_sentence(subexpressions):
     'keys : comment_list sentence'
@@ -507,7 +507,7 @@ def p_keys_append_possiblecomment(subexpressions):
     else:
         if sentence["line"] != subexpressions[1]["line"]:
             text = "\n" + text
-    subexpressions[0] = {"value": "{ " + indent(text) + "}\n"}
+    subexpressions[0] = {"value": " { " + indent(text) + "}\n"}
 
 def p_assignationorlambda_assignation(subexpressions):
     'assignationorlambda : assignation'
@@ -909,7 +909,7 @@ def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
 
     list_registers = subexpressions[2]
-    subexpressions[0] = {"value": ", " + list_registers["value"], "dict": list_registers["dict"] }
+    subexpressions[0] = {"value": "," + list_registers["value"], "dict": list_registers["dict"] }
 
 def p_l_lambda(subexpressions):
     'l : '
