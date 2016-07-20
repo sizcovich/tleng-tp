@@ -50,7 +50,8 @@ tokens = (
 	'VAR',
 	'COMMENT',
 	'STRING',
-	'NEGATIVO'
+	'NEGATIVO',
+	'NEWLINE'
 )
 
 #Reserved words
@@ -337,14 +338,21 @@ def t_COMMENT(t):
 	t.value = { "line": t.lineno, "value": t.value }
 	return t
 
+def t_NEWLINE(token):
+  r"\n+"
+  token.lexer.lineno += len(token.value)
+
+
 # A string containing ignored characters (spaces, tabs and newlines)
-t_ignore = '\t \n'
+
+
+t_ignore = '\t '
 
 # Error handling rule
 def t_error(token):
-	message = "Token desconocido:"
 	print("TOKEN")
 	print(token)
+	message = "Token desconocido:"
 	message += "\ntype:" + token.type
 	message += "\nvalue:" + str(token.value)
 	message += "\nline:" + str(token.lineno)
