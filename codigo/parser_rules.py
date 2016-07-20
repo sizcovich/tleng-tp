@@ -789,7 +789,7 @@ def p_value_minus_array(subexpressions):
     typ = getTypeRecursivo(var["value"] + s["stringInterno"])
 
 
-    subexpressions[0] = {"value":  "-(" + var["value"] + s["value"] + ")", "type": typ}
+    subexpressions[0] = {"value":  "-" + var["value"] + s["value"], "type": typ}
 
 def p_value_string(subexpressions):
     'value : STRING'
