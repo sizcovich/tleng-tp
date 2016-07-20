@@ -326,9 +326,6 @@ def p_list_sentencies_comment(subexpressions):
 
 def p_list_sentencies_sentence(subexpressions):
     'list_sentencies : sentence a'
-
-def p_list_sentencies_sentence(subexpressions):
-    'list_sentencies : sentence a'
     
     sentence = subexpressions[1]
     a = subexpressions[2]
