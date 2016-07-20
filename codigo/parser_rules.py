@@ -332,8 +332,6 @@ def p_list_sentencies_sentence(subexpressions):
     
     sentence = subexpressions[1]
     a = subexpressions[2]
-
-
     list_sentencies_value = sentence["value"]
     if(a["element"] != "" and a["line"] != sentence["line"]):
         list_sentencies_value = list_sentencies_value + "\n"
@@ -429,7 +427,7 @@ def p_sentence_do_while(subexpressions):
     new = newline + keysdo["value"] + "\n"
 
     #ojo aca cambio en line 7 por 1
-    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");\n", "line": subexpressions[1]["line"]}
+    subexpressions[0] = {"value": "do " + new + "while (" + condition["value"] + ");\n", "line": subexpressions[1]["line"]}
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
@@ -519,8 +517,6 @@ def p_keys_append_possiblecomment(subexpressions):
 
     sentence = subexpressions[2]
     text = sentence["value"]
-
-
     if (sentence["element"] != "comment"):
         text = "\n" + text
     else:
