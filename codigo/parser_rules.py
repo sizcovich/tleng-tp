@@ -384,7 +384,7 @@ def p_sentence_do_while(subexpressions):
     new = newline + keysdo["value"]
 
 
-    subexpressions[0] = {"value": "do " + new + keysdo["value"] + "while(" + condition["value"] + ");", "line": subexpressions[7]["line"]}
+    subexpressions[0] = {"value": "do " + new + "while(" + condition["value"] + ");", "line": subexpressions[7]["line"]}
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
@@ -559,6 +559,9 @@ def p_advance_var_array_c(subexpressions):
     c = subexpressions[5]
     isTerminal = True
 
+    if not isNatural(expression, False):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
 
     if c["isPlusEqual"] :
         if  not isNumerical(var, isTerminal) and not isString(var, isTerminal) and not isArrayNumerical(var, isTerminal):
@@ -575,6 +578,11 @@ def p_advance_var_array_d(subexpressions):
     var = subexpressions[1]
     expression = subexpressions[3]
     d = subexpressions[5]
+    isTerminal = False
+
+    if not isNatural(expression, isTerminal):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
     isTerminal = True
     if not isNumerical(var, isTerminal)  and not isArrayNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
@@ -631,6 +639,11 @@ def p_advance_d_array(subexpressions):
     d = subexpressions[1]
     var = subexpressions[2]
     isTerminal = True
+    expression  = subexpressions[4]
+
+    if not isNatural(expression, False):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
     if not isNumerical(var, isTerminal):
         raise SemanticException("El tipo a avanzar no es un numero")
     subexpressions[0] = {"value":  d["value"] + var["value"] + "[" + expression["value"] + "]"}
@@ -645,6 +658,8 @@ def p_c_plus(subexpressions):
     #{C.value = '+=' + value.value}
     expression = subexpressions[2]
     isTerminal = False
+
+
     if not isNumerical(expression, isTerminal) and not isString(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion +=")
     subexpressions[0] = {"value": "+=" + expression["value"], "type": expression["type"],"isPlusEqual" :True}
@@ -724,6 +739,11 @@ def p_value_minus_paren_array(subexpressions):
     expression = subexpressions[5]
     var = subexpressions[3]
     isTerminal = True
+
+    if not isNatural(expression, False):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
+
     typ = getType(var, isTerminal)
     if not isArray(var, isTerminal):
         raise SemanticException("var no es un arreglo")
@@ -751,6 +771,10 @@ def p_value_minus_array(subexpressions):
     expression = subexpressions[4]
     var = subexpressions[2]
     isTerminal = True
+
+    if not isNatural(expression, False):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
+
     typ = getType(var, isTerminal)
     if not isArray(var, isTerminal):
         raise SemanticException("la variable debe ser arreglo")
@@ -803,6 +827,10 @@ def p_value_var_array(subexpressions):
     #{VALUE.value = var.value + J.value, VALUE.type = table.getType(var.value), VALUE.isArray = J.isArray}
     expression = subexpressions[3]
     var = subexpressions[1]
+
+    isTerminal = False
+    if not isNatural(expression, isTerminal):
+        raise SemanticException("El valor para acceder a un array debe ser natural")
 
     isTerminal = True
     typ = getType(var, isTerminal)
