@@ -336,7 +336,7 @@ def p_list_sentencies_sentence(subexpressions):
         if sentence["value"][0].upper() == 'D' and sentence["value"][1].upper() == 'O' and sentence["line"] == a["line"]:
             list_sentencies_value = list_sentencies_value
         else:
-            list_sentencies_value = list_sentencies_value
+            list_sentencies_value =  list_sentencies_value + " "
 
     list_sentencies_value = list_sentencies_value + a["value"]
 
@@ -373,7 +373,7 @@ def p_sentence_while(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "while (" + condition["value"] + ")" + new, "line": subexpressions[1]["line"]}
+    subexpressions[0] = {"value": "while (" + condition["value"] + ") " + new, "line": subexpressions[1]["line"]}
 
 def p_sentence_if_else(subexpressions):
     'sentence : IF LPAREN expression RPAREN keys possibleelse'
@@ -388,7 +388,7 @@ def p_sentence_if_else(subexpressions):
         newline = "\n"
     new = newline + keys["value"]
     possibleelse = subexpressions[6]
-    subexpressions[0] = {"value": "if (" + condition["value"] + ")" + new + possibleelse["value"], "line": subexpressions[1]["line"]}
+    subexpressions[0] = {"value": "if (" + condition["value"] + ") " + new + possibleelse["value"], "line": subexpressions[1]["line"]}
 
 def p_sentence_for(subexpressions):
     'sentence : FOR LPAREN assignationorlambda SEMICOLON expression SEMICOLON advancefor RPAREN keys'
@@ -406,7 +406,7 @@ def p_sentence_for(subexpressions):
     if keys["value"][0] != '{':
         new = "\n"
     new = new + keys["value"]
-    subexpressions[0] = {"value": "for (" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ")" + new, "line": subexpressions[1]["line"]}
+    subexpressions[0] = {"value": "for (" + assignationorlamba["value"] + "; "+condition["value"]+ "; " +advancefor["value"]+ ") " + new, "line": subexpressions[1]["line"]}
 
 def p_sentence_do_while(subexpressions):
     'sentence : DO keys_do WHILE LPAREN expression RPAREN SEMICOLON'
@@ -415,15 +415,15 @@ def p_sentence_do_while(subexpressions):
     condition = subexpressions[5]
 
     lastElementLine = subexpressions[4]["line"]
-    newline = ''
+    newline = ""
     if keysdo["value"][0] == '#' and lastElementLine == keysdo["line"]:
         newline = "\n"
     if keysdo["value"][0] != '{':
         newline = "\n"
-    new = newline + keysdo["value"] + "\n"
+    new = newline + keysdo["value"]
 
     #ojo aca cambio en line 7 por 1
-    subexpressions[0] = {"value": "do " + new + "while (" + condition["value"] + ");\n", "line": subexpressions[1]["line"]}
+    subexpressions[0] = {"value": "do " + new + "while (" + condition["value"] + ");", "line": subexpressions[1]["line"]}
 
 def p_sentence_function(subexpressions):
     'sentence : function SEMICOLON'
@@ -447,8 +447,8 @@ def p_possibleelse_else(subexpressions):
         new = "\n"
     new = new + keys["value"]
     if keys["value"][0] != '{':
-        new = "\n" + keys["value"] + "\n"
-    subexpressions[0] = {"value": " else " + new}
+        new = "\n" + keys["value"]
+    subexpressions[0] = {"value": "\nelse " + new}
 
 def p_possibleelse_lambda(subexpressions):
     'possibleelse : '
@@ -486,7 +486,7 @@ def p_keys_do_append_sentence(subexpressions):
 
     comment_list = subexpressions[1]
     sentence = subexpressions[2]
-    subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
+    subexpressions[0] = {"value": indent(  comment_list["value"] +  sentence["value"] + "\n" )}
 
 def p_keys_do_append_possiblecomment(subexpressions):
     'keys_do : LKEY list_sentencies RKEY'
@@ -498,7 +498,7 @@ def p_keys_do_append_possiblecomment(subexpressions):
     else:
         if sentence["line"] != subexpressions[1]["line"]:
             text = "\n" + text
-    subexpressions[0] = {"value": " { " + indent(text) + "} "}
+    subexpressions[0] = {"value": "{ " + indent(text) + "} "}
 
 def p_keys_append_sentence(subexpressions):
     'keys : comment_list sentence'
@@ -506,7 +506,7 @@ def p_keys_append_sentence(subexpressions):
     keys = subexpressions[0]
     comment_list = subexpressions[1]
     sentence = subexpressions[2]
-    subexpressions[0] = {"value":indent(comment_list["value"] +  sentence["value"])}
+    subexpressions[0] = {"value": indent(comment_list["value"] +  sentence["value"])}
 
 def p_keys_append_possiblecomment(subexpressions):
     'keys : LKEY list_sentencies RKEY'
@@ -518,7 +518,7 @@ def p_keys_append_possiblecomment(subexpressions):
     else:
         if sentence["line"] != subexpressions[1]["line"]:
             text = "\n" + text
-    subexpressions[0] = {"value": " { " + indent(text) + "}\n"}
+    subexpressions[0] = {"value": "{ " + indent(text) + "}"}
 
 def p_assignationorlambda_assignation(subexpressions):
     'assignationorlambda : assignation'
@@ -700,7 +700,7 @@ def p_c_plus(subexpressions):
 
     if not isNumerical(expression, isTerminal) and not isString(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion +=")
-    subexpressions[0] = {"value": "+=" + expression["value"], "type": expression["type"],"isPlusEqual" :True}
+    subexpressions[0] = {"value": " += " + expression["value"], "type": expression["type"],"isPlusEqual" :True}
 
 def p_d_decrement(subexpressions):
     'd : DECREMENT'
@@ -715,7 +715,7 @@ def p_c_minequal(subexpressions):
     if not isNumerical(expression, isTerminal):
         raise SemanticException("No es un tipo valido para la operacion -=")
 
-    subexpressions[0] = {"value": "-=" + expression["value"], "type": expression["type"], "isPlusEqual" :False}
+    subexpressions[0] = {"value": " -= " + expression["value"], "type": expression["type"], "isPlusEqual" :False}
 
 def p_c_mulequal(subexpressions):
     'c : MULEQUAL expression'
@@ -915,13 +915,13 @@ def p_list_registers(subexpressions):
     l = subexpressions[4]
     dict = l["dict"]
     dict.update({ var["value"] : getType(exp,False ) })
-    subexpressions[0] = {"value": var["value"] + " : " + exp["value"] + l["value"], "dict": dict}
+    subexpressions[0] = {"value": var["value"] + ":" + exp["value"] + l["value"], "dict": dict}
 
 def p_l_list_registers(subexpressions):
     'l : COMMA list_registers'
 
     list_registers = subexpressions[2]
-    subexpressions[0] = {"value": "," + list_registers["value"], "dict": list_registers["dict"] }
+    subexpressions[0] = {"value": ", " + list_registers["value"], "dict": list_registers["dict"] }
 
 def p_l_lambda(subexpressions):
     'l : '
@@ -967,7 +967,7 @@ def p_list_values_comma(subexpressions):
                 raise SemanticException("El tipo del valor no coincide con el tipo de la lista")
 
 
-    subexpressions[0] = {"value": "," + expression["value"] + list_values2["value"], "type":typ}
+    subexpressions[0] = {"value": ", " + expression["value"] + list_values2["value"], "type":typ}
 
 def p_list_values_lambda(subexpressions):
     'list_values : '
